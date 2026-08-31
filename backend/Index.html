@@ -497,28 +497,60 @@
 
     .launcher-tile:active {
       transform: scale(0.97);
-    }
-
-    .launcher-icon-box {
-      width: 52px;
-      height: 52px;
-      border-radius: var(--radius-md);
+    /* ================= MODERN VECTOR SVG SQUIRCLE ICONS ================= */
+    .icon-squircle {
+      width: 48px;
+      height: 48px;
+      border-radius: 14px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.65rem;
-      margin-bottom: 0.6rem;
-      transition: transform 0.2s;
+      flex-shrink: 0;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+    .icon-squircle svg {
+      width: 24px;
+      height: 24px;
+      stroke-width: 2.2;
+    }
+    .icon-grad-emerald {
+      background: linear-gradient(135deg, #10b981 0%, #047857 100%);
+      color: #ffffff;
+    }
+    .icon-grad-amber {
+      background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+      color: #ffffff;
+    }
+    .icon-grad-blue {
+      background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
+      color: #ffffff;
+    }
+    .icon-grad-purple {
+      background: linear-gradient(135deg, #a855f7 0%, #7c3aed 100%);
+      color: #ffffff;
+    }
+    .icon-grad-rose {
+      background: linear-gradient(135deg, #f43f5e 0%, #e11d48 100%);
+      color: #ffffff;
+    }
+    .icon-grad-teal {
+      background: linear-gradient(135deg, #14b8a6 0%, #0f766e 100%);
+      color: #ffffff;
     }
 
-    .launcher-tile:hover .launcher-icon-box {
-      transform: scale(1.08);
+    .launcher-tile:hover .icon-squircle {
+      transform: scale(1.1) rotate(-3deg);
+    }
+    .metric-box:hover .icon-squircle {
+      transform: scale(1.08) rotate(3deg);
     }
 
     .launcher-title {
       font-weight: 700;
       font-size: 0.92rem;
       color: var(--text-main);
+      margin-top: 0.65rem;
       margin-bottom: 0.2rem;
       line-height: 1.25;
     }
@@ -989,89 +1021,114 @@
       <!-- 4 Thẻ KPI: 2 cột trên Mobile, 4 cột trên Desktop -->
       <div class="metrics-grid">
         <div class="metric-box">
-          <div class="metric-icon" style="background:#ffedd5; color:#9a3412;">🔧</div>
+          <div class="icon-squircle icon-grad-amber">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+          </div>
           <div>
-            <div style="font-size:0.72rem; color:var(--text-muted); font-weight:600;">BIÊN BẢN BẢO TRÌ</div>
-            <div style="font-size:1.25rem; font-weight:800;" id="kpi-bt">0</div>
+            <div style="font-size:0.72rem; color:var(--text-muted); font-weight:700;">BIÊN BẢN BẢO TRÌ</div>
+            <div style="font-size:1.4rem; font-weight:800; line-height:1.1; margin-top:2px;" id="kpi-bt">0</div>
           </div>
         </div>
         <div class="metric-box">
-          <div class="metric-icon" style="background:#d8f3dc; color:#1b4332;">🌿</div>
+          <div class="icon-squircle icon-grad-emerald">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></svg>
+          </div>
           <div>
-            <div style="font-size:0.72rem; color:var(--text-muted); font-weight:600;">BIÊN BẢN VỆ SINH</div>
-            <div style="font-size:1.25rem; font-weight:800;" id="kpi-vs">0</div>
+            <div style="font-size:0.72rem; color:var(--text-muted); font-weight:700;">BIÊN BẢN VỆ SINH</div>
+            <div style="font-size:1.4rem; font-weight:800; line-height:1.1; margin-top:2px;" id="kpi-vs">0</div>
           </div>
         </div>
         <div class="metric-box">
-          <div class="metric-icon" style="background:#dbeafe; color:#1e40af;">📏</div>
+          <div class="icon-squircle icon-grad-blue">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>
+          </div>
           <div>
-            <div style="font-size:0.72rem; color:var(--text-muted); font-weight:600;">ĐÃ PHÁT DỌN</div>
-            <div style="font-size:1.25rem; font-weight:800;"><span id="kpi-len">0</span> m</div>
+            <div style="font-size:0.72rem; color:var(--text-muted); font-weight:700;">ĐÃ PHÁT DỌN</div>
+            <div style="font-size:1.4rem; font-weight:800; line-height:1.1; margin-top:2px;"><span id="kpi-len">0</span> <span style="font-size:0.85rem; font-weight:600;">m</span></div>
           </div>
         </div>
         <div class="metric-box">
-          <div class="metric-icon" style="background:#f3e8ff; color:#6b21a8;">🗺️</div>
+          <div class="icon-squircle icon-grad-purple">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"/><line x1="9" y1="3" x2="9" y2="18"/><line x1="15" y1="6" x2="15" y2="21"/></svg>
+          </div>
           <div>
-            <div style="font-size:0.72rem; color:var(--text-muted); font-weight:600;">DIỆN TÍCH PHÁT DỌN</div>
-            <div style="font-size:1.25rem; font-weight:800;"><span id="kpi-area">0</span> ha</div>
+            <div style="font-size:0.72rem; color:var(--text-muted); font-weight:700;">DIỆN TÍCH PHÁT DỌN</div>
+            <div style="font-size:1.4rem; font-weight:800; line-height:1.1; margin-top:2px;"><span id="kpi-area">0</span> <span style="font-size:0.85rem; font-weight:600;">ha</span></div>
           </div>
         </div>
       </div>
 
       <!-- 6 MỤC TÍNH NĂNG CHÍNH: 2 CỘT X 3 HÀNG TRÊN MOBILE, 3 CỘT TRÊN WEB -->
-      <div class="card-panel" style="padding:1rem;">
-        <div class="card-header" style="margin-bottom:0.75rem;">
-          <h2 style="display:flex; align-items:center; gap:0.4rem;">⚡ Danh Mục Chức Năng</h2>
+      <div class="card-panel" style="padding:1.25rem 1rem;">
+        <div class="card-header" style="margin-bottom:0.85rem;">
+          <h2 style="display:flex; align-items:center; gap:0.5rem; font-size:1.05rem;">
+            <span style="display:inline-block; width:8px; height:18px; background:var(--primary); border-radius:4px;"></span>
+            Danh Mục Chức Năng
+          </h2>
         </div>
         
         <div class="quick-launcher-grid">
           <!-- 1. BB Bảo Trì -->
           <div class="launcher-tile" onclick="switchTab('baotri')">
-            <div class="launcher-icon-box" style="background:#ffedd5; color:#9a3412;">🔧</div>
+            <div class="icon-squircle icon-grad-amber">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+            </div>
             <div class="launcher-title">Biên Bản Bảo Trì</div>
             <div class="launcher-desc">Ghi nhận sự cố & phụ tùng thay</div>
           </div>
 
           <!-- 2. BB Vệ Sinh -->
           <div class="launcher-tile" onclick="switchTab('vesinh')">
-            <div class="launcher-icon-box" style="background:#d8f3dc; color:#1b4332;">🌿</div>
+            <div class="icon-squircle icon-grad-emerald">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></svg>
+            </div>
             <div class="launcher-title">Biên Bản Vệ Sinh</div>
             <div class="launcher-desc">Ghi nhận phát dọn thực bì</div>
           </div>
 
           <!-- 3. Nhật Ký Thi Công -->
           <div class="launcher-tile" onclick="switchTab('nhatky')">
-            <div class="launcher-icon-box" style="background:#e0f2fe; color:#0369a1;">🏗️</div>
+            <div class="icon-squircle icon-grad-teal">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/><path d="M9 14l2 2 4-4"/></svg>
+            </div>
             <div class="launcher-title">Nhật Ký Thi Công</div>
             <div class="launcher-desc">Nhân lực, thiết bị trong ngày</div>
           </div>
 
           <!-- 4. Lịch Sử Bản Ghi -->
           <div class="launcher-tile" onclick="switchTab('history')">
-            <div class="launcher-icon-box" style="background:#fef3c7; color:#b45309;">📂</div>
+            <div class="icon-squircle icon-grad-rose">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/><line x1="12" y1="11" x2="12" y2="17"/><line x1="9" y1="14" x2="15" y2="14"/></svg>
+            </div>
             <div class="launcher-title">Lịch Sử Bản Ghi</div>
             <div class="launcher-desc">Tra cứu, xem lại & xuất PDF</div>
           </div>
 
           <!-- 5. Quản Lý Nhân Sự -->
           <div class="launcher-tile" id="dash-tile-users" onclick="switchTab('users')">
-            <div class="launcher-icon-box" style="background:#ede9fe; color:#6d28d9;">👥</div>
+            <div class="icon-squircle icon-grad-purple">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            </div>
             <div class="launcher-title">Quản Lý Nhân Sự</div>
             <div class="launcher-desc">Phân quyền tài khoản (Admin)</div>
           </div>
 
           <!-- 6. Quản Lý Danh Mục Gợi Ý & Pin -->
           <div class="launcher-tile" onclick="openValModal()">
-            <div class="launcher-icon-box" style="background:#fef3c7; color:#b45309;">📌</div>
+            <div class="icon-squircle icon-grad-emerald">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>
+            </div>
             <div class="launcher-title">Danh Mục & Gợi Ý</div>
             <div class="launcher-desc">Ghim & sửa danh mục tự động</div>
           </div>
 
-          <!-- 7. Cài Đặt & Đổi Mật Khẩu -->
-          <div class="launcher-tile" onclick="openSettingsModal()">
-            <div class="launcher-icon-box" style="background:#f1f5f9; color:#475569;">⚙️</div>
-            <div class="launcher-title">Cài Đặt Tài Khoản</div>
-            <div class="launcher-desc">Đổi mật khẩu & thông tin</div>
+          <!-- 7. Chọn Giao Diện Lâm Nghiệp -->
+          <div class="launcher-tile" onclick="openThemePicker()">
+            <div class="icon-squircle icon-grad-blue">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="13.5" cy="6.5" r=".5"/><circle cx="17.5" cy="10.5" r=".5"/><circle cx="8.5" cy="7.5" r=".5"/><circle cx="6.5" cy="12.5" r=".5"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/></svg>
+            </div>
+            <div class="launcher-title">Đổi Giao Diện</div>
+            <div class="launcher-desc">05 phong cách Lâm nghiệp</div>
           </div>
         </div>
       </div>

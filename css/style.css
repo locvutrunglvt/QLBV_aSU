@@ -1389,38 +1389,245 @@ body {
   border-color: var(--primary);
 }
 
-/* Enhancing forms with modern cards & visual hierarchy */
-.form-card-section {
+/* ================= MODAL SYSTEM (POPUP DIALOGS) ================= */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(15, 23, 42, 0.65);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: none !important;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  padding: 1rem;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+
+.modal-overlay.active {
+  display: flex !important;
+  opacity: 1;
+}
+
+.modal-dialog, .modal-card {
   background: var(--bg-surface);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-lg);
-  padding: 1.1rem;
-  margin-bottom: 1.1rem;
-  box-shadow: var(--shadow-card);
+  width: 100%;
+  max-width: 580px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.35);
+  animation: modalPopIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow: hidden;
 }
 
-.form-section-title {
-  font-size: 0.95rem;
+@keyframes modalPopIn {
+  0% { transform: scale(0.94) translateY(10px); opacity: 0; }
+  100% { transform: scale(1) translateY(0); opacity: 1; }
+}
+
+.modal-header {
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--bg-subtle);
+}
+
+.modal-header h3 {
+  font-size: 1.05rem;
   font-weight: 700;
   color: var(--primary);
+  margin: 0;
   display: flex;
   align-items: center;
-  gap: 0.45rem;
-  margin-bottom: 0.85rem;
-  padding-bottom: 0.45rem;
-  border-bottom: 1.5px solid var(--bg-subtle);
+  gap: 0.5rem;
 }
 
-.kpi-card-modern {
-  border-radius: var(--radius-lg) !important;
-  border: 1px solid var(--border-color) !important;
-  background: var(--bg-surface) !important;
-  box-shadow: var(--shadow-card) !important;
-  transition: var(--transition) !important;
+.modal-close-btn {
+  background: transparent;
+  border: none;
+  font-size: 1.25rem;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 0.25rem;
+  line-height: 1;
+  border-radius: 6px;
+  transition: var(--transition);
 }
 
-.kpi-card-modern:hover {
-  transform: translateY(-3px) !important;
-  box-shadow: var(--shadow-hover) !important;
+.modal-close-btn:hover {
+  background: rgba(0, 0, 0, 0.08);
+  color: var(--danger);
 }
+
+.modal-body {
+  padding: 1.25rem;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.modal-footer {
+  padding: 0.85rem 1.25rem;
+  border-top: 1px solid var(--border-color);
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  background: var(--bg-subtle);
+}
+
+/* ================= MODERN VECTOR SVG SQUIRCLE ICONS ================= */
+.icon-squircle {
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.icon-squircle svg {
+  width: 24px;
+  height: 24px;
+  stroke-width: 2.2;
+}
+
+.icon-squircle-sm {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+}
+
+.icon-squircle-sm svg {
+  width: 20px;
+  height: 20px;
+}
+
+/* Gradient Variants */
+.icon-grad-emerald {
+  background: linear-gradient(135deg, #10b981 0%, #047857 100%);
+  color: #ffffff;
+}
+
+.icon-grad-amber {
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  color: #ffffff;
+}
+
+.icon-grad-blue {
+  background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
+  color: #ffffff;
+}
+
+.icon-grad-purple {
+  background: linear-gradient(135deg, #a855f7 0%, #7c3aed 100%);
+  color: #ffffff;
+}
+
+.icon-grad-rose {
+  background: linear-gradient(135deg, #f43f5e 0%, #e11d48 100%);
+  color: #ffffff;
+}
+
+.icon-grad-teal {
+  background: linear-gradient(135deg, #14b8a6 0%, #0f766e 100%);
+  color: #ffffff;
+}
+
+/* Metric Box Modern */
+.metric-box {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  box-shadow: var(--shadow-card);
+  transition: var(--transition);
+}
+
+.metric-box:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-hover);
+  border-color: var(--primary-light);
+}
+
+.metric-box:hover .icon-squircle {
+  transform: scale(1.08) rotate(3deg);
+}
+
+/* Quick Launcher Tiles */
+.quick-launcher-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 0.85rem;
+}
+
+.launcher-tile {
+  background: var(--bg-surface);
+  border: 1.5px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 1.1rem 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  cursor: pointer;
+  transition: var(--transition);
+  box-shadow: var(--shadow-sm);
+  position: relative;
+  overflow: hidden;
+}
+
+.launcher-tile::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--primary);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.launcher-tile:hover {
+  transform: translateY(-4px);
+  border-color: var(--primary);
+  box-shadow: var(--shadow-hover);
+}
+
+.launcher-tile:hover::before {
+  opacity: 1;
+}
+
+.launcher-tile:hover .icon-squircle {
+  transform: scale(1.1) rotate(-3deg);
+}
+
+.launcher-title {
+  font-weight: 700;
+  font-size: 0.92rem;
+  color: var(--text-main);
+  margin-top: 0.65rem;
+  margin-bottom: 0.2rem;
+}
+
+.launcher-desc {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  line-height: 1.3;
+}
+
 
