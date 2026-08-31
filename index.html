@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="vi" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>QLBV - Quản Lý Bảo Trì Tuyến Hàng Rào Điện</title>
+  <meta name="description" content="Hệ thống số hóa biên bản bảo trì, vệ sinh và nhật ký thi công tuyến hàng rào điện bảo tồn Voi Đồng Nai" />
+  
+  <!-- Favicon & PWA Theme -->
+  <link rel="icon" type="image/png" href="https://kiemlamvung4.org.vn/wp-content/uploads/2024/09/kiem_lam_favi-1.png" />
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#1e4620" />
+
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <!-- html2pdf Library for Client-side PDF Generation -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <!-- ================= TOP NAVBAR (CĂN GIỮA TRÊN WEB, XUỐNG DÒNG TRÊN MOBILE) ================= -->
+  <header class="top-navbar">
+    <div class="header-brand-container" onclick="App.switchTab('dashboard')" style="cursor: pointer;">
+      <img src="https://kiemlamvung4.org.vn/wp-content/uploads/2024/09/kiem_lam_favi-1.png" alt="Logo Kiểm Lâm" class="header-brand-logo" />
+      <div class="header-brand-text">
+        <h1>CHI CỤC KIỂM LÂM ĐỒNG NAI</h1>
+        <p>HỆ THỐNG QUẢN LÝ HÀNG RÀO ĐIỆN (QLBV)</p>
+      </div>
+    </div>
+
+    <div class="header-actions">
+      <div id="user-badge-info" class="user-badge" onclick="App.showModal('user-settings-modal')" title="Tài khoản & Cài đặt">
+        <span class="status-dot" style="background: var(--text-light)"></span>
+        <span>Đăng nhập</span>
+      </div>
+
+      <button type="button" id="theme-toggle-btn" class="btn btn-secondary btn-sm" title="Đổi giao diện Sáng/Tối">
+        🌙
+      </button>
+    </div>
+  </header>
+
+  <!-- ================= MAIN CONTENT CONTAINER ================= -->
+  <main class="app-container">
+
+    <!-- ================= VIEW 1: DASHBOARD ================= -->
+    <section id="view-dashboard" class="tab-view">
+      <!-- 4 Thẻ KPI Metrics -->
+      <div class="metrics-grid">
+        <div class="metric-box">
+          <div class="metric-icon" style="background:#ffedd5; color:#9a3412;">🔧</div>
+          <div>
+            <div style="font-size:0.72rem; color:var(--text-muted); font-weight:600;">BIÊN BẢN BẢO TRÌ</div>
+            <div style="font-size:1.25rem; font-weight:800;" id="metric-count-bt">0</div>
+          </div>
+        </div>
+
+        <div class="metric-box">
+          <div class="metric-icon" style="background:#d8f3dc; color:#1b4332;">🌿</div>
+          <div>
+            <div style="font-size:0.72rem; color:var(--text-muted); font-weight:600;">BIÊN BẢN VỆ SINH</div>
+            <div style="font-size:1.25rem; font-weight:800;" id="metric-count-vs">0</div>
+          </div>
+        </div>
+
+        <div class="metric-box">
+          <div class="metric-icon" style="background:#dbeafe; color:#1e40af;">📏</div>
+          <div>
+            <div style="font-size:0.72rem; color:var(--text-muted); font-weight:600;">ĐÃ PHÁT DỌN</div>
+            <div style="font-size:1.25rem; font-weight:800;"><span id="metric-total-len">0</span> m</div>
+          </div>
+        </div>
+
+        <div class="metric-box">
+          <div class="metric-icon" style="background:#f3e8ff; color:#6b21a8;">🗺️</div>
+          <div>
+            <div style="font-size:0.72rem; color:var(--text-muted); font-weight:600;">DIỆN TÍCH PHÁT DỌN</div>
+            <div style="font-size:1.25rem; font-weight:800;"><span id="metric-total-area">0.000</span> ha</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 6 MỤC TÍNH NĂNG CHÍNH: 2 CỘT X 3 HÀNG TRÊN MOBILE, 3 CỘT TRÊN WEB -->
+      <div class="card-panel" style="padding:1rem;">
+        <div class="card-header" style="margin-bottom:0.75rem;">
+          <h2 style="display:flex; align-items:center; gap:0.4rem;">⚡ Danh Mục Chức Năng</h2>
+        </div>
+        
+        <div class="quick-launcher-grid">
+          <!-- 1. BB Bảo Trì -->
+          <div class="launcher-tile" onclick="App.switchTab('form-baotri')">
+            <div class="launcher-icon-box" style="background:#ffedd5; color:#9a3412;">🔧</div>
+            <div class="launcher-title">Biên Bản Bảo Trì</div>
+            <div class="launcher-desc">Ghi nhận sự cố & phụ tùng thay</div>
+          </div>
+
+          <!-- 2. BB Vệ Sinh -->
+          <div class="launcher-tile" onclick="App.switchTab('form-vesinh')">
+            <div class="launcher-icon-box" style="background:#d8f3dc; color:#1b4332;">🌿</div>
+            <div class="launcher-title">Biên Bản Vệ Sinh</div>
+            <div class="launcher-desc">Ghi nhận phát dọn thực bì</div>
+          </div>
+
+          <!-- 3. Nhật Ký Thi Công -->
+          <div class="launcher-tile" onclick="App.switchTab('form-nhatky')">
+            <div class="launcher-icon-box" style="background:#e0f2fe; color:#0369a1;">🏗️</div>
+            <div class="launcher-title">Nhật Ký Thi Công</div>
+            <div class="launcher-desc">Nhân lực, thiết bị trong ngày</div>
+          </div>
+
+          <!-- 4. Lịch Sử Bản Ghi -->
+          <div class="launcher-tile" onclick="App.switchTab('history')">
+            <div class="launcher-icon-box" style="background:#fef3c7; color:#b45309;">📂</div>
+            <div class="launcher-title">Lịch Sử Bản Ghi</div>
+            <div class="launcher-desc">Tra cứu, xem lại & xuất PDF</div>
+          </div>
+
+          <!-- 5. Quản Lý Nhân Sự -->
+          <div class="launcher-tile" id="dash-tile-users" onclick="App.switchTab('users')">
+            <div class="launcher-icon-box" style="background:#ede9fe; color:#6d28d9;">👥</div>
+            <div class="launcher-title">Quản Lý Nhân Sự</div>
+            <div class="launcher-desc">Phân quyền tài khoản (Admin)</div>
+          </div>
+
+          <!-- 6. Cài Đặt & Đổi Mật Khẩu -->
+          <div class="launcher-tile" onclick="App.showModal('user-settings-modal')">
+            <div class="launcher-icon-box" style="background:#f1f5f9; color:#475569;">⚙️</div>
+            <div class="launcher-title">Cài Đặt Tài Khoản</div>
+            <div class="launcher-desc">Đổi mật khẩu & kết nối</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= VIEW 2: FORM BẢO TRÌ ================= -->
+    <section id="view-form-baotri" class="tab-view" style="display: none;">
+      <form id="form-baotri-el">
+        <div class="card-panel">
+          <div class="card-header">
+            <h2>🔧 Biên Bản Xác Minh Hiện Trạng & Ghi Nhận Bảo Trì HRD</h2>
+            <button type="button" class="btn btn-secondary btn-sm" onclick="App.switchTab('dashboard')">⬅️ Về Trang Chủ</button>
+          </div>
+
+          <!-- Thông tin thời gian & địa điểm -->
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="form-label required" for="bt-ngay-lap">Ngày lập biên bản</label>
+              <input type="date" id="bt-ngay-lap" class="form-control" required />
+            </div>
+            <div class="form-group">
+              <label class="form-label required" for="bt-gio-lap">Giờ lập</label>
+              <input type="time" id="bt-gio-lap" class="form-control" required />
+            </div>
+            <div class="form-group">
+              <label class="form-label required" for="bt-tuyen-select">Tuyến hàng rào điện</label>
+              <select id="bt-tuyen-select" class="form-select" required></select>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="bt-dia-diem">Vị trí cụ thể / Trụ số</label>
+              <input type="text" id="bt-dia-diem" class="form-control" placeholder="Ví dụ: Khu vực Trụ 45 - Trụ 48" />
+            </div>
+          </div>
+
+          <!-- Thành phần tham gia -->
+          <div style="font-weight: 700; margin: 1.25rem 0 0.5rem 0; color: var(--primary);">
+            I. THÀNH PHẦN THAM GIA
+          </div>
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="form-label" for="bt-dd-baotri">Đại diện Đơn vị Bảo trì</label>
+              <input type="text" id="bt-dd-baotri" class="form-control" placeholder="Họ tên - Chức vụ" />
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="bt-dd-churung">Đại diện Đơn vị Chủ rừng</label>
+              <input type="text" id="bt-dd-churung" class="form-control" placeholder="Họ tên - Chức vụ" />
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="bt-dd-kiemlam">Đại diện Cơ quan Kiểm lâm</label>
+              <input type="text" id="bt-dd-kiemlam" class="form-control" placeholder="Họ tên - Chức vụ" />
+            </div>
+          </div>
+
+          <!-- Nội dung sự cố -->
+          <div style="font-weight: 700; margin: 1.25rem 0 0.5rem 0; color: var(--primary);">
+            II. NỘI DUNG XÁC MINH SỰ CỐ
+          </div>
+          <div class="form-grid">
+            <div class="form-group full-width">
+              <label class="form-label required" for="bt-su-co-select">Sự cố xảy ra (Chọn nhanh hoặc gõ)</label>
+              <select id="bt-su-co-select" class="form-select" style="margin-bottom: 4px;"></select>
+              <input type="text" id="bt-su-co-input" class="form-control" placeholder="Hoặc nhập chi tiết sự cố tại đây..." />
+            </div>
+            <div class="form-group full-width">
+              <label class="form-label" for="bt-nguyen-nhan">Nguyên nhân sự cố</label>
+              <textarea id="bt-nguyen-nhan" class="form-textarea" placeholder="Ví dụ: Cây rừng gãy đè đứt dây cáp làm mất xung điện..."></textarea>
+            </div>
+          </div>
+
+          <!-- Bảng Thiết bị hỏng -->
+          <div style="display: flex; align-items: center; justify-content: space-between; margin: 1.25rem 0 0.5rem 0;">
+            <div style="font-weight: 700; color: var(--danger);">Danh mục Thiết bị Hư hỏng:</div>
+            <button type="button" id="btn-add-bt-thietbi-hong" class="btn btn-secondary btn-sm">+ Thêm thiết bị</button>
+          </div>
+          <div class="dynamic-table-wrapper">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th style="width: 40px; text-align: center;">STT</th>
+                  <th>Tên thiết bị / Quy cách</th>
+                  <th style="width: 150px;">Số lượng</th>
+                  <th>Tình trạng hư hỏng</th>
+                  <th style="width: 50px; text-align: center;">Xóa</th>
+                </tr>
+              </thead>
+              <tbody id="bt-thietbi-hong-tbody"></tbody>
+            </table>
+          </div>
+
+          <!-- Bảng Thiết bị thay thế -->
+          <div style="display: flex; align-items: center; justify-content: space-between; margin: 1.25rem 0 0.5rem 0;">
+            <div style="font-weight: 700; color: var(--success);">Vật tư / Thiết bị Thay thế, Khắc phục:</div>
+            <button type="button" id="btn-add-bt-thietbi-thaythe" class="btn btn-secondary btn-sm">+ Thêm vật tư</button>
+          </div>
+          <div class="dynamic-table-wrapper">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th style="width: 40px; text-align: center;">STT</th>
+                  <th>Tên vật tư thay thế</th>
+                  <th style="width: 150px;">Số lượng</th>
+                  <th>Ghi chú / Tình trạng</th>
+                  <th style="width: 50px; text-align: center;">Xóa</th>
+                </tr>
+              </thead>
+              <tbody id="bt-thietbi-thaythe-tbody"></tbody>
+            </table>
+          </div>
+
+          <!-- Kết quả khắc phục -->
+          <div class="form-grid" style="margin-top: 1rem;">
+            <div class="form-group full-width">
+              <label class="form-label" for="bt-ket-qua">Kết quả khắc phục sự cố</label>
+              <input type="text" id="bt-ket-qua" class="form-control" value="Đã tiến hành nối dây cáp và kiểm tra thông mạch, hệ thống xung điện hoạt động bình thường." />
+            </div>
+            <div class="form-group full-width">
+              <label class="form-label" for="bt-tinh-trang">Tình trạng tuyến sau xử lý</label>
+              <input type="text" id="bt-tinh-trang" class="form-control" value="Điện áp đo đạt 7.5kV, đảm bảo an toàn ngăn voi." />
+            </div>
+          </div>
+
+          <!-- Chụp ảnh hiện trường có Watermark -->
+          <div style="margin-top: 1.5rem;">
+            <div style="font-weight: 700; margin-bottom: 0.5rem; color: var(--primary);">📸 Ảnh Chụp Hiện Trường (Tự động chèn Tọa độ GPS & Thời gian)</div>
+            <label class="photo-uploader-box" for="bt-photo-input">
+              <div style="font-size: 2rem;">📷</div>
+              <div style="font-weight: 600; margin-top: 4px;">Bấm để Chụp ảnh hoặc Chọn từ Thư viện</div>
+              <div style="font-size: 0.78rem; color: var(--text-muted);">Hệ thống tự động nén & đóng dấu GPS + ngày giờ</div>
+              <input type="file" id="bt-photo-input" accept="image/*" capture="environment" multiple style="display: none;" />
+            </label>
+            <div id="bt-photo-gallery" class="photo-preview-grid"></div>
+          </div>
+
+          <!-- Actions -->
+          <div class="form-actions-bar">
+            <button type="button" id="btn-print-baotri" class="btn btn-secondary">
+              🖨️ Xem trước & In PDF
+            </button>
+            <button type="submit" class="btn btn-primary btn-lg">
+              💾 Lưu Biên Bản
+            </button>
+          </div>
+        </div>
+      </form>
+    </section>
+
+    <!-- ================= VIEW 3: FORM VỆ SINH ================= -->
+    <section id="view-form-vesinh" class="tab-view" style="display: none;">
+      <form id="form-vesinh-el">
+        <div class="card-panel">
+          <div class="card-header">
+            <h2>🌿 Biên Bản Ghi Nhận Kết Quả Vệ Sinh, Phát Dọn Thực Bì HRD</h2>
+            <button type="button" class="btn btn-secondary btn-sm" onclick="App.switchTab('dashboard')">⬅️ Về Trang Chủ</button>
+          </div>
+
+          <!-- Thời gian & Địa điểm -->
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="form-label required" for="vs-ngay-lap">Ngày thực hiện</label>
+              <input type="date" id="vs-ngay-lap" class="form-control" required />
+            </div>
+            <div class="form-group">
+              <label class="form-label required" for="vs-gio-lap">Giờ kiểm tra</label>
+              <input type="time" id="vs-gio-lap" class="form-control" required />
+            </div>
+            <div class="form-group">
+              <label class="form-label required" for="vs-tuyen-select">Tuyến hàng rào điện</label>
+              <select id="vs-tuyen-select" class="form-select" required></select>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="vs-dia-diem">Địa điểm / Tiểu khu</label>
+              <input type="text" id="vs-dia-diem" class="form-control" placeholder="Ví dụ: Tiểu khu 120 - RPH Tân Phú" />
+            </div>
+          </div>
+
+          <!-- Đại diện & Nhân công -->
+          <div style="font-weight: 700; margin: 1.25rem 0 0.5rem 0; color: var(--primary);">
+            I. THÀNH PHẦN THAM GIA & NHÂN CÔNG
+          </div>
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="form-label" for="vs-dd-baotri">Đại diện Đơn vị Bảo trì</label>
+              <input type="text" id="vs-dd-baotri" class="form-control" placeholder="Họ tên - Chức vụ" />
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="vs-dd-churung">Đại diện Chủ rừng / Kiểm lâm</label>
+              <input type="text" id="vs-dd-churung" class="form-control" placeholder="Họ tên - Chức vụ" />
+            </div>
+            <div class="form-group full-width">
+              <label class="form-label" for="vs-nhan-cong">Danh sách Nhân công phát dọn</label>
+              <input type="text" id="vs-nhan-cong" class="form-control" placeholder="Ví dụ: Nguyễn Văn A, Trần Văn B, Lê Văn C (Tổ 1)" />
+            </div>
+          </div>
+
+          <!-- Chi tiết phân đoạn trụ -->
+          <div style="display: flex; align-items: center; justify-content: space-between; margin: 1.25rem 0 0.5rem 0;">
+            <div style="font-weight: 700; color: var(--primary);">II. CHI TIẾT CÁC PHÂN ĐOẠN TRỤ ĐÃ PHÁT DỌN:</div>
+            <button type="button" id="btn-add-vs-doan" class="btn btn-secondary btn-sm">+ Thêm phân đoạn</button>
+          </div>
+          <div class="dynamic-table-wrapper">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th style="width: 40px; text-align: center;">STT</th>
+                  <th>Phân đoạn trụ (Từ - Đến)</th>
+                  <th style="width: 110px;">Chiều dài (m)</th>
+                  <th style="width: 100px;">Bề rộng (m)</th>
+                  <th style="width: 120px;">Diện tích (m²)</th>
+                  <th style="width: 50px; text-align: center;">Xóa</th>
+                </tr>
+              </thead>
+              <tbody id="vs-doan-tbody"></tbody>
+            </table>
+          </div>
+
+          <!-- Tổng kết -->
+          <div class="form-grid" style="margin-top: 1rem; background: var(--bg-subtle); padding: 1rem; border-radius: var(--radius-md);">
+            <div class="form-group">
+              <label class="form-label" for="vs-tong-chieu-dai">Tổng Chiều Dài (Mét)</label>
+              <input type="number" id="vs-tong-chieu-dai" class="form-control" readonly style="font-weight: 800; font-size: 1.1rem; color: var(--primary);" value="0" />
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="vs-tong-dien-tich">Tổng Diện Tích (m²)</label>
+              <input type="text" id="vs-tong-dien-tich" class="form-control" readonly style="font-weight: 800; font-size: 1.1rem; color: var(--success);" value="0" />
+            </div>
+            <div class="form-group full-width">
+              <label class="form-label" for="vs-danh-gia">Đánh giá chất lượng vệ sinh</label>
+              <input type="text" id="vs-danh-gia" class="form-control" value="Đã phát dọn sạch thực bì dưới hành lang dây điện, đảm bảo thông thoáng và an toàn cách điện." />
+            </div>
+          </div>
+
+          <!-- Chụp ảnh hiện trường có Watermark -->
+          <div style="margin-top: 1.5rem;">
+            <div style="font-weight: 700; margin-bottom: 0.5rem; color: var(--primary);">📸 Ảnh Kiểm Tra Phát Dọn Thực Bì</div>
+            <label class="photo-uploader-box" for="vs-photo-input">
+              <div style="font-size: 2rem;">📷</div>
+              <div style="font-weight: 600; margin-top: 4px;">Chụp ảnh hoặc Chọn từ Thư viện</div>
+              <input type="file" id="vs-photo-input" accept="image/*" capture="environment" multiple style="display: none;" />
+            </label>
+            <div id="vs-photo-gallery" class="photo-preview-grid"></div>
+          </div>
+
+          <!-- Actions -->
+          <div class="form-actions-bar">
+            <button type="button" id="btn-print-vesinh" class="btn btn-secondary">
+              🖨️ Xem trước & In PDF
+            </button>
+            <button type="submit" class="btn btn-primary btn-lg">
+              💾 Lưu Biên Bản Vệ Sinh
+            </button>
+          </div>
+        </div>
+      </form>
+    </section>
+
+    <!-- ================= VIEW 4: NHẬT KÝ THI CÔNG ================= -->
+    <section id="view-form-nhatky" class="tab-view" style="display: none;">
+      <form id="form-nhatky-el">
+        <div class="card-panel">
+          <div class="card-header">
+            <h2>🏗️ Nhật Ký Thi Công & Quản Lý Vận Hành</h2>
+            <button type="button" class="btn btn-secondary btn-sm" onclick="App.switchTab('dashboard')">⬅️ Về Trang Chủ</button>
+          </div>
+
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="form-label required" for="nk-ngay-ghi">Ngày ghi nhật ký</label>
+              <input type="date" id="nk-ngay-ghi" class="form-control" required />
+            </div>
+            <div class="form-group">
+              <label class="form-label required" for="nk-thoi-tiet">Thời tiết</label>
+              <select id="nk-thoi-tiet" class="form-select" required>
+                <option value="Nắng ráo">☀️ Nắng ráo</option>
+                <option value="Nắng gắt">🔥 Nắng gắt</option>
+                <option value="Mưa rải rác">🌦️ Mưa rải rác</option>
+                <option value="Mưa to / Bão">⛈️ Mưa to / Bão</option>
+                <option value="Âm u / Râm mát">⛅ Âm u / Râm mát</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="nk-hang-muc">Tên Hạng mục</label>
+              <input type="text" id="nk-hang-muc" class="form-control" value="Quản lý, bảo vệ và vận hành hàng rào điện" />
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="nk-tuyen-select">Địa điểm / Tuyến</label>
+              <select id="nk-tuyen-select" class="form-select"></select>
+            </div>
+          </div>
+
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="form-label" for="nk-chu-dau-tu">Chủ đầu tư</label>
+              <input type="text" id="nk-chu-dau-tu" class="form-control" value="Chi cục Kiểm lâm Tỉnh Đồng Nai" />
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="nk-tu-van-giam-sat">Tư vấn giám sát</label>
+              <input type="text" id="nk-tu-van-giam-sat" class="form-control" value="Ban Quản lý Dự án Bảo tồn Voi" />
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="nk-nha-thau">Nhà thầu thi công / Đơn vị thực hiện</label>
+              <input type="text" id="nk-nha-thau" class="form-control" value="Công ty Kỹ thuật Xây dựng & Môi trường Đồng Nai" />
+            </div>
+          </div>
+
+          <div class="form-grid">
+            <div class="form-group full-width">
+              <label class="form-label required" for="nk-noi-dung">Nội dung công việc thực hiện trong ngày</label>
+              <textarea id="nk-noi-dung" class="form-textarea" style="min-height: 110px;" placeholder="- Kiểm tra điện áp toàn tuyến rào...&#10;- Phát dọn thực bì hành lang tuyến từ Trụ X đến Trụ Y...&#10;- Sửa chữa thay thế 2 bình ắc quy tại trạm xung số 3..." required></textarea>
+            </div>
+            <div class="form-group full-width">
+              <label class="form-label" for="nk-danh-gia">Đánh giá của Cán bộ Giám sát / Chủ đầu tư</label>
+              <textarea id="nk-danh-gia" class="form-textarea" placeholder="Nhận xét về chất lượng, tiến độ, an toàn lao động..."></textarea>
+            </div>
+          </div>
+
+          <!-- Chụp ảnh hiện trường có Watermark -->
+          <div style="margin-top: 1.5rem;">
+            <div style="font-weight: 700; margin-bottom: 0.5rem; color: var(--primary);">📸 Ảnh Nhật Ký Công Trường</div>
+            <label class="photo-uploader-box" for="nk-photo-input">
+              <div style="font-size: 2rem;">📷</div>
+              <div style="font-weight: 600; margin-top: 4px;">Chụp ảnh hoặc Chọn từ Thư viện</div>
+              <input type="file" id="nk-photo-input" accept="image/*" capture="environment" multiple style="display: none;" />
+            </label>
+            <div id="nk-photo-gallery" class="photo-preview-grid"></div>
+          </div>
+
+          <!-- Actions -->
+          <div class="form-actions-bar">
+            <button type="button" id="btn-print-nhatky" class="btn btn-secondary">
+              🖨️ Xem trước & In PDF
+            </button>
+            <button type="submit" class="btn btn-primary btn-lg">
+              💾 Lưu Nhật Ký
+            </button>
+          </div>
+        </div>
+      </form>
+    </section>
+
+    <!-- ================= VIEW 5: LỊCH SỬ BẢN GHI ================= -->
+    <section id="view-history" class="tab-view" style="display: none;">
+      <div class="card-panel">
+        <div class="card-header">
+          <h2>📂 Lịch Sử Các Bản Ghi Đã Lập</h2>
+          <button type="button" class="btn btn-secondary btn-sm" onclick="App.switchTab('dashboard')">⬅️ Về Trang Chủ</button>
+        </div>
+        <div id="history-records-list"></div>
+      </div>
+    </section>
+
+    <!-- ================= VIEW 6: QUẢN LÝ NHÂN SỰ & PHÂN QUYỀN (ADMIN) ================= -->
+    <section id="view-users" class="tab-view" style="display: none;">
+      <div class="card-panel">
+        <div class="card-header">
+          <h2>👥 Quản Lý Nhân Sự & Phân Quyền</h2>
+          <button type="button" class="btn btn-primary btn-sm" onclick="App.openAddUserModal()">+ Thêm Nhân Sự Mới</button>
+        </div>
+        <div style="overflow-x:auto;">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Họ và Tên</th>
+                <th>Tài khoản / SĐT</th>
+                <th>Vai trò (Quyền)</th>
+                <th>Đơn vị công tác</th>
+                <th style="text-align:center;">Trạng thái</th>
+                <th style="text-align:center;">Thao tác</th>
+              </tr>
+            </thead>
+            <tbody id="app-users-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ================= MÀN HÌNH ĐĂNG NHẬP CHUYÊN NGHIỆP (BẢO MẬT & KHÔNG LỘ GỢI Ý) ================= -->
+  <div id="login-modal" class="modal-overlay active" style="background: var(--bg-body); z-index: 9999;">
+    <div class="login-clean-card">
+      <img src="https://kiemlamvung4.org.vn/wp-content/uploads/2024/09/kiem_lam_favi-1.png" alt="Logo Kiểm Lâm" class="login-logo-img" />
+      <h2 class="login-agency-title">CHI CỤC KIỂM LÂM ĐỒNG NAI</h2>
+      <p class="login-sub-title">Hệ thống Quản lý & Vận hành Hàng rào điện (QLBV)</p>
+
+      <form id="login-form" style="margin-top: 1.5rem;">
+        <div class="form-group" style="margin-bottom: 1rem; text-align: left;">
+          <label class="form-label required" for="login-username">Tên đăng nhập / Số điện thoại</label>
+          <input type="text" id="login-username" class="form-control" placeholder="Nhập tên đăng nhập hoặc SĐT..." required autocomplete="username" />
+        </div>
+        
+        <div class="form-group" style="margin-bottom: 0.5rem; text-align: left;">
+          <label class="form-label required" for="login-password">Mật khẩu</label>
+          <input type="password" id="login-password" class="form-control" placeholder="Nhập mật khẩu..." required autocomplete="current-password" />
+        </div>
+
+        <div style="text-align: right; margin-bottom: 1.25rem;">
+          <a href="javascript:void(0)" onclick="App.openForgotModal()" style="font-size: 0.85rem; color: var(--primary); font-weight: 600; text-decoration: none;">
+            ❓ Quên mật khẩu?
+          </a>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-block btn-lg" style="font-weight: 700;">
+          Đăng Nhập
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ================= MODAL: QUÊN MẬT KHẨU ================= -->
+  <div id="forgot-modal" class="modal-overlay">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3>❓ Khôi Phục Mật Khẩu</h3>
+        <button type="button" class="modal-close-btn" style="background:none; border:none; font-size:1.25rem; cursor:pointer;" onclick="App.hideModal('forgot-modal')">✕</button>
+      </div>
+      <form id="app-forgot-form">
+        <div class="modal-body">
+          <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:1rem;">
+            Nhập <b>Tên đăng nhập</b> hoặc <b>Số điện thoại</b> đã đăng ký để đặt lại mật khẩu về mặc định (<code>123456</code>):
+          </p>
+          <div class="form-group">
+            <input type="text" id="app-forgot-input" class="form-control" placeholder="Tên đăng nhập hoặc SĐT..." required />
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="App.hideModal('forgot-modal')">Hủy</button>
+          <button type="submit" class="btn btn-primary">Khôi Phục Mật Khẩu</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ================= MODAL: THÊM / SỬA NHÂN SỰ ================= -->
+  <div id="app-user-modal" class="modal-overlay">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 id="app-user-modal-title">➕ Thêm Nhân Sự Mới</h3>
+        <button type="button" class="modal-close-btn" style="background:none; border:none; font-size:1.25rem; cursor:pointer;" onclick="App.hideModal('app-user-modal')">✕</button>
+      </div>
+      <form id="app-user-form">
+        <input type="hidden" id="app-usr-mode" value="add" />
+        <div class="modal-body">
+          <div class="form-group" style="margin-bottom:0.75rem;">
+            <label class="form-label required">Họ và Tên</label>
+            <input type="text" id="app-usr-fullname" class="form-control" required />
+          </div>
+          <div class="form-grid" style="margin-bottom:0.75rem;">
+            <div class="form-group">
+              <label class="form-label required">Tên đăng nhập</label>
+              <input type="text" id="app-usr-username" class="form-control" required />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Số điện thoại</label>
+              <input type="tel" id="app-usr-phone" class="form-control" />
+            </div>
+          </div>
+          <div class="form-grid" style="margin-bottom:0.75rem;">
+            <div class="form-group">
+              <label class="form-label required">Phân quyền</label>
+              <select id="app-usr-role" class="form-select" required>
+                <option value="Worker">🛠️ Đội Bảo trì (Worker)</option>
+                <option value="Supervisor">🔍 Cán bộ Giám sát (Supervisor)</option>
+                <option value="Admin">👑 Quản trị viên (Admin)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Trạng thái</label>
+              <select id="app-usr-status" class="form-select">
+                <option value="Active">🟢 Hoạt động</option>
+                <option value="Inactive">🔴 Đang khóa</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Đơn vị công tác</label>
+            <input type="text" id="app-usr-org" class="form-control" />
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="App.hideModal('app-user-modal')">Hủy</button>
+          <button type="submit" class="btn btn-primary">Lưu Nhân Sự</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ================= MODAL: CÀI ĐẶT & ĐỔI MẬT KHẨU ================= -->
+  <div id="user-settings-modal" class="modal-overlay">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3>⚙️ Cài Đặt Tài Khoản & Kết Nối</h3>
+        <button type="button" class="modal-close-btn" style="background: none; border: none; font-size: 1.25rem; cursor: pointer;">✕</button>
+      </div>
+      <div class="modal-body">
+        <!-- Đổi Mật Khẩu -->
+        <h4 style="font-weight: 700; color: var(--primary); margin-bottom: 0.75rem;">🔑 Đổi Mật Khẩu</h4>
+        <form id="change-password-form" style="margin-bottom: 1.5rem;">
+          <div class="form-group" style="margin-bottom: 0.75rem;">
+            <label class="form-label required" for="old-password">Mật khẩu hiện tại</label>
+            <input type="password" id="old-password" class="form-control" required />
+          </div>
+          <div class="form-group" style="margin-bottom: 0.75rem;">
+            <label class="form-label required" for="new-password">Mật khẩu mới</label>
+            <input type="password" id="new-password" class="form-control" minlength="6" required />
+          </div>
+          <div class="form-group" style="margin-bottom: 1rem;">
+            <label class="form-label required" for="confirm-password">Xác nhận mật khẩu mới</label>
+            <input type="password" id="confirm-password" class="form-control" minlength="6" required />
+          </div>
+          <button type="submit" class="btn btn-secondary btn-sm">Cập nhật Mật khẩu</button>
+        </form>
+
+        <hr style="border: 0; border-top: 1px solid var(--border-color); margin: 1.25rem 0;" />
+
+        <!-- Cấu hình Google Apps Script Backend URL -->
+        <h4 style="font-weight: 700; color: var(--primary); margin-bottom: 0.5rem;">🌐 Cấu Hình Google Apps Script Web App</h4>
+        <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.5rem;">
+          Dán URL Web App sau khi Deploy Apps Script để kết nối trực tiếp với Google Sheets:
+        </p>
+        <form id="gas-config-form">
+          <div class="form-group" style="margin-bottom: 0.75rem;">
+            <input type="url" id="gas-url-input" class="form-control" placeholder="https://script.google.com/macros/s/.../exec" />
+          </div>
+          <button type="submit" class="btn btn-primary btn-sm">Lưu cấu hình kết nối</button>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger btn-sm" onclick="Auth.logout()">Đăng xuất</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= MODAL: XEM TRƯỚC & XUẤT A4 PDF ================= -->
+  <div id="pdf-preview-modal" class="modal-overlay">
+    <div class="modal-dialog pdf-modal-dialog">
+      <div class="modal-header" style="background: var(--bg-surface-elevated); padding: 0.85rem 1.25rem;">
+        <h3 id="pdf-preview-title" style="display: flex; align-items: center; gap: 0.5rem; font-size: 1.05rem;">
+          📄 Xem Trước Văn Bản Khổ A4
+        </h3>
+        <div style="display: flex; align-items: center; gap: 0.5rem;">
+          <button type="button" class="btn btn-primary btn-sm" onclick="PDFService.exportToPDF()" title="Tải file PDF về máy">
+            📥 Xuất File PDF (A4)
+          </button>
+          <button type="button" class="btn btn-secondary btn-sm" onclick="PDFService.printRecord()" title="Mở hộp thoại in trình duyệt">
+            🖨️ In Trình Duyệt
+          </button>
+          <button type="button" class="btn btn-secondary btn-sm" onclick="PDFService.closePreviewModal()" style="padding: 0.35rem 0.65rem;" title="Đóng">
+            ✕
+          </button>
+        </div>
+      </div>
+      <div class="modal-body" style="padding: 0.75rem;">
+        <div class="pdf-preview-container">
+          <div id="pdf-preview-sheet" class="a4-preview-sheet"></div>
+        </div>
+      </div>
+      <div class="modal-footer" style="padding: 0.75rem 1.25rem; display: flex; justify-content: space-between; align-items: center;">
+        <div style="font-size: 0.82rem; color: var(--text-muted);">
+          💡 Chuẩn thể thức văn bản: Phông Times New Roman, Khổ A4 Portrait, Cỡ chữ 12–13pt.
+        </div>
+        <div style="display: flex; gap: 0.5rem;">
+          <button type="button" class="btn btn-primary" onclick="PDFService.exportToPDF()">
+            📥 Tải Xuống PDF (A4)
+          </button>
+          <button type="button" class="btn btn-secondary" onclick="PDFService.closePreviewModal()">
+            Đóng
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Datalist Autocomplete -->
+  <datalist id="thietbi-datalist">
+    <option value="Bộ phát xung điện (Energizer) 12V/220V"></option>
+    <option value="Bình ắc quy lưu điện 12V - 100Ah"></option>
+    <option value="Tấm pin năng lượng mặt trời Solar 100W"></option>
+    <option value="Sứ cách điện néo / Sứ đỡ dây"></option>
+    <option value="Dây cáp thép bọc kẽm 2.5mm"></option>
+    <option value="Bộ chống sét lan truyền"></option>
+    <option value="Trụ bê tông gia cố"></option>
+  </datalist>
+
+  <!-- Container for Direct A4 Printing -->
+  <div id="printable-area"></div>
+
+  <!-- JavaScript Scripts -->
+  <script src="js/config.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/master_data.js"></script>
+  <script src="js/camera.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/pdf_export.js"></script>
+  <script src="js/app.js"></script>
+
+  <!-- PWA Service Worker Registration -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js').catch(err => console.log('SW registration failed:', err));
+      });
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,2308 @@
+<!DOCTYPE html>
+<html lang="vi" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <title>QLBV - Quản Lý Hàng Rào Điện Đồng Nai</title>
+  
+  <link rel="icon" type="image/png" href="https://kiemlamvung4.org.vn/wp-content/uploads/2024/09/kiem_lam_favi-1.png" />
+  <link rel="apple-touch-icon" href="https://kiemlamvung4.org.vn/wp-content/uploads/2024/09/kiem_lam_favi-1.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="https://kiemlamvung4.org.vn/wp-content/uploads/2024/09/kiem_lam_favi-1.png" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="QLBV Đồng Nai" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="application-name" content="QLBV Đồng Nai" />
+  <meta name="theme-color" content="#1e4620" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+  <style>
+    /* DESIGN SYSTEM TỐI ƯU MOBILE IPHONE & SMARTPHONE */
+    :root {
+      --primary: #1e4620;
+      --primary-light: #2d6a4f;
+      --primary-hover: #1b4332;
+      --accent: #d4a373;
+      --success: #2a9d8f;
+      --warning: #e9c46a;
+      --danger: #e63946;
+      --info: #457b9d;
+
+      --bg-body: #f4f6f8;
+      --bg-surface: #ffffff;
+      --bg-card: rgba(255, 255, 255, 0.98);
+      --bg-subtle: #f8fafc;
+      --border-color: #e2e8f0;
+
+      --text-main: #1a202c;
+      --text-muted: #64748b;
+      --text-light: #94a3b8;
+
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
+      --shadow-md: 0 4px 10px rgba(0,0,0,0.08);
+      --shadow-lg: 0 12px 24px rgba(0,0,0,0.12);
+
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 18px;
+      --radius-full: 9999px;
+      --font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+
+    [data-theme="dark"] {
+      --bg-body: #0b130e;
+      --bg-surface: #132118;
+      --bg-card: rgba(19, 33, 24, 0.98);
+      --bg-subtle: #0f1c13;
+      --border-color: #243d2c;
+      --text-main: #f1f5f9;
+      --text-muted: #94a3b8;
+      --text-light: #64748b;
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      font-family: var(--font-family);
+      background: var(--bg-body);
+      color: var(--text-main);
+      line-height: 1.5;
+      font-size: 15px;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      padding-bottom: 25px !important;
+    }
+
+    /* TOP NAVBAR: CĂN GIỮA TRÊN DESKTOP, XUỐNG DÒNG TRÊN MOBILE */
+    .top-navbar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: var(--bg-card);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border-color);
+      padding: 0.65rem 1.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .header-brand-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.65rem;
+      text-align: center;
+      margin: 0 auto;
+    }
+
+    .header-brand-logo {
+      width: 40px;
+      height: 40px;
+      object-fit: contain;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.15));
+      flex-shrink: 0;
+    }
+
+    .header-brand-text {
+      text-align: left;
+    }
+
+    .header-brand-text h1 {
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: var(--primary);
+      line-height: 1.15;
+      margin: 0;
+      letter-spacing: 0.02em;
+    }
+
+    [data-theme="dark"] .header-brand-text h1 { color: #74c69d; }
+
+    .header-brand-text p {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      font-weight: 600;
+      margin: 0;
+      letter-spacing: 0.03em;
+    }
+
+    .header-actions {
+      position: absolute;
+      right: 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .user-pill {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: var(--bg-subtle);
+      border: 1px solid var(--border-color);
+      padding: 0.28rem 0.65rem;
+      border-radius: var(--radius-full);
+      font-size: 0.78rem;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    /* ĐIỀU CHỈNH TRÊN ĐIỆN THOẠI (MOBILE): ĐƯA TÀI KHOẢN XUỐNG DƯỚI TÊN DỰ ÁN */
+    @media (max-width: 768px) {
+      .top-navbar {
+        flex-direction: column;
+        align-items: center;
+        padding: 0.65rem 0.5rem 0.5rem;
+        gap: 0.45rem;
+      }
+
+      .header-brand-container {
+        flex-direction: row;
+        justify-content: center;
+        width: 100%;
+        margin: 0;
+      }
+
+      .header-brand-logo {
+        width: 34px;
+        height: 34px;
+      }
+
+      .header-brand-text {
+        text-align: left;
+      }
+
+      .header-brand-text h1 {
+        font-size: 0.88rem;
+      }
+
+      .header-brand-text p {
+        font-size: 0.65rem;
+      }
+
+      .header-actions {
+        position: static;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        gap: 0.5rem;
+        margin-top: 2px;
+      }
+    }
+
+    .role-badge {
+      font-size: 0.68rem;
+      font-weight: 700;
+      padding: 0.1rem 0.4rem;
+      border-radius: var(--radius-sm);
+      text-transform: uppercase;
+    }
+
+    .role-admin { background: #fee2e2; color: #b91c1c; }
+    .role-supervisor { background: #e0f2fe; color: #0369a1; }
+    .role-worker { background: #dcfce7; color: #15803d; }
+
+    /* CONTAINER */
+    .app-container {
+      max-width: 1000px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 1rem;
+      flex: 1;
+    }
+
+    /* TABS DÀNH CHO DESKTOP */
+    .desktop-tabs {
+      display: flex;
+      gap: 0.5rem;
+      overflow-x: auto;
+      margin-bottom: 1rem;
+    }
+
+    .tab-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.6rem 1.1rem;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      color: var(--text-muted);
+      font-weight: 600;
+      font-size: 0.88rem;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s;
+    }
+
+    .tab-btn.active {
+      background: var(--primary);
+      color: #fff;
+      border-color: var(--primary);
+    }
+
+    /* ẨN HOÀN TOÀN THANH ĐIỀU HƯỚNG ĐÁY MÀN HÌNH THEO YÊU CẦU */
+    .mobile-bottom-nav {
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-size: 0.72rem;
+      font-weight: 600;
+      padding: 0.3rem 0.5rem;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      flex: 1;
+      transition: all 0.15s;
+    }
+
+    .bottom-nav-item .icon {
+      font-size: 1.25rem;
+    }
+
+    .bottom-nav-item.active {
+      color: var(--primary);
+      font-weight: 700;
+    }
+
+    [data-theme="dark"] .bottom-nav-item.active {
+      color: #74c69d;
+    }
+
+    /* CARDS & PANELS */
+    .card-panel {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 1.25rem;
+      margin-bottom: 1.25rem;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1rem;
+      padding-bottom: 0.6rem;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .card-header h2 {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    [data-theme="dark"] .card-header h2 { color: #74c69d; }
+
+    /* METRICS GRID */
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+    }
+
+    .metric-box {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 0.85rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .metric-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.35rem;
+      flex-shrink: 0;
+    }
+
+    /* 6 QUICK LAUNCHER TILES (2 CỘT X 3 HÀNG TRÊN MOBILE, 3 CỘT TRÊN WEB) */
+    .quick-launcher-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.85rem;
+    }
+
+    .launcher-tile {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 1.15rem 0.9rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .launcher-tile:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+      border-color: var(--primary);
+    }
+
+    .launcher-tile:active {
+      transform: scale(0.97);
+    }
+
+    .launcher-icon-box {
+      width: 52px;
+      height: 52px;
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.65rem;
+      margin-bottom: 0.6rem;
+      transition: transform 0.2s;
+    }
+
+    .launcher-tile:hover .launcher-icon-box {
+      transform: scale(1.08);
+    }
+
+    .launcher-title {
+      font-weight: 700;
+      font-size: 0.92rem;
+      color: var(--text-main);
+      margin-bottom: 0.2rem;
+      line-height: 1.25;
+    }
+
+    .launcher-desc {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      line-height: 1.25;
+    }
+
+    @media (max-width: 768px) {
+      .metrics-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .quick-launcher-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.65rem;
+      }
+      .launcher-tile {
+        padding: 0.9rem 0.6rem;
+      }
+      .launcher-icon-box {
+        width: 44px;
+        height: 44px;
+        font-size: 1.4rem;
+        margin-bottom: 0.45rem;
+      }
+      .launcher-title {
+        font-size: 0.85rem;
+      }
+      .launcher-desc {
+        font-size: 0.68rem;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+    }
+
+    @media (min-width: 769px) {
+      /* ẨN BOTTOM NAV TRÊN WEB/DESKTOP */
+      .mobile-bottom-nav {
+        display: none !important;
+      }
+      body {
+        padding-bottom: 20px;
+      }
+    }
+
+    /* FORMS & INPUTS TỐI ƯU CẢM ỨNG */
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 0.85rem;
+      margin-bottom: 1rem;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+    }
+
+    .form-group.full-width {
+      grid-column: 1 / -1;
+    }
+
+    .form-label {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-main);
+    }
+
+    .form-label.required::after {
+      content: "*";
+      color: var(--danger);
+      margin-left: 2px;
+    }
+
+    /* Cỡ chữ 16px chống iOS tự động zoom màn hình */
+    .form-control, .form-select, .form-textarea {
+      width: 100%;
+      padding: 0.65rem 0.8rem;
+      font-size: 16px;
+      font-family: inherit;
+      color: var(--text-main);
+      background-color: var(--bg-surface);
+      border: 1.5px solid var(--border-color);
+      border-radius: var(--radius-md);
+      outline: none;
+    }
+
+    .form-control:focus, .form-select:focus, .form-textarea:focus {
+      border-color: var(--primary-light);
+      box-shadow: 0 0 0 3px rgba(45, 106, 79, 0.15);
+    }
+
+    .form-textarea {
+      min-height: 85px;
+      resize: vertical;
+    }
+
+    /* BUTTONS */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem;
+      padding: 0.65rem 1.2rem;
+      font-size: 0.92rem;
+      font-weight: 600;
+      border-radius: var(--radius-md);
+      border: none;
+      cursor: pointer;
+      user-select: none;
+      transition: all 0.15s;
+    }
+
+    .btn:active {
+      transform: scale(0.97);
+    }
+
+    .btn-primary { background: var(--primary); color: #fff; }
+    .btn-secondary { background: var(--bg-subtle); color: var(--text-main); border: 1px solid var(--border-color); }
+    .btn-danger { background: var(--danger); color: #fff; }
+    .btn-sm { padding: 0.35rem 0.65rem; font-size: 0.8rem; }
+    .btn-block { width: 100%; }
+
+    /* PHOTO UPLOADER */
+    .photo-uploader {
+      border: 2px dashed var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 1.25rem;
+      text-align: center;
+      background: var(--bg-subtle);
+      cursor: pointer;
+      display: block;
+    }
+
+    .photo-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+      gap: 0.6rem;
+      margin-top: 0.75rem;
+    }
+
+    .photo-item {
+      position: relative;
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      aspect-ratio: 4/3;
+      border: 1px solid var(--border-color);
+    }
+
+    .photo-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .photo-del {
+      position: absolute;
+      top: 3px;
+      right: 3px;
+      background: rgba(230, 57, 70, 0.9);
+      color: #fff;
+      border: none;
+      border-radius: 50%;
+      width: 22px;
+      height: 22px;
+      font-size: 0.7rem;
+      cursor: pointer;
+    }
+
+    /* FULLSCREEN LOGIN SCREEN */
+    .login-screen {
+      position: fixed;
+      inset: 0;
+      background: var(--bg-body);
+      z-index: 2000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.25rem;
+    }
+
+    .login-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      max-width: 400px;
+      width: 100%;
+      padding: 2rem 1.5rem;
+      box-shadow: var(--shadow-lg);
+      text-align: center;
+    }
+
+    /* TOAST */
+    .toast-box {
+      position: fixed;
+      top: 15px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 3000;
+      background: rgba(19, 33, 24, 0.95);
+      color: #fff;
+      padding: 0.75rem 1.25rem;
+      border-radius: var(--radius-full);
+      font-size: 0.88rem;
+      box-shadow: var(--shadow-lg);
+      pointer-events: none;
+      display: none;
+      backdrop-filter: blur(8px);
+      text-align: center;
+      max-width: 90%;
+    }
+
+    /* MODAL */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.6);
+      backdrop-filter: blur(4px);
+      z-index: 1500;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+
+    .modal-overlay.active { display: flex; }
+
+    .modal-card {
+      background: var(--bg-surface);
+      border-radius: var(--radius-lg);
+      max-width: 500px;
+      width: 100%;
+      padding: 1.5rem;
+      box-shadow: var(--shadow-lg);
+    }
+
+    /* PRINT & PREVIEW A4 */
+    @page {
+      size: A4 portrait;
+      margin: 10mm 15mm 10mm 15mm;
+    }
+
+    #printable-area { display: none; }
+
+    .pdf-modal-dialog {
+      max-width: 860px !important;
+      width: 96% !important;
+      max-height: 94vh !important;
+      display: flex;
+      flex-direction: column;
+      background: var(--bg-surface) !important;
+    }
+
+    .pdf-preview-container {
+      overflow-y: auto;
+      padding: 1.25rem;
+      background: #e2e8f0;
+      border-radius: var(--radius-md);
+      display: flex;
+      justify-content: center;
+    }
+
+    [data-theme="dark"] .pdf-preview-container {
+      background: #1e293b;
+    }
+
+    .a4-preview-sheet {
+      background: #ffffff;
+      color: #000000;
+      width: 100%;
+      max-width: 794px;
+      padding: 20px 20px 20px 25px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+      box-sizing: border-box;
+      font-family: 'Times New Roman', Times, serif;
+    }
+
+    @media print {
+      html, body {
+        width: 100% !important;
+        height: auto !important;
+        min-height: auto !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        background: #ffffff !important;
+        color: #000000 !important;
+        overflow: visible !important;
+      }
+
+      body > *:not(#printable-area) {
+        display: none !important;
+      }
+
+      #printable-area {
+        display: block !important;
+        position: static !important;
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        background: #ffffff !important;
+        color: #000000 !important;
+        visibility: visible !important;
+      }
+
+      #printable-area * {
+        visibility: visible !important;
+      }
+
+      .no-print {
+        display: none !important;
+      }
+
+      .a4-page-main {
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+        page-break-after: auto !important;
+      }
+
+      .print-page-break {
+        page-break-before: always !important;
+        break-before: page !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ================= TOP HEADER (CĂN GIỮA TRÊN WEB, TÀI KHOẢN DƯỚI TÊN DỰ ÁN TRÊN MOBILE) ================= -->
+  <header class="top-navbar">
+    <div class="header-brand-container" onclick="switchTab('dashboard')" style="cursor:pointer;">
+      <img src="https://kiemlamvung4.org.vn/wp-content/uploads/2024/09/kiem_lam_favi-1.png" alt="Logo Kiểm Lâm" class="header-brand-logo" />
+      <div class="header-brand-text">
+        <h1>CHI CỤC KIỂM LÂM ĐỒNG NAI</h1>
+        <p>HỆ THỐNG QUẢN LÝ HÀNG RÀO ĐIỆN (QLBV)</p>
+      </div>
+    </div>
+
+    <div class="header-actions">
+      <div id="user-pill-btn" class="user-pill" onclick="openSettingsModal()" title="Cài đặt & Đổi mật khẩu">
+        <span id="user-pill-name" style="max-width:140px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">Tài khoản</span>
+        <span id="user-pill-role" class="role-badge role-worker">Worker</span>
+      </div>
+      <button type="button" id="theme-btn" class="btn btn-secondary btn-sm" style="padding:0.25rem 0.55rem; font-size:0.85rem;" title="Đổi giao diện Sáng/Tối">🌙</button>
+    </div>
+  </header>
+
+  <!-- ================= MAIN CONTAINER ================= -->
+  <main class="app-container">
+
+    <!-- Tab 1: Dashboard -->
+    <section id="view-dashboard" class="tab-view">
+      <!-- 4 Thẻ KPI: 2 cột trên Mobile, 4 cột trên Desktop -->
+      <div class="metrics-grid">
+        <div class="metric-box">
+          <div class="metric-icon" style="background:#ffedd5; color:#9a3412;">🔧</div>
+          <div>
+            <div style="font-size:0.72rem; color:var(--text-muted); font-weight:600;">BIÊN BẢN BẢO TRÌ</div>
+            <div style="font-size:1.25rem; font-weight:800;" id="kpi-bt">0</div>
+          </div>
+        </div>
+        <div class="metric-box">
+          <div class="metric-icon" style="background:#d8f3dc; color:#1b4332;">🌿</div>
+          <div>
+            <div style="font-size:0.72rem; color:var(--text-muted); font-weight:600;">BIÊN BẢN VỆ SINH</div>
+            <div style="font-size:1.25rem; font-weight:800;" id="kpi-vs">0</div>
+          </div>
+        </div>
+        <div class="metric-box">
+          <div class="metric-icon" style="background:#dbeafe; color:#1e40af;">📏</div>
+          <div>
+            <div style="font-size:0.72rem; color:var(--text-muted); font-weight:600;">ĐÃ PHÁT DỌN</div>
+            <div style="font-size:1.25rem; font-weight:800;"><span id="kpi-len">0</span> m</div>
+          </div>
+        </div>
+        <div class="metric-box">
+          <div class="metric-icon" style="background:#f3e8ff; color:#6b21a8;">🗺️</div>
+          <div>
+            <div style="font-size:0.72rem; color:var(--text-muted); font-weight:600;">DIỆN TÍCH PHÁT DỌN</div>
+            <div style="font-size:1.25rem; font-weight:800;"><span id="kpi-area">0</span> ha</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 6 MỤC TÍNH NĂNG CHÍNH: 2 CỘT X 3 HÀNG TRÊN MOBILE, 3 CỘT TRÊN WEB -->
+      <div class="card-panel" style="padding:1rem;">
+        <div class="card-header" style="margin-bottom:0.75rem;">
+          <h2 style="display:flex; align-items:center; gap:0.4rem;">⚡ Danh Mục Chức Năng</h2>
+        </div>
+        
+        <div class="quick-launcher-grid">
+          <!-- 1. BB Bảo Trì -->
+          <div class="launcher-tile" onclick="switchTab('baotri')">
+            <div class="launcher-icon-box" style="background:#ffedd5; color:#9a3412;">🔧</div>
+            <div class="launcher-title">Biên Bản Bảo Trì</div>
+            <div class="launcher-desc">Ghi nhận sự cố & phụ tùng thay</div>
+          </div>
+
+          <!-- 2. BB Vệ Sinh -->
+          <div class="launcher-tile" onclick="switchTab('vesinh')">
+            <div class="launcher-icon-box" style="background:#d8f3dc; color:#1b4332;">🌿</div>
+            <div class="launcher-title">Biên Bản Vệ Sinh</div>
+            <div class="launcher-desc">Ghi nhận phát dọn thực bì</div>
+          </div>
+
+          <!-- 3. Nhật Ký Thi Công -->
+          <div class="launcher-tile" onclick="switchTab('nhatky')">
+            <div class="launcher-icon-box" style="background:#e0f2fe; color:#0369a1;">🏗️</div>
+            <div class="launcher-title">Nhật Ký Thi Công</div>
+            <div class="launcher-desc">Nhân lực, thiết bị trong ngày</div>
+          </div>
+
+          <!-- 4. Lịch Sử Bản Ghi -->
+          <div class="launcher-tile" onclick="switchTab('history')">
+            <div class="launcher-icon-box" style="background:#fef3c7; color:#b45309;">📂</div>
+            <div class="launcher-title">Lịch Sử Bản Ghi</div>
+            <div class="launcher-desc">Tra cứu, xem lại & xuất PDF</div>
+          </div>
+
+          <!-- 5. Quản Lý Nhân Sự -->
+          <div class="launcher-tile" id="dash-tile-users" onclick="switchTab('users')">
+            <div class="launcher-icon-box" style="background:#ede9fe; color:#6d28d9;">👥</div>
+            <div class="launcher-title">Quản Lý Nhân Sự</div>
+            <div class="launcher-desc">Phân quyền tài khoản (Admin)</div>
+          </div>
+
+          <!-- 6. Cài Đặt & Đổi Mật Khẩu -->
+          <div class="launcher-tile" onclick="openSettingsModal()">
+            <div class="launcher-icon-box" style="background:#f1f5f9; color:#475569;">⚙️</div>
+            <div class="launcher-title">Cài Đặt Tài Khoản</div>
+            <div class="launcher-desc">Đổi mật khẩu & thông tin</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tab 2: Form Bảo Trì -->
+    <section id="view-baotri" class="tab-view" style="display:none;">
+      <div class="card-panel">
+        <div class="card-header">
+          <h2>🔧 Biên Bản Bảo Trì Sự Cố Hàng Rào Điện</h2>
+          <button type="button" class="btn btn-secondary btn-sm" onclick="switchTab('dashboard')">⬅️ Về Trang Chủ</button>
+        </div>
+        <form id="f-baotri">
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="form-label required">Ngày lập</label>
+              <input type="date" id="bt-date" class="form-control" required />
+            </div>
+            <div class="form-group">
+              <label class="form-label required">Giờ lập</label>
+              <input type="time" id="bt-time" class="form-control" required />
+            </div>
+            <div class="form-group">
+              <label class="form-label required">Tuyến hàng rào</label>
+              <select id="bt-tuyen" class="form-select" required></select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Vị trí / Trụ số</label>
+              <input type="text" id="bt-location" class="form-control" placeholder="Trụ số 45 - 50..." />
+            </div>
+          </div>
+
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="form-label">Đại diện Đơn vị Bảo trì</label>
+              <input type="text" id="bt-dd-bt" class="form-control" placeholder="Họ tên - Chức vụ" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Đại diện Đơn vị Chủ rừng</label>
+              <input type="text" id="bt-dd-cr" class="form-control" placeholder="Họ tên - Chức vụ" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Đại diện Cơ quan Kiểm lâm</label>
+              <input type="text" id="bt-dd-kl" class="form-control" placeholder="Họ tên - Chức vụ" />
+            </div>
+          </div>
+
+          <div class="form-group" style="margin-bottom:0.75rem;">
+            <label class="form-label required">Sự cố xảy ra</label>
+            <select id="bt-su-co-sel" class="form-select" style="margin-bottom:4px;"></select>
+            <input type="text" id="bt-su-co" class="form-control" placeholder="Hoặc nhập sự cố chi tiết..." />
+          </div>
+
+          <div class="form-group" style="margin-bottom:0.75rem;">
+            <label class="form-label">Nguyên nhân sự cố</label>
+            <textarea id="bt-reason" class="form-textarea" placeholder="Cây gãy đè đứt dây, sét đánh..."></textarea>
+          </div>
+
+          <!-- Chụp ảnh GPS -->
+          <div style="margin-top:1rem;">
+            <label class="form-label">📸 Ảnh Hiện Trường (Tự động gắn GPS & Ngày Giờ)</label>
+            <label class="photo-uploader">
+              <div style="font-size:1.75rem;">📷</div>
+              <div style="font-weight:600; font-size:0.9rem;">Chụp ảnh hoặc chọn từ máy</div>
+              <input type="file" id="bt-photos-input" accept="image/*" capture="environment" multiple style="display:none;" />
+            </label>
+            <div id="bt-photos-grid" class="photo-grid"></div>
+          </div>
+
+          <div style="display:flex; gap:0.5rem; margin-top:1.25rem;">
+            <button type="button" class="btn btn-secondary" style="flex:1;" onclick="printCurrent('baotri')">🖨️ In / PDF</button>
+            <button type="submit" class="btn btn-primary" style="flex:2;">💾 Lưu Biên Bản</button>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <!-- Tab 3: Form Vệ Sinh -->
+    <section id="view-vesinh" class="tab-view" style="display:none;">
+      <div class="card-panel">
+        <div class="card-header">
+          <h2>🌿 Biên Bản Vệ Sinh & Phát Dọn Thực Bì</h2>
+          <button type="button" class="btn btn-secondary btn-sm" onclick="switchTab('dashboard')">⬅️ Về Trang Chủ</button>
+        </div>
+        <form id="f-vesinh">
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="form-label required">Ngày lập</label>
+              <input type="date" id="vs-date" class="form-control" required />
+            </div>
+            <div class="form-group">
+              <label class="form-label required">Tuyến hàng rào</label>
+              <select id="vs-tuyen" class="form-select" required></select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Địa điểm / Tiểu khu</label>
+              <input type="text" id="vs-location" class="form-control" placeholder="Tiểu khu 120..." />
+            </div>
+          </div>
+
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="form-label">Đại diện Đơn vị Bảo trì</label>
+              <input type="text" id="vs-dd-bt" class="form-control" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Đại diện Chủ rừng / Kiểm lâm</label>
+              <input type="text" id="vs-dd-cr" class="form-control" />
+            </div>
+            <div class="form-group full-width">
+              <label class="form-label">Danh sách Nhân công</label>
+              <input type="text" id="vs-workers" class="form-control" placeholder="Nguyễn Văn A, Trần Văn B..." />
+            </div>
+          </div>
+
+          <!-- Chi tiết phân đoạn -->
+          <div style="background:var(--bg-subtle); padding:0.85rem; border-radius:var(--radius-md); margin-bottom:1rem;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.5rem;">
+              <span style="font-weight:700; color:var(--primary);">Phân đoạn trụ phát dọn:</span>
+              <button type="button" class="btn btn-secondary btn-sm" onclick="addVsRow()">+ Thêm đoạn</button>
+            </div>
+            <div id="vs-rows-container"></div>
+            
+            <div style="display:flex; justify-content:space-between; font-weight:700; margin-top:0.5rem; font-size:0.9rem;">
+              <span>Tổng dài: <b id="vs-sum-len">0</b> m</span>
+              <span>Tổng diện tích: <b id="vs-sum-area" style="color:var(--success);">0</b> m²</span>
+            </div>
+          </div>
+
+          <!-- Chụp ảnh GPS -->
+          <div>
+            <label class="form-label">📸 Ảnh Phát Dọn Tuyến (Gắn GPS Watermark)</label>
+            <label class="photo-uploader">
+              <div style="font-size:1.75rem;">📷</div>
+              <div style="font-weight:600; font-size:0.9rem;">Chụp ảnh hiện trường</div>
+              <input type="file" id="vs-photos-input" accept="image/*" capture="environment" multiple style="display:none;" />
+            </label>
+            <div id="vs-photos-grid" class="photo-grid"></div>
+          </div>
+
+          <div style="display:flex; gap:0.5rem; margin-top:1.25rem;">
+            <button type="button" class="btn btn-secondary" style="flex:1;" onclick="printCurrent('vesinh')">🖨️ In / PDF</button>
+            <button type="submit" class="btn btn-primary" style="flex:2;">💾 Lưu Biên Bản Vệ Sinh</button>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <!-- Tab 4: Nhật Ký -->
+    <section id="view-nhatky" class="tab-view" style="display:none;">
+      <div class="card-panel">
+        <div class="card-header">
+          <h2>🏗️ Nhật Ký Thi Công & Quản Lý Vận Hành</h2>
+          <button type="button" class="btn btn-secondary btn-sm" onclick="switchTab('dashboard')">⬅️ Về Trang Chủ</button>
+        </div>
+        <form id="f-nhatky">
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="form-label required">Ngày ghi</label>
+              <input type="date" id="nk-date" class="form-control" required />
+            </div>
+            <div class="form-group">
+              <label class="form-label required">Thời tiết</label>
+              <select id="nk-weather" class="form-select">
+                <option value="Nắng ráo">☀️ Nắng ráo</option>
+                <option value="Nắng gắt">🔥 Nắng gắt</option>
+                <option value="Mưa nhỏ">🌦️ Mưa nhỏ</option>
+                <option value="Mưa to / Bão">⛈️ Mưa to / Bão</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group" style="margin-bottom:0.75rem;">
+            <label class="form-label required">Nội dung công việc thực hiện</label>
+            <textarea id="nk-work" class="form-textarea" placeholder="Chi tiết các công việc triển khai trong ngày..." required></textarea>
+          </div>
+
+          <div class="form-group" style="margin-bottom:0.75rem;">
+            <label class="form-label">Đánh giá của Giám sát / Chủ đầu tư</label>
+            <textarea id="nk-eval" class="form-textarea" placeholder="Nhận xét tiến độ, an toàn lao động..."></textarea>
+          </div>
+
+          <div style="display:flex; gap:0.5rem; margin-top:1.25rem;">
+            <button type="button" class="btn btn-secondary" style="flex:1;" onclick="printCurrent('nhatky')">🖨️ In / PDF</button>
+            <button type="submit" class="btn btn-primary" style="flex:2;">💾 Lưu Nhật Ký</button>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <!-- Tab 5: Lịch Sử Bản Ghi -->
+    <section id="view-history" class="tab-view" style="display:none;">
+      <div class="card-panel">
+        <div class="card-header">
+          <h2>📂 Lịch Sử Bản Ghi Đã Lập</h2>
+          <button type="button" class="btn btn-secondary btn-sm" onclick="switchTab('dashboard')">⬅️ Về Trang Chủ</button>
+        </div>
+        <div id="history-container"></div>
+      </div>
+    </section>
+
+    <!-- Tab 6: QUẢN LÝ NHÂN SỰ & PHÂN QUYỀN (DÀNH RIÊNG CHO ADMIN) -->
+    <section id="view-users" class="tab-view" style="display:none;">
+      <div class="card-panel">
+        <div class="card-header">
+          <h2>👥 Quản Lý Nhân Sự & Phân Quyền</h2>
+          <div style="display:flex; gap:0.5rem;">
+            <button type="button" class="btn btn-primary btn-sm" onclick="openAddUserModal()">+ Thêm Mới</button>
+            <button type="button" class="btn btn-secondary btn-sm" onclick="switchTab('dashboard')">⬅️ Về Trang Chủ</button>
+          </div>
+        </div>
+
+        <div style="background:var(--bg-subtle); padding:0.75rem; border-radius:var(--radius-md); font-size:0.82rem; color:var(--text-muted); margin-bottom:1rem;">
+          💡 <b>Ghi chú phân quyền:</b><br/>
+          • 👑 <b>Admin (Quản trị)</b>: Toàn quyền quản lý, thêm sửa xóa nhân sự, duyệt báo cáo.<br/>
+          • 🔍 <b>Giám sát (Supervisor)</b>: Xem toàn bộ biên bản, ký duyệt, xuất PDF in ấn.<br/>
+          • 🛠️ <b>Đội Bảo trì (Worker)</b>: Nhập biên bản hiện trường, chụp ảnh GPS, tự tính diện tích.
+        </div>
+
+        <div style="overflow-x:auto;">
+          <table style="width:100%; border-collapse:collapse; font-size:0.88rem;">
+            <thead>
+              <tr style="background:var(--bg-subtle); text-align:left; border-bottom:1.5px solid var(--border-color);">
+                <th style="padding:0.65rem;">Họ và Tên</th>
+                <th style="padding:0.65rem;">Tài khoản / SĐT</th>
+                <th style="padding:0.65rem;">Vai trò (Quyền)</th>
+                <th style="padding:0.65rem;">Đơn vị công tác</th>
+                <th style="padding:0.65rem; text-align:center;">Trạng thái</th>
+                <th style="padding:0.65rem; text-align:center;">Thao tác</th>
+              </tr>
+            </thead>
+            <tbody id="users-table-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ================= MÀN HÌNH ĐĂNG NHẬP (LOGIN SCREEN) ================= -->
+  <div id="login-screen" class="login-screen" style="display:flex; background:var(--bg-body); z-index:9999;">
+    <div class="login-card" style="padding: 2.5rem 1.75rem; max-width: 420px; box-shadow: 0 20px 40px rgba(0,0,0,0.15);">
+      <img src="https://kiemlamvung4.org.vn/wp-content/uploads/2024/09/kiem_lam_favi-1.png" alt="Logo Kiểm Lâm" style="width:80px; height:80px; object-fit:contain; margin-bottom:0.75rem; filter:drop-shadow(0 4px 8px rgba(0,0,0,0.15));" />
+      <h2 style="font-size:1.25rem; font-weight:800; color:var(--primary); margin-bottom:0.25rem;">CHI CỤC KIỂM LÂM ĐỒNG NAI</h2>
+      <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:1.5rem;">Hệ thống Quản lý & Vận hành Hàng rào điện (QLBV)</p>
+
+      <form id="f-login">
+        <div class="form-group" style="margin-bottom:1rem; text-align:left;">
+          <label class="form-label required">Tên đăng nhập / Số điện thoại</label>
+          <input type="text" id="inp-user" class="form-control" placeholder="Nhập tên đăng nhập hoặc SĐT..." required autocomplete="username" />
+        </div>
+        <div class="form-group" style="margin-bottom:0.5rem; text-align:left;">
+          <label class="form-label required">Mật khẩu</label>
+          <input type="password" id="inp-pass" class="form-control" placeholder="Nhập mật khẩu..." required autocomplete="current-password" />
+        </div>
+
+        <div style="text-align:right; margin-bottom:1.25rem;">
+          <a href="javascript:void(0)" onclick="openForgotModal()" style="font-size:0.85rem; color:var(--primary); text-decoration:none; font-weight:600;">
+            ❓ Quên mật khẩu?
+          </a>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-block btn-lg" style="padding:0.8rem; font-weight:700;">
+          Đăng Nhập
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ================= MODAL: QUÊN MẬT KHẨU ================= -->
+  <div id="forgot-modal" class="modal-overlay">
+    <div class="modal-card">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+        <h3 style="font-weight:700; color:var(--primary);">❓ Khôi Phục Mật Khẩu</h3>
+        <button type="button" class="btn btn-secondary btn-sm" onclick="closeModal('forgot-modal')">✕</button>
+      </div>
+      <form id="f-forgot">
+        <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:1rem;">
+          Nhập <b>Tên đăng nhập</b> hoặc <b>Số điện thoại</b> đã đăng ký trong hệ thống để đặt lại mật khẩu về mặc định (<code>123456</code>):
+        </p>
+        <div class="form-group" style="margin-bottom:1rem;">
+          <input type="text" id="forgot-input" class="form-control" placeholder="Nhập username hoặc số điện thoại..." required />
+        </div>
+        <div style="display:flex; gap:0.5rem;">
+          <button type="button" class="btn btn-secondary" style="flex:1;" onclick="closeModal('forgot-modal')">Hủy</button>
+          <button type="submit" class="btn btn-primary" style="flex:2;">Khôi Phục Mật Khẩu</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ================= MODAL: THÊM / SỬA NHÂN SỰ (ADMIN) ================= -->
+  <div id="user-modal" class="modal-overlay">
+    <div class="modal-card">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+        <h3 style="font-weight:700; color:var(--primary);" id="user-modal-title">➕ Thêm Nhân Sự Mới</h3>
+        <button type="button" class="btn btn-secondary btn-sm" onclick="closeModal('user-modal')">✕</button>
+      </div>
+      <form id="f-save-user">
+        <input type="hidden" id="usr-mode" value="add" />
+        <div class="form-group" style="margin-bottom:0.75rem;">
+          <label class="form-label required">Họ và Tên</label>
+          <input type="text" id="usr-fullname" class="form-control" placeholder="Ví dụ: Nguyễn Văn A" required />
+        </div>
+        <div class="form-grid" style="margin-bottom:0.75rem;">
+          <div class="form-group">
+            <label class="form-label required">Tên đăng nhập</label>
+            <input type="text" id="usr-username" class="form-control" placeholder="Ví dụ: van_a" required />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Số điện thoại</label>
+            <input type="tel" id="usr-phone" class="form-control" placeholder="0901234567" />
+          </div>
+        </div>
+        <div class="form-grid" style="margin-bottom:0.75rem;">
+          <div class="form-group">
+            <label class="form-label required">Phân quyền (Vai trò)</label>
+            <select id="usr-role" class="form-select" required>
+              <option value="Worker">🛠️ Đội Bảo trì (Worker)</option>
+              <option value="Supervisor">🔍 Cán bộ Giám sát (Supervisor)</option>
+              <option value="Admin">👑 Quản trị viên (Admin)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Trạng thái tài khoản</label>
+            <select id="usr-status" class="form-select">
+              <option value="Active">🟢 Hoạt động</option>
+              <option value="Inactive">🔴 Đang khóa</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group" style="margin-bottom:1.25rem;">
+          <label class="form-label">Đơn vị công tác</label>
+          <input type="text" id="usr-org" class="form-control" placeholder="Ví dụ: Đội Bảo trì 1 / Hạt Kiểm lâm Tân Phú" />
+        </div>
+        <div style="display:flex; gap:0.5rem;">
+          <button type="button" class="btn btn-secondary" style="flex:1;" onclick="closeModal('user-modal')">Hủy</button>
+          <button type="submit" class="btn btn-primary" style="flex:2;">Lưu Nhân Sự</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ================= MODAL CÀI ĐẶT TÀI KHOẢN & ĐỔI MẬT KHẨU ================= -->
+  <div id="settings-modal" class="modal-overlay">
+    <div class="modal-card">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+        <h3 style="font-weight:700; color:var(--primary);">⚙️ Cài Đặt Tài Khoản</h3>
+        <button type="button" class="btn btn-secondary btn-sm" onclick="closeModal('settings-modal')">✕</button>
+      </div>
+
+      <form id="f-change-pass">
+        <div style="font-weight:600; font-size:0.9rem; margin-bottom:0.5rem;">🔑 Đổi Mật Khẩu</div>
+        <div class="form-group" style="margin-bottom:0.5rem;">
+          <input type="password" id="chg-old" class="form-control" placeholder="Mật khẩu hiện tại" required />
+        </div>
+        <div class="form-group" style="margin-bottom:0.5rem;">
+          <input type="password" id="chg-new" class="form-control" placeholder="Mật khẩu mới (tối thiểu 6 ký tự)" minlength="6" required />
+        </div>
+        <button type="submit" class="btn btn-secondary btn-sm" style="margin-bottom:1.25rem;">Cập nhật mật khẩu</button>
+      </form>
+
+      <hr style="border:0; border-top:1px solid var(--border-color); margin-bottom:1rem;" />
+      <button type="button" class="btn btn-danger btn-block" onclick="doLogout()">Đăng Xuất</button>
+    </div>
+  </div>
+
+  <!-- ================= MODAL: XEM TRƯỚC & XUẤT A4 PDF ================= -->
+  <div id="pdf-preview-modal" class="modal-overlay">
+    <div class="modal-dialog pdf-modal-dialog">
+      <div style="background: var(--bg-surface-elevated); padding: 0.85rem 1.25rem; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color);">
+        <h3 id="pdf-preview-title" style="display: flex; align-items: center; gap: 0.5rem; font-size: 1.05rem; font-weight: 700; color: var(--primary);">
+          📄 Xem Trước Văn Bản Khổ A4
+        </h3>
+        <div style="display: flex; align-items: center; gap: 0.5rem;">
+          <button type="button" class="btn btn-primary btn-sm" onclick="exportCurrentPDF()" title="Tải file PDF về máy">
+            📥 Xuất File PDF (A4)
+          </button>
+          <button type="button" class="btn btn-secondary btn-sm" onclick="printFromPreview()" title="Mở hộp thoại in trình duyệt">
+            🖨️ In Trình Duyệt
+          </button>
+          <button type="button" class="btn btn-secondary btn-sm" onclick="closeModal('pdf-preview-modal')" style="padding: 0.35rem 0.65rem;" title="Đóng">
+            ✕
+          </button>
+        </div>
+      </div>
+      <div style="padding: 0.75rem;">
+        <div class="pdf-preview-container">
+          <div id="pdf-preview-sheet" class="a4-preview-sheet"></div>
+        </div>
+      </div>
+      <div style="padding: 0.75rem 1.25rem; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-color);">
+        <div style="font-size: 0.82rem; color: var(--text-muted);">
+          💡 Chuẩn thể thức văn bản: Phông Times New Roman, Khổ A4 Portrait, Cỡ chữ 12–13pt.
+        </div>
+        <div style="display: flex; gap: 0.5rem;">
+          <button type="button" class="btn btn-primary" onclick="exportCurrentPDF()">
+            📥 Tải Xuống PDF (A4)
+          </button>
+          <button type="button" class="btn btn-secondary" onclick="closeModal('pdf-preview-modal')">
+            Đóng
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Box -->
+  <div id="toast" class="toast-box"></div>
+
+  <!-- Printable A4 Area -->
+  <div id="printable-area"></div>
+
+  <!-- ================= ALL-IN-ONE JAVASCRIPT LOGIC ================= -->
+  <script>
+    // Master Data mẫu
+    const MASTER_DATA = {
+      tuyen: [
+        "Tuyến Hàng rào điện Định Quán (Đoạn 1)",
+        "Tuyến Hàng rào điện Vĩnh Cửu (Đoạn 2)",
+        "Tuyến Hàng rào điện Tân Phú (Đoạn 3)",
+        "Tuyến Hàng rào điện Bù Gia Mập giáp ranh"
+      ],
+      suCo: [
+        "Đứt dây dẫn xung điện do cây gãy đè",
+        "Sét đánh hỏng bộ tạo xung (Energizer)",
+        "Bình ắc quy / Pin mặt trời hỏng, yếu điện",
+        "Sứ cách điện bị vỡ làm rò điện xuống đất",
+        "Trụ rào bị nghiêng gãy do voi va quẹt"
+      ]
+    };
+
+    let currentUser = null;
+    let photosState = { baotri: [], vesinh: [] };
+    let currentGPS = null;
+
+    // Khởi tạo ứng dụng
+    window.addEventListener('DOMContentLoaded', () => {
+      initGPS();
+      initUserSession();
+      initDropdowns();
+      setDefaultDates();
+      updateDashboardKPI();
+      addVsRow(); // Mặc định 1 dòng phân đoạn vệ sinh
+    });
+
+    // Lấy GPS nền
+    function initGPS() {
+      if ("geolocation" in navigator) {
+        navigator.geolocation.getCurrentPosition(
+          p => { currentGPS = { lat: p.coords.latitude.toFixed(6), lng: p.coords.longitude.toFixed(6) }; },
+          e => { console.log('GPS error:', e.message); }
+        );
+      }
+    }
+
+    // Quản lý phiên đăng nhập
+    function initUserSession() {
+      const saved = localStorage.getItem('qlbv_user');
+      if (saved) {
+        currentUser = JSON.parse(saved);
+        if (currentUser && currentUser.username.toLowerCase() === 'admin' && currentUser.fullName.includes('Lộc Vũ Trung')) {
+          currentUser.fullName = 'Nguyễn Viết Sử (admin)';
+          localStorage.setItem('qlbv_user', JSON.stringify(currentUser));
+        }
+        updateUserBadge();
+      } else {
+        updateUserBadge();
+      }
+    }
+
+    // Cập nhật giao diện sau đăng nhập
+    function updateUserBadge() {
+      const loginScreen = document.getElementById('login-screen');
+      const mainContainer = document.querySelector('main.app-container');
+      const bottomNav = document.querySelector('nav.mobile-bottom-nav');
+      const topNavbar = document.querySelector('header.top-navbar');
+
+      if (currentUser) {
+        if (loginScreen) loginScreen.style.display = 'none';
+        if (mainContainer) mainContainer.style.display = 'block';
+        if (bottomNav) bottomNav.style.display = 'flex';
+        if (topNavbar) topNavbar.style.display = 'flex';
+
+        document.getElementById('user-pill-name').textContent = currentUser.fullName || currentUser.username;
+        const roleEl = document.getElementById('user-pill-role');
+        roleEl.textContent = currentUser.role || 'Worker';
+        roleEl.className = 'role-badge role-' + (currentUser.role ? currentUser.role.toLowerCase() : 'worker');
+
+        // Nếu là Admin -> Hiển thị nút Nhân Sự trên thanh điều hướng & Dashboard
+        const navUsers = document.getElementById('nav-item-users');
+        if (navUsers) {
+          navUsers.style.display = (currentUser.role === 'Admin') ? 'flex' : 'none';
+        }
+        const dashUsers = document.getElementById('dash-tile-users');
+        if (dashUsers) {
+          dashUsers.style.display = (currentUser.role === 'Admin') ? 'flex' : 'none';
+        }
+      } else {
+        if (loginScreen) loginScreen.style.display = 'flex';
+        if (mainContainer) mainContainer.style.display = 'none';
+        if (bottomNav) bottomNav.style.display = 'none';
+        if (topNavbar) topNavbar.style.display = 'none';
+      }
+    }
+
+    // ================= QUÊN MẬT KHẨU =================
+    function openForgotModal() {
+      document.getElementById('forgot-modal').classList.add('active');
+    }
+
+    document.getElementById('f-forgot').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const val = document.getElementById('forgot-input').value.trim();
+      
+      // Xử lý cục bộ
+      let localUsers = getLocalUsersList();
+      let found = localUsers.find(u => u.username.toLowerCase() === val.toLowerCase() || u.phone === val);
+
+      if (found) {
+        found.pass = '123456';
+        saveLocalUsersList(localUsers);
+        showToast('✅ Đã đặt lại mật khẩu về mặc định: 123456. Vui lòng đăng nhập!');
+        closeModal('forgot-modal');
+        document.getElementById('inp-user').value = found.username;
+        document.getElementById('inp-pass').value = '123456';
+      } else {
+        showToast('❌ Không tìm thấy tài khoản hoặc số điện thoại này!');
+      }
+    });
+
+    // ================= QUẢN LÝ NHÂN SỰ (ADMIN) =================
+    function getLocalUsersList() {
+      const defaultUsers = [
+        { userId: 'U001', username: 'admin', pass: '123456', fullName: 'Nguyễn Viết Sử (admin)', role: 'Admin', organization: 'Chi cục Kiểm lâm Đồng Nai', phone: '0900000001', status: 'Active' },
+        { userId: 'U002', username: 'giamsat', pass: '123456', fullName: 'Cán Bộ Giám Sát', role: 'Supervisor', organization: 'Hạt Kiểm lâm Khu vực', phone: '0900000002', status: 'Active' },
+        { userId: 'U003', username: 'baotri01', pass: '123456', fullName: 'Đội Trưởng Bảo Trì 1', role: 'Worker', organization: 'Đơn vị Bảo trì HRD', phone: '0900000003', status: 'Active' }
+      ];
+      let list = JSON.parse(localStorage.getItem('qlbv_all_users') || 'null');
+      if (!list) return defaultUsers;
+      // Tự động cập nhật tên Admin mới nếu đang lưu tên cũ
+      list.forEach(u => {
+        if (u.username.toLowerCase() === 'admin' && u.fullName.includes('Lộc Vũ Trung')) {
+          u.fullName = 'Nguyễn Viết Sử (admin)';
+        }
+      });
+      return list;
+    }
+
+    function saveLocalUsersList(list) {
+      localStorage.setItem('qlbv_all_users', JSON.stringify(list));
+    }
+
+    function loadUsersTable() {
+      const tbody = document.getElementById('users-table-body');
+      if (!tbody) return;
+      const users = getLocalUsersList();
+
+      tbody.innerHTML = users.map((u, idx) => `
+        <tr style="border-bottom:1px solid var(--border-color);">
+          <td style="padding:0.65rem; font-weight:600;">${u.fullName}</td>
+          <td style="padding:0.65rem;">
+            <code>${u.username}</code>
+            ${u.phone ? `<br/><span style="font-size:0.75rem; color:var(--text-muted);">${u.phone}</span>` : ''}
+          </td>
+          <td style="padding:0.65rem;">
+            <span class="role-badge role-${u.role ? u.role.toLowerCase() : 'worker'}">${u.role}</span>
+          </td>
+          <td style="padding:0.65rem; font-size:0.82rem; color:var(--text-muted);">${u.organization || '-'}</td>
+          <td style="padding:0.65rem; text-align:center;">
+            <span style="font-size:0.78rem; font-weight:700; color:${u.status === 'Active' ? 'var(--success)' : 'var(--danger)'};">
+              ${u.status === 'Active' ? '🟢 Hoạt động' : '🔴 Đã khóa'}
+            </span>
+          </td>
+          <td style="padding:0.65rem; text-align:center;">
+            <div style="display:flex; gap:3px; justify-content:center; flex-wrap:wrap;">
+              <button class="btn btn-secondary btn-sm" title="Đặt lại mật khẩu về 123456" onclick="resetUserPassword('${u.username}')">🔑 Reset</button>
+              <button class="btn btn-secondary btn-sm" title="Khóa / Mở khóa" onclick="toggleUserStatus('${u.username}')">${u.status === 'Active' ? '🔒 Khóa' : '🔓 Mở'}</button>
+              <button class="btn btn-secondary btn-sm" title="Sửa thông tin" onclick="openEditUserModal(${idx})">✏️ Sửa</button>
+              ${u.username.toLowerCase() !== 'admin' ? `<button class="btn btn-danger btn-sm" title="Xóa" onclick="deleteUserAccount('${u.username}')">🗑️</button>` : ''}
+            </div>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function openAddUserModal() {
+      document.getElementById('user-modal-title').textContent = '➕ Thêm Nhân Sự Mới';
+      document.getElementById('usr-mode').value = 'add';
+      document.getElementById('usr-username').disabled = false;
+      document.getElementById('f-save-user').reset();
+      document.getElementById('user-modal').classList.add('active');
+    }
+
+    function openEditUserModal(idx) {
+      const users = getLocalUsersList();
+      const u = users[idx];
+      if (!u) return;
+
+      document.getElementById('user-modal-title').textContent = '✏️ Sửa Thông Tin Nhân Sự';
+      document.getElementById('usr-mode').value = 'edit';
+      document.getElementById('usr-username').value = u.username;
+      document.getElementById('usr-username').disabled = true;
+      document.getElementById('usr-fullname').value = u.fullName;
+      document.getElementById('usr-phone').value = u.phone || '';
+      document.getElementById('usr-role').value = u.role || 'Worker';
+      document.getElementById('usr-status').value = u.status || 'Active';
+      document.getElementById('usr-org').value = u.organization || '';
+      document.getElementById('user-modal').classList.add('active');
+    }
+
+    document.getElementById('f-save-user').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const mode = document.getElementById('usr-mode').value;
+      const username = document.getElementById('usr-username').value.trim();
+      const fullName = document.getElementById('usr-fullname').value.trim();
+      const phone = document.getElementById('usr-phone').value.trim();
+      const role = document.getElementById('usr-role').value;
+      const status = document.getElementById('usr-status').value;
+      const org = document.getElementById('usr-org').value.trim();
+
+      let users = getLocalUsersList();
+
+      if (mode === 'add') {
+        if (users.find(u => u.username.toLowerCase() === username.toLowerCase())) {
+          showToast('❌ Tên đăng nhập này đã tồn tại!');
+          return;
+        }
+        users.push({
+          userId: 'U' + (users.length + 1),
+          username: username,
+          pass: '123456',
+          fullName: fullName,
+          role: role,
+          organization: org,
+          phone: phone,
+          status: status
+        });
+        showToast('✅ Đã thêm nhân sự thành công! (Mật khẩu mặc định: 123456)');
+      } else {
+        const u = users.find(u => u.username.toLowerCase() === username.toLowerCase());
+        if (u) {
+          u.fullName = fullName;
+          u.phone = phone;
+          u.role = role;
+          u.status = status;
+          u.organization = org;
+          showToast('✅ Đã cập nhật nhân sự thành công!');
+        }
+      }
+
+      saveLocalUsersList(users);
+      closeModal('user-modal');
+      loadUsersTable();
+    });
+
+    function resetUserPassword(username) {
+      if (!confirm(`Bạn có chắc chắn muốn đặt lại mật khẩu cho tài khoản [${username}] về mặc định là 123456?`)) return;
+      let users = getLocalUsersList();
+      const u = users.find(u => u.username.toLowerCase() === username.toLowerCase());
+      if (u) {
+        u.pass = '123456';
+        saveLocalUsersList(users);
+        showToast(`🔑 Đã reset mật khẩu cho [${username}] về: 123456`);
+      }
+    }
+
+    function toggleUserStatus(username) {
+      let users = getLocalUsersList();
+      const u = users.find(u => u.username.toLowerCase() === username.toLowerCase());
+      if (u) {
+        u.status = (u.status === 'Active') ? 'Inactive' : 'Active';
+        saveLocalUsersList(users);
+        showToast(`Đã ${u.status === 'Active' ? 'mở khóa' : 'khóa'} tài khoản [${username}]!`);
+        loadUsersTable();
+      }
+    }
+
+    function deleteUserAccount(username) {
+      if (!confirm(`Bạn có chắc chắn muốn xóa tài khoản nhân sự [${username}]?`)) return;
+      let users = getLocalUsersList().filter(u => u.username.toLowerCase() !== username.toLowerCase());
+      saveLocalUsersList(users);
+      showToast(`Đã xóa tài khoản [${username}]!`);
+      loadUsersTable();
+    }
+
+    // Đăng nhập
+    document.getElementById('f-login').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const u = document.getElementById('inp-user').value.trim();
+      const p = document.getElementById('inp-pass').value;
+
+      // Tài khoản mẫu phân quyền
+      const accounts = [
+        { username: 'admin', pass: '123456', fullName: 'Nguyễn Viết Sử (admin)', role: 'Admin' },
+        { username: 'giamsat', pass: '123456', fullName: 'Cán Bộ Giám Sát', role: 'Supervisor' },
+        { username: 'baotri01', pass: '123456', fullName: 'Đội Trưởng Bảo Trì 1', role: 'Worker' }
+      ];
+
+      const found = accounts.find(a => a.username.toLowerCase() === u.toLowerCase() && a.pass === p);
+      if (found) {
+        currentUser = found;
+        localStorage.setItem('qlbv_user', JSON.stringify(found));
+        updateUserBadge();
+        showToast('Đăng nhập thành công!');
+      } else {
+        showToast('Tài khoản hoặc mật khẩu không đúng!');
+      }
+    });
+
+    function doLogout() {
+      localStorage.removeItem('qlbv_user');
+      location.reload();
+    }
+
+    // Chuyển Tab
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-view').forEach(v => v.style.display = 'none');
+      const target = document.getElementById('view-' + tabId);
+      if (target) target.style.display = 'block';
+
+      document.querySelectorAll('.bottom-nav-item').forEach(b => {
+        b.classList.toggle('active', b.getAttribute('onclick')?.includes(tabId));
+      });
+
+      if (tabId === 'history') loadHistory();
+      if (tabId === 'dashboard') updateDashboardKPI();
+      if (tabId === 'users') loadUsersTable();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // Nạp dropdown
+    function initDropdowns() {
+      const btTuyen = document.getElementById('bt-tuyen');
+      const vsTuyen = document.getElementById('vs-tuyen');
+      MASTER_DATA.tuyen.forEach(t => {
+        btTuyen.innerHTML += `<option value="${t}">${t}</option>`;
+        vsTuyen.innerHTML += `<option value="${t}">${t}</option>`;
+      });
+
+      const btSuCo = document.getElementById('bt-su-co-sel');
+      btSuCo.innerHTML = '<option value="">-- Chọn sự cố thường gặp --</option>';
+      MASTER_DATA.suCo.forEach(s => {
+        btSuCo.innerHTML += `<option value="${s}">${s}</option>`;
+      });
+      btSuCo.addEventListener('change', () => {
+        if (btSuCo.value) document.getElementById('bt-su-co').value = btSuCo.value;
+      });
+    }
+
+    function setDefaultDates() {
+      const now = new Date();
+      const d = now.toISOString().split('T')[0];
+      const t = now.toTimeString().substring(0, 5);
+      ['bt-date', 'vs-date', 'nk-date'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.value = d;
+      });
+      const tEl = document.getElementById('bt-time');
+      if (tEl) tEl.value = t;
+    }
+
+    // Phân đoạn Vệ sinh
+    function addVsRow() {
+      const container = document.getElementById('vs-rows-container');
+      const row = document.createElement('div');
+      row.style.display = 'flex';
+      row.style.gap = '4px';
+      row.style.alignItems = 'center';
+      row.style.marginBottom = '6px';
+      row.innerHTML = `
+        <input type="number" placeholder="Trụ từ" class="form-control vs-from" style="width:75px;" />
+        <span>-</span>
+        <input type="number" placeholder="Đến" class="form-control vs-to" style="width:75px;" />
+        <input type="number" placeholder="Mét" class="form-control vs-len" style="flex:1;" />
+        <input type="number" value="3.0" step="0.5" class="form-control vs-wid" style="width:60px;" />
+        <button type="button" class="btn btn-danger btn-sm" onclick="this.parentElement.remove(); calcVs();">✕</button>
+      `;
+      const inputs = row.querySelectorAll('input');
+      inputs.forEach(inp => inp.addEventListener('input', () => {
+        const from = parseInt(row.querySelector('.vs-from').value) || 0;
+        const to = parseInt(row.querySelector('.vs-to').value) || 0;
+        const lenEl = row.querySelector('.vs-len');
+        if (!lenEl.value && to > from) lenEl.value = (to - from) * 40;
+        calcVs();
+      }));
+      container.appendChild(row);
+    }
+
+    function calcVs() {
+      let sumL = 0;
+      let sumA = 0;
+      document.querySelectorAll('#vs-rows-container > div').forEach(r => {
+        const l = parseFloat(r.querySelector('.vs-len')?.value) || 0;
+        const w = parseFloat(r.querySelector('.vs-wid')?.value) || 0;
+        sumL += l;
+        sumA += l * w;
+      });
+      document.getElementById('vs-sum-len').textContent = sumL;
+      document.getElementById('vs-sum-area').textContent = sumA.toFixed(1);
+    }
+
+    // Xử lý ảnh Watermark
+    setupPhotoWatermark('bt-photos-input', 'bt-photos-grid', 'baotri');
+    setupPhotoWatermark('vs-photos-input', 'vs-photos-grid', 'vesinh');
+
+    function setupPhotoWatermark(inputId, gridId, type) {
+      const input = document.getElementById(inputId);
+      input.addEventListener('change', async (e) => {
+        const files = Array.from(e.target.files);
+        for (const f of files) {
+          const base64 = await processPhoto(f);
+          photosState[type].push(base64);
+        }
+        renderPhotos(gridId, type);
+      });
+    }
+
+    function processPhoto(file) {
+      return new Promise(res => {
+        const r = new FileReader();
+        r.onload = ev => {
+          const img = new Image();
+          img.onload = () => {
+            const canvas = document.createElement('canvas');
+            const max = 1200;
+            let w = img.width, h = img.height;
+            if (w > max || h > max) {
+              if (w > h) { h = Math.round((h * max) / w); w = max; }
+              else { w = Math.round((w * max) / h); h = max; }
+            }
+            canvas.width = w; canvas.height = h;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, w, h);
+
+            // Watermark
+            const barH = 50;
+            ctx.fillStyle = "rgba(0,0,0,0.65)";
+            ctx.fillRect(0, h - barH, w, barH);
+            ctx.font = "bold 16px sans-serif";
+            ctx.fillStyle = "#fff";
+            const timeStr = new Date().toLocaleString('vi-VN');
+            const gpsStr = currentGPS ? `Lat: ${currentGPS.lat}, Lng: ${currentGPS.lng}` : 'GPS: Không xác định';
+            ctx.fillText(`⚡ QLBV ĐỒNG NAI | ${timeStr}`, 15, h - 28);
+            ctx.fillStyle = "#fde047";
+            ctx.fillText(gpsStr, 15, h - 10);
+
+            res(canvas.toDataURL('image/jpeg', 0.75));
+          };
+          img.src = ev.target.result;
+        };
+        r.readAsDataURL(file);
+      });
+    }
+
+    function renderPhotos(gridId, type) {
+      const g = document.getElementById(gridId);
+      g.innerHTML = '';
+      photosState[type].forEach((p, i) => {
+        const d = document.createElement('div');
+        d.className = 'photo-item';
+        d.innerHTML = `<img src="${p}"><button type="button" class="photo-del" onclick="delPhoto('${type}', ${i})">✕</button>`;
+        g.appendChild(d);
+      });
+    }
+
+    function delPhoto(type, idx) {
+      photosState[type].splice(idx, 1);
+      renderPhotos(type === 'baotri' ? 'bt-photos-grid' : 'vs-photos-grid', type);
+    }
+
+    // Submit Forms
+    document.getElementById('f-baotri').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const rec = {
+        type: 'baotri',
+        date: document.getElementById('bt-date').value,
+        time: document.getElementById('bt-time').value,
+        tuyen: document.getElementById('bt-tuyen').value,
+        loc: document.getElementById('bt-location').value,
+        suCo: document.getElementById('bt-su-co').value || document.getElementById('bt-su-co-sel').value,
+        reason: document.getElementById('bt-reason').value,
+        ddBt: document.getElementById('bt-dd-bt').value,
+        ddCr: document.getElementById('bt-dd-cr').value,
+        ddKl: document.getElementById('bt-dd-kl').value,
+        photos: photosState.baotri
+      };
+      saveRecord(rec);
+    });
+
+    document.getElementById('f-vesinh').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const cacDoan = [];
+      document.querySelectorAll('#vs-rows-container > div').forEach(r => {
+        const from = r.querySelector('.vs-from')?.value || '';
+        const to = r.querySelector('.vs-to')?.value || '';
+        const l = r.querySelector('.vs-len')?.value || '0';
+        const w = r.querySelector('.vs-wid')?.value || '3.0';
+        const a = (parseFloat(l) * parseFloat(w)).toFixed(1);
+        if (from || to || l !== '0') {
+          cacDoan.push({ from: from, to: to, length: l, width: w, area: a });
+        }
+      });
+
+      const rec = {
+        type: 'vesinh',
+        date: document.getElementById('vs-date').value,
+        tuyen: document.getElementById('vs-tuyen').value,
+        loc: document.getElementById('vs-location').value,
+        workers: document.getElementById('vs-workers').value,
+        ddBt: document.getElementById('vs-dd-bt')?.value || '',
+        ddCr: document.getElementById('vs-dd-cr')?.value || '',
+        len: document.getElementById('vs-sum-len').textContent,
+        area: document.getElementById('vs-sum-area').textContent,
+        cacDoanVeSinh: cacDoan,
+        photos: photosState.vesinh
+      };
+      saveRecord(rec);
+    });
+
+    document.getElementById('f-nhatky').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const rec = {
+        type: 'nhatky',
+        date: document.getElementById('nk-date').value,
+        weather: document.getElementById('nk-weather').value,
+        work: document.getElementById('nk-work').value,
+        eval: document.getElementById('nk-eval').value
+      };
+      saveRecord(rec);
+    });
+
+    function saveRecord(rec) {
+      rec.id = 'QLBV_' + Date.now();
+      rec.createdBy = currentUser ? currentUser.username : 'khach';
+      rec.createdAt = new Date().toISOString();
+
+      showToast('⏳ Đang lưu dữ liệu lên Google Sheets...');
+
+      // Gọi trực tiếp backend Google Apps Script
+      if (typeof google !== 'undefined' && google.script && google.script.run) {
+        google.script.run
+          .withSuccessHandler(res => {
+            saveToLocal(rec);
+            showToast('✅ Đã lưu trực tiếp vào Google Sheets thành công!');
+            updateDashboardKPI();
+          })
+          .withFailureHandler(err => {
+            saveToLocal(rec);
+            showToast('⚠️ Lưu cục bộ: ' + (err.message || err));
+            updateDashboardKPI();
+          })
+          .handleSaveRecordClient({ formType: rec.type, record: rec, username: rec.createdBy });
+      } else {
+        saveToLocal(rec);
+        showToast('💾 Đã lưu vào bộ nhớ máy!');
+        updateDashboardKPI();
+      }
+    }
+
+    function saveToLocal(rec) {
+      let list = JSON.parse(localStorage.getItem('qlbv_records') || '[]');
+      list.unshift(rec);
+      localStorage.setItem('qlbv_records', JSON.stringify(list));
+    }
+
+    function loadHistory() {
+      const container = document.getElementById('history-container');
+      const list = JSON.parse(localStorage.getItem('qlbv_records') || '[]');
+      if (list.length === 0) {
+        container.innerHTML = '<p style="color:var(--text-muted); text-align:center; padding:1.5rem;">Chưa có bản ghi nào.</p>';
+        return;
+      }
+      container.innerHTML = list.map((item, idx) => `
+        <div style="border:1px solid var(--border-color); border-radius:var(--radius-md); padding:0.75rem; margin-bottom:0.6rem; display:flex; justify-content:space-between; align-items:center; background:var(--bg-surface);">
+          <div>
+            <div style="font-weight:700; color:var(--primary);">${item.type === 'baotri' ? 'Biên bản Bảo trì' : item.type === 'vesinh' ? 'Biên bản Vệ sinh' : 'Nhật ký thi công'}</div>
+            <div style="font-size:0.8rem; color:var(--text-muted);">📅 Ngày: ${item.date} | 📍 ${item.tuyen || item.loc || ''}</div>
+          </div>
+          <button type="button" class="btn btn-secondary btn-sm" onclick="printSaved(${idx})">📄 Xem & Xuất A4 PDF</button>
+        </div>
+      `).join('');
+    }
+
+    function updateDashboardKPI() {
+      const list = JSON.parse(localStorage.getItem('qlbv_records') || '[]');
+      let bt = 0, vs = 0, len = 0, area = 0;
+      list.forEach(i => {
+        if (i.type === 'baotri') bt++;
+        if (i.type === 'vesinh') {
+          vs++;
+          len += parseFloat(i.len) || 0;
+          area += parseFloat(i.area) || 0;
+        }
+      });
+      document.getElementById('kpi-bt').textContent = bt;
+      document.getElementById('kpi-vs').textContent = vs;
+      document.getElementById('kpi-len').textContent = len.toLocaleString();
+      document.getElementById('kpi-area').textContent = (area / 10000).toFixed(3);
+    }
+
+    // ==========================================================================
+    // XUẤT PDF & IN ẤN CHUẨN THỂ THỨC VĂN BẢN (Nghị định 30/2020 & FILE MẪU WORD)
+    // ==========================================================================
+    let currentPreviewRecord = null;
+    let currentPreviewType = null;
+
+    function getDocumentPdfFileName(type) {
+      const now = new Date();
+      const pad = n => String(n).padStart(2, '0');
+      const ddmmyyyy = `${pad(now.getDate())}${pad(now.getMonth() + 1)}${now.getFullYear()}`;
+      const hhmmss = `${pad(now.getHours())}${pad(now.getMinutes())}${pad(now.getSeconds())}`;
+      const ts = `${ddmmyyyy}_${hhmmss}`;
+
+      if (type === 'baotri') return `BienBan_BaoTri_${ts}`;
+      if (type === 'vesinh') return `BienBan_VeSinh_${ts}`;
+      if (type === 'nhatky') return `NhatKy_ThiCong_${ts}`;
+      return `BienBan_${ts}`;
+    }
+
+    function renderBaoTriHTML(r) {
+      const ngayParts = (r.date || '').split('-');
+      const ngayStr = ngayParts.length === 3 ? ngayParts[2] : '.....';
+      const thangStr = ngayParts.length === 3 ? ngayParts[1] : '.....';
+      const namStr = ngayParts.length === 3 ? ngayParts[0] : '2026';
+      const gioStr = r.time || '.....';
+
+      const ddBt = r.ddBt ? r.ddBt.split(';') : ['...................................................'];
+      const ddCr = r.ddCr ? r.ddCr.split(';') : ['...................................................'];
+      const ddKl = r.ddKl ? r.ddKl.split(';') : ['...................................................'];
+
+      const photosHTML = (r.photos && r.photos.length > 0) ? `
+        <div class="print-page-break" style="page-break-before: always; break-before: page; margin-top: 20px; padding-top: 10px;">
+          <div style="text-align: center; font-weight: bold; font-size: 12.5pt; text-transform: uppercase; margin-bottom: 12px;">
+            PHỤ LỤC: HÌNH ẢNH HIỆN TRƯỜNG BẢO TRÌ SỰ CỐ
+          </div>
+          <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;">
+            ${r.photos.map((p, i) => `
+              <div style="text-align: center; border: 1px solid #777; padding: 5px; background: #fff; border-radius: 3px;">
+                <img src="${p}" style="max-width: 100%; height: 210px; object-fit: contain; display: block; margin: 0 auto;" />
+                <div style="font-size: 10.5pt; font-style: italic; margin-top: 4px; color: #000;">Hình ${i+1}: Ảnh ghi nhận hiện trường bảo trì</div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      ` : '';
+
+      return `
+        <div class="a4-document-content" style="font-family: 'Times New Roman', Times, serif; font-size: 12pt; line-height: 1.28; color: #000000; background: #ffffff; text-align: justify;">
+          <div class="a4-page-main" style="page-break-inside: avoid; break-inside: avoid;">
+            <table style="width: 100%; border-collapse: collapse; margin-bottom: 8px;">
+              <tr>
+                <td style="width: 44%; text-align: center; vertical-align: top; padding: 0;">
+                  <div style="font-weight: bold; font-size: 11pt; text-transform: uppercase;">CHI CỤC KIỂM LÂM ĐỒNG NAI</div>
+                  <div style="font-weight: bold; font-size: 11pt; text-transform: uppercase;">ĐỘI BẢO TRÌ HÀNG RÀO ĐIỆN</div>
+                  <div style="font-size: 11pt; margin-top: 2px;">Số: ....../BB-BT</div>
+                </td>
+                <td style="width: 56%; text-align: center; vertical-align: top; padding: 0;">
+                  <div style="font-weight: bold; font-size: 11.5pt; text-transform: uppercase;">CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM</div>
+                  <div style="font-weight: bold; font-size: 12pt;">Độc lập - Tự do - Hạnh phúc</div>
+                  <div style="border-bottom: 1.5px solid #000; width: 150px; margin: 2px auto 4px auto;"></div>
+                  <div style="font-style: italic; font-size: 11.5pt;">
+                    Đồng Nai, ngày ${ngayStr} tháng ${thangStr} năm ${namStr}
+                  </div>
+                </td>
+              </tr>
+            </table>
+
+            <div style="text-align: center; margin: 8px 0 8px 0;">
+              <div style="font-weight: bold; font-size: 14pt; text-transform: uppercase;">BIÊN BẢN</div>
+              <div style="font-weight: bold; font-size: 12pt; margin-top: 2px; line-height: 1.3;">
+                Xác minh hiện trạng, ghi nhận sự cố của tuyến hàng rào điện thuộc<br/>
+                Dự án khẩn cấp bảo tồn Voi tỉnh Đồng Nai trên địa bàn quản lý của ${r.loc || r.tuyen || '…………………………………………….'}
+              </div>
+            </div>
+
+            <div style="text-align: justify; margin-bottom: 5px; font-style: italic; text-indent: 1cm; font-size: 11.5pt;">
+              Thực hiện nội dung Quyết định số 704/QĐ-SNNMT ngày 30/6/2026 của Sở Nông nghiệp và Môi trường về việc Phê duyệt điều chỉnh, bổ sung Điều 1 Quyết định số 595/QĐ-SNNMT ngày 30/3/2026 về việc phê duyệt kế hoạch và dự toán kinh phí nhiệm vụ “quản lý, bảo vệ và vận hành các công trình xây dựng để bảo tồn Voi châu Á tại Đồng Nai năm 2026" của Chi cục Kiểm lâm;
+            </div>
+
+            <div style="margin-bottom: 5px; text-indent: 1cm;">
+              Hôm nay, vào lúc <b>${gioStr}</b>, ngày <b>${ngayStr}</b> tháng <b>${thangStr}</b> năm <b>${namStr}</b>, tại: <b>${r.tuyen || r.loc || '...........................................................................'}</b>, chúng tôi gồm:
+            </div>
+
+            <div style="font-weight: bold; margin-top: 4px;">I. Thành phần tham dự</div>
+            <div style="margin-left: 0.4cm; margin-bottom: 4px;">
+              <div style="font-weight: bold;">1. Đại diện đơn vị bảo trì:</div>
+              ${ddBt.map(item => `<div style="margin-left: 0.4cm;">Ông/bà: ${item.trim()}</div>`).join('')}
+              <div style="font-weight: bold; margin-top: 2px;">2. Đại diện đơn vị chủ rừng:</div>
+              ${ddCr.map(item => `<div style="margin-left: 0.4cm;">Ông/bà: ${item.trim()}</div>`).join('')}
+              <div style="font-weight: bold; margin-top: 2px;">3. Đại diện Cơ quan kiểm lâm sở tại:</div>
+              ${ddKl.map(item => `<div style="margin-left: 0.4cm;">Ông/bà: ${item.trim()}</div>`).join('')}
+            </div>
+
+            <div style="font-weight: bold; margin-top: 5px;">II. Nội dung xác minh, ghi nhận:</div>
+            <div style="margin-left: 0.4cm; margin-bottom: 4px;">
+              <div>1. <b>Về sự cố xảy ra trên tuyến hàng rào:</b> ${r.suCo || '...................................................................................................................................................'}</div>
+              <div>2. <b>Về nguyên nhân:</b> ${r.reason || '...................................................................................................................................................'}</div>
+              <div style="margin-top: 2px;">3. <b>Về thiết bị hư hỏng:</b> Đã kiểm tra và lập danh mục thiết bị xử lý thay thế.</div>
+            </div>
+
+            <div style="font-weight: bold; margin-top: 5px;">III. Kết luận</div>
+            <div style="margin-left: 0.4cm;">
+              <div style="text-indent: 0.6cm;">Qua kết quả xác minh, ghi nhận sự cố nêu trên, các thành phần tham dự cùng thống nhất kết luận, nội dung sau:</div>
+              <div>- <b>Về kết quả thay thế/khắc phục sự cố:</b> Đã tiến hành xử lý hoàn tất, hệ thống xung điện hoạt động bình thường.</div>
+              <div>- <b>Về tình trạng hoạt động sau khắc phục:</b> Đạt yêu cầu kỹ thuật ngăn voi, điện áp duy trì ổn định.</div>
+            </div>
+
+            <div style="margin-top: 6px; font-style: italic; text-indent: 1cm; font-size: 11.5pt;">
+              Biên bản kết thúc vào lúc ..... cùng ngày và được thông qua, thống nhất. Biên bản được lập thành 04 bản, Đơn vị bảo trì giữ 01 bản, đơn vị chủ rừng 01 bản, Cơ quan kiểm lâm sở tại giữ 01 bản và lưu hồ sơ thanh quyết toán 01 bản./.
+            </div>
+
+            <table style="width: 100%; border-collapse: collapse; margin-top: 12px; text-align: center; page-break-inside: avoid;">
+              <tr>
+                <td style="width: 33.3%; font-weight: bold; vertical-align: top; font-size: 11.5pt;">
+                  ĐD. ĐƠN VỊ BẢO TRÌ<br/>TUYẾN HÀNG RÀO ĐIỆN<br/>
+                  <span style="font-size: 10.5pt; font-weight: normal; font-style: italic;">(Ký, ghi rõ họ tên)</span>
+                  <div style="height: 48px;"></div>
+                </td>
+                <td style="width: 33.3%; font-weight: bold; vertical-align: top; font-size: 11.5pt;">
+                  ĐD. ĐƠN VỊ CHỦ RỪNG<br/><br/>
+                  <span style="font-size: 10.5pt; font-weight: normal; font-style: italic;">(Ký, ghi rõ họ tên)</span>
+                  <div style="height: 48px;"></div>
+                </td>
+                <td style="width: 33.4%; font-weight: bold; vertical-align: top; font-size: 11.5pt;">
+                  ĐD. CƠ QUAN KIỂM LÂM SỞ TẠI<br/><br/>
+                  <span style="font-size: 10.5pt; font-weight: normal; font-style: italic;">(Ký, ghi rõ họ tên)</span>
+                  <div style="height: 48px;"></div>
+                </td>
+              </tr>
+            </table>
+          </div>
+          ${photosHTML}
+        </div>
+      `;
+    }
+
+    function renderVeSinhHTML(r) {
+      const ngayParts = (r.date || '').split('-');
+      const ngayStr = ngayParts.length === 3 ? ngayParts[2] : '.....';
+      const thangStr = ngayParts.length === 3 ? ngayParts[1] : '.....';
+      const namStr = ngayParts.length === 3 ? ngayParts[0] : '2026';
+
+      const doanRows = (r.cacDoanVeSinh && r.cacDoanVeSinh.length > 0) ? r.cacDoanVeSinh.map((d, idx) => `
+        <tr>
+          <td style="text-align: center; border: 1px solid #000; padding: 3px 4px; font-size: 11pt;">${idx + 1}</td>
+          <td style="border: 1px solid #000; padding: 3px 6px; text-align: center; font-size: 11pt;">Từ trụ: <b>${d.from || '...'}</b> đến trụ: <b>${d.to || '...'}</b></td>
+          <td style="border: 1px solid #000; padding: 3px 6px; text-align: right; font-size: 11pt;">${d.length || '0'} m</td>
+          <td style="border: 1px solid #000; padding: 3px 6px; text-align: right; font-size: 11pt;">${d.width || '3.0'} m</td>
+          <td style="border: 1px solid #000; padding: 3px 6px; text-align: right; font-weight: bold; font-size: 11pt;">${d.area || '0'} m²</td>
+        </tr>
+      `).join('') : `
+        <tr>
+          <td style="text-align: center; border: 1px solid #000; padding: 3px 4px; font-size: 11pt;">1</td>
+          <td style="border: 1px solid #000; padding: 3px 6px; text-align: center; font-size: 11pt;">Toàn phân đoạn thực bì tuyến rào</td>
+          <td style="border: 1px solid #000; padding: 3px 6px; text-align: right; font-size: 11pt;">${r.len || '0'} m</td>
+          <td style="border: 1px solid #000; padding: 3px 6px; text-align: right; font-size: 11pt;">3.0 m</td>
+          <td style="border: 1px solid #000; padding: 3px 6px; text-align: right; font-weight: bold; font-size: 11pt;">${r.area || '0'} m²</td>
+        </tr>
+      `;
+
+      const photosHTML = (r.photos && r.photos.length > 0) ? `
+        <div class="print-page-break" style="page-break-before: always; break-before: page; margin-top: 20px; padding-top: 10px;">
+          <div style="text-align: center; font-weight: bold; font-size: 12.5pt; text-transform: uppercase; margin-bottom: 12px;">
+            PHỤ LỤC: HÌNH ẢNH THỰC TẾ PHÁT DỌN VỆ SINH TUYẾN HÀNG RÀO ĐIỆN
+          </div>
+          <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;">
+            ${r.photos.map((p, i) => `
+              <div style="text-align: center; border: 1px solid #777; padding: 5px; background: #fff; border-radius: 3px;">
+                <img src="${p}" style="max-width: 100%; height: 210px; object-fit: contain; display: block; margin: 0 auto;" />
+                <div style="font-size: 10.5pt; font-style: italic; margin-top: 4px; color: #000;">Hình ${i+1}: Ảnh kiểm tra sau phát dọn thực bì</div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      ` : '';
+
+      return `
+        <div class="a4-document-content" style="font-family: 'Times New Roman', Times, serif; font-size: 12pt; line-height: 1.28; color: #000000; background: #ffffff; text-align: justify;">
+          <div class="a4-page-main" style="page-break-inside: avoid; break-inside: avoid;">
+            <table style="width: 100%; border-collapse: collapse; margin-bottom: 8px;">
+              <tr>
+                <td style="width: 44%; text-align: center; vertical-align: top; padding: 0;">
+                  <div style="font-weight: bold; font-size: 11pt; text-transform: uppercase;">CHI CỤC KIỂM LÂM ĐỒNG NAI</div>
+                  <div style="font-weight: bold; font-size: 11pt; text-transform: uppercase;">ĐỘI BẢO TRÌ HÀNG RÀO ĐIỆN</div>
+                  <div style="font-size: 11pt; margin-top: 2px;">Số: ....../BB-VS</div>
+                </td>
+                <td style="width: 56%; text-align: center; vertical-align: top; padding: 0;">
+                  <div style="font-weight: bold; font-size: 11.5pt; text-transform: uppercase;">CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM</div>
+                  <div style="font-weight: bold; font-size: 12pt;">Độc lập - Tự do - Hạnh phúc</div>
+                  <div style="border-bottom: 1.5px solid #000; width: 150px; margin: 2px auto 4px auto;"></div>
+                  <div style="font-style: italic; font-size: 11.5pt;">
+                    Đồng Nai, ngày ${ngayStr} tháng ${thangStr} năm ${namStr}
+                  </div>
+                </td>
+              </tr>
+            </table>
+
+            <div style="text-align: center; margin: 8px 0 8px 0;">
+              <div style="font-weight: bold; font-size: 14pt; text-transform: uppercase;">BIÊN BẢN</div>
+              <div style="font-weight: bold; font-size: 12pt; margin-top: 2px; line-height: 1.3;">
+                Ghi nhận kết quả thực hiện công việc tuyến hàng rào điện thuộc<br/>
+                Dự án khẩn cấp bảo tồn Voi tỉnh Đồng Nai trên địa bàn quản lý của ${r.loc || r.tuyen || '…………………………………………….'}
+              </div>
+            </div>
+
+            <div style="text-align: justify; margin-bottom: 5px; font-style: italic; text-indent: 1cm; font-size: 11.5pt;">
+              Thực hiện nội dung Quyết định số 704/QĐ-SNNMT ngày 30/6/2026 của Sở Nông nghiệp và Môi trường về việc Phê duyệt điều chỉnh, bổ sung Điều 1 Quyết định số 595/QĐ-SNNMT ngày 30/3/2026 về việc phê duyệt kế hoạch và dự toán kinh phí nhiệm vụ “quản lý, bảo vệ và vận hành các công trình xây dựng để bảo tồn Voi châu Á tại Đồng Nai năm 2026" của Chi cục Kiểm lâm;
+            </div>
+
+            <div style="margin-bottom: 5px; text-indent: 1cm;">
+              Hôm nay, ngày <b>${ngayStr}</b> tháng <b>${thangStr}</b> năm <b>${namStr}</b>, tại: <b>${r.loc || r.tuyen || '...........................................................................'}</b>, chúng tôi gồm:
+            </div>
+
+            <div style="font-weight: bold; margin-top: 4px;">I. Thành phần tham dự</div>
+            <div style="margin-left: 0.4cm; margin-bottom: 4px;">
+              <div>1. <b>Đại diện đơn vị bảo trì:</b> ${r.ddBt || '...................................................'}</div>
+              <div>2. <b>Các cá nhân thực hiện phát dọn:</b> ${r.workers || '...........................................................................................'}</div>
+              <div>3. <b>Đại diện đơn vị chủ rừng / Kiểm lâm:</b> ${r.ddCr || '...................................................'}</div>
+            </div>
+
+            <div style="font-weight: bold; margin-top: 5px;">II. Nội dung ghi nhận kết quả vệ sinh:</div>
+            <div style="margin-left: 0.4cm; margin-bottom: 4px;">
+              <div>- <b>Tuyến hàng rào được vệ sinh:</b> <b>${r.tuyen || '...................................................'}</b></div>
+              <div>- <b>Tổng chiều dài thực hiện:</b> <b>${r.len || '0'} m</b> | <b>Tổng diện tích phát dọn:</b> <b>${r.area || '0'} m²</b> <i>(${((parseFloat(r.area) || 0) / 10000).toFixed(4)} ha)</i></div>
+              
+              <div style="margin-top: 4px; font-weight: bold;">Chi tiết từng phân đoạn phát dọn:</div>
+              <table style="width: 100%; border-collapse: collapse; margin-top: 3px; margin-bottom: 4px; font-size: 11pt;">
+                <thead>
+                  <tr style="background: #f2f2f2;">
+                    <th style="border: 1px solid #000; padding: 3px; width: 40px; text-align: center;">STT</th>
+                    <th style="border: 1px solid #000; padding: 3px; text-align: center;">Phân đoạn trụ</th>
+                    <th style="border: 1px solid #000; padding: 3px; width: 85px; text-align: center;">Chiều dài</th>
+                    <th style="border: 1px solid #000; padding: 3px; width: 85px; text-align: center;">Bề rộng</th>
+                    <th style="border: 1px solid #000; padding: 3px; width: 95px; text-align: center;">Diện tích</th>
+                  </tr>
+                </thead>
+                <tbody>${doanRows}</tbody>
+              </table>
+              <div>- <b>Đánh giá chất lượng vệ sinh:</b> Đã phát dọn sạch thực bì dưới hành lang dây điện, không còn cành cây chạm vào dây rào, thông thoáng và đảm bảo an toàn phóng điện ngăn Voi.</div>
+            </div>
+
+            <div style="font-weight: bold; margin-top: 5px;">III. Kết luận</div>
+            <div style="margin-left: 0.4cm;">
+              <div style="text-indent: 0.6cm;">Qua ghi nhận, các thành phần tham dự cùng thống nhất kết luận nghiệm thu khối lượng vệ sinh thực bì theo kế hoạch.</div>
+            </div>
+
+            <div style="margin-top: 6px; font-style: italic; text-indent: 1cm; font-size: 11.5pt;">
+              Biên bản kết thúc cùng ngày và được thông qua, thống nhất. Biên bản được lập thành 03 bản, Đơn vị vệ sinh giữ 01 bản, đơn vị chủ rừng 01 bản và lưu hồ sơ thanh quyết toán 01 bản./.
+            </div>
+
+            <table style="width: 100%; border-collapse: collapse; margin-top: 12px; text-align: center; page-break-inside: avoid;">
+              <tr>
+                <td style="width: 33.3%; font-weight: bold; vertical-align: top; font-size: 11.5pt;">
+                  ĐD. ĐƠN VỊ VỆ SINH<br/>TUYẾN HÀNG RÀO ĐIỆN<br/>
+                  <span style="font-size: 10.5pt; font-weight: normal; font-style: italic;">(Ký, ghi rõ họ tên)</span>
+                  <div style="height: 48px;"></div>
+                </td>
+                <td style="width: 33.3%; font-weight: bold; vertical-align: top; font-size: 11.5pt;">
+                  ĐD. ĐƠN VỊ CHỦ RỪNG<br/><br/>
+                  <span style="font-size: 10.5pt; font-weight: normal; font-style: italic;">(Ký, ghi rõ họ tên)</span>
+                  <div style="height: 48px;"></div>
+                </td>
+                <td style="width: 33.4%; font-weight: bold; vertical-align: top; font-size: 11.5pt;">
+                  CÁC CÁ NHÂN THỰC HIỆN VỆ SINH<br/>TUYẾN HÀNG RÀO ĐIỆN<br/>
+                  <span style="font-size: 10.5pt; font-weight: normal; font-style: italic;">(Ký, ghi rõ họ tên)</span>
+                  <div style="height: 48px;"></div>
+                </td>
+              </tr>
+            </table>
+          </div>
+          ${photosHTML}
+        </div>
+      `;
+    }
+
+    function renderNhatKyHTML(r) {
+      const ngayParts = (r.date || '').split('-');
+      const ngayStr = ngayParts.length === 3 ? ngayParts[2] : '.....';
+      const thangStr = ngayParts.length === 3 ? ngayParts[1] : '.....';
+      const namStr = ngayParts.length === 3 ? ngayParts[0] : '2026';
+
+      return `
+        <div class="a4-document-content" style="font-family: 'Times New Roman', Times, serif; font-size: 12pt; line-height: 1.28; color: #000000; background: #ffffff; text-align: justify;">
+          <div class="a4-page-main" style="page-break-inside: avoid; break-inside: avoid;">
+            <div style="text-align: center; margin-bottom: 10px; border-bottom: 2px solid #000; padding-bottom: 6px;">
+              <div style="font-weight: bold; font-size: 14pt; text-transform: uppercase;">NHẬT KÝ THI CÔNG XÂY DỰNG CÔNG TRÌNH</div>
+              <div style="font-size: 11.5pt; font-weight: bold; margin-top: 2px;">HẠNG MỤC: QUẢN LÝ BẢO VỆ VÀ VẬN HÀNH HÀNG RÀO ĐIỆN BẢO TỒN VOI</div>
+              <div style="font-style: italic; font-size: 11pt;">Địa điểm: Tỉnh Đồng Nai</div>
+            </div>
+
+            <table style="width: 100%; border-collapse: collapse; margin-bottom: 8px; font-size: 11.5pt;">
+              <tr>
+                <td style="width: 25%; font-weight: bold;">Chủ đầu tư:</td>
+                <td>Chi cục Kiểm lâm Tỉnh Đồng Nai</td>
+              </tr>
+              <tr>
+                <td style="font-weight: bold;">Tư vấn giám sát:</td>
+                <td>Ban Quản lý Dự án Bảo tồn Voi Đồng Nai</td>
+              </tr>
+              <tr>
+                <td style="font-weight: bold;">Nhà thầu thi công:</td>
+                <td>Đội Bảo trì & Vận hành Tuyến Hàng rào điện</td>
+              </tr>
+            </table>
+
+            <div style="background: #f2f2f2; padding: 4px 8px; font-weight: bold; border: 1px solid #333; margin-bottom: 8px; font-size: 11.5pt;">
+              NGÀY: ${ngayStr} THÁNG ${thangStr} NĂM ${namStr} | THỜI TIẾT: ${r.weather || 'Nắng ráo'}
+            </div>
+
+            <div style="font-weight: bold; font-size: 11.5pt;">1. CÔNG VIỆC THỰC HIỆN TRONG NGÀY:</div>
+            <div style="margin-left: 0.4cm; margin-bottom: 6px; border: 1px solid #666; padding: 6px; min-height: 70px; font-size: 11.5pt; background: #fafafa;">
+              ${(r.work || '').replace(/\n/g, '<br/>') || 'Tiến hành kiểm tra dọc tuyến, phát dọn thực bì hành lang dây điện và kiểm tra các vị trí xung yếu ngăn Voi.'}
+            </div>
+
+            <div style="font-weight: bold; font-size: 11.5pt;">2. NHẬN XÉT ĐÁNH GIÁ CỦA GIÁM SÁT / CHỦ ĐẦU TƯ:</div>
+            <div style="margin-left: 0.4cm; margin-bottom: 6px; border: 1px solid #666; padding: 6px; min-height: 50px; font-size: 11.5pt; background: #fafafa;">
+              ${(r.eval || '').replace(/\n/g, '<br/>') || 'Công tác thi công đảm bảo tiến độ và chất lượng theo yêu cầu của Chủ đầu tư.'}
+            </div>
+
+            <table style="width: 100%; border-collapse: collapse; margin-top: 18px; text-align: center; page-break-inside: avoid;">
+              <tr>
+                <td style="width: 50%; font-weight: bold; vertical-align: top; font-size: 11.5pt;">
+                  CÁN BỘ PHỤ TRÁCH THI CÔNG<br/>
+                  <span style="font-size: 10.5pt; font-weight: normal; font-style: italic;">(Ký, ghi rõ họ tên)</span>
+                  <div style="height: 48px;"></div>
+                </td>
+                <td style="width: 50%; font-weight: bold; vertical-align: top; font-size: 11.5pt;">
+                  CÁN BỘ GIÁM SÁT / CHỦ ĐẦU TƯ<br/>
+                  <span style="font-size: 10.5pt; font-weight: normal; font-style: italic;">(Ký, ghi rõ họ tên)</span>
+                  <div style="height: 48px;"></div>
+                </td>
+              </tr>
+            </table>
+          </div>
+        </div>
+      `;
+    }
+
+    function openPreviewModal(type, record) {
+      currentPreviewType = type;
+      currentPreviewRecord = record;
+
+      let html = '';
+      let title = 'Xem Trước Bản In A4';
+      if (type === 'baotri') {
+        html = renderBaoTriHTML(record);
+        title = 'Xem Trước: Biên Bản Bảo Trì Sự Cố (A4)';
+      } else if (type === 'vesinh') {
+        html = renderVeSinhHTML(record);
+        title = 'Xem Trước: Biên Bản Vệ Sinh Phát Dọn (A4)';
+      } else if (type === 'nhatky') {
+        html = renderNhatKyHTML(record);
+        title = 'Xem Trước: Nhật Ký Thi Công (A4)';
+      }
+
+      document.getElementById('pdf-preview-title').textContent = title;
+      document.getElementById('pdf-preview-sheet').innerHTML = html;
+      document.getElementById('pdf-preview-modal').classList.add('active');
+    }
+
+    function printCurrent(type) {
+      let rec = {};
+      if (type === 'baotri') {
+        rec = {
+          date: document.getElementById('bt-date').value,
+          time: document.getElementById('bt-time').value,
+          tuyen: document.getElementById('bt-tuyen').value,
+          loc: document.getElementById('bt-location').value,
+          suCo: document.getElementById('bt-su-co').value || document.getElementById('bt-su-co-sel').value,
+          reason: document.getElementById('bt-reason').value,
+          ddBt: document.getElementById('bt-dd-bt').value,
+          ddCr: document.getElementById('bt-dd-cr').value,
+          ddKl: document.getElementById('bt-dd-kl').value,
+          photos: photosState.baotri
+        };
+      } else if (type === 'vesinh') {
+        const cacDoan = [];
+        document.querySelectorAll('#vs-rows-container > div').forEach(r => {
+          const from = r.querySelector('.vs-from')?.value || '';
+          const to = r.querySelector('.vs-to')?.value || '';
+          const l = r.querySelector('.vs-len')?.value || '0';
+          const w = r.querySelector('.vs-wid')?.value || '3.0';
+          const a = (parseFloat(l) * parseFloat(w)).toFixed(1);
+          if (from || to || l !== '0') {
+            cacDoan.push({ from: from, to: to, length: l, width: w, area: a });
+          }
+        });
+        rec = {
+          date: document.getElementById('vs-date').value,
+          tuyen: document.getElementById('vs-tuyen').value,
+          loc: document.getElementById('vs-location').value,
+          workers: document.getElementById('vs-workers').value,
+          ddBt: document.getElementById('vs-dd-bt')?.value || '',
+          ddCr: document.getElementById('vs-dd-cr')?.value || '',
+          len: document.getElementById('vs-sum-len').textContent,
+          area: document.getElementById('vs-sum-area').textContent,
+          cacDoanVeSinh: cacDoan,
+          photos: photosState.vesinh
+        };
+      } else if (type === 'nhatky') {
+        rec = {
+          date: document.getElementById('nk-date').value,
+          weather: document.getElementById('nk-weather').value,
+          work: document.getElementById('nk-work').value,
+          eval: document.getElementById('nk-eval').value
+        };
+      }
+      openPreviewModal(type, rec);
+    }
+
+    function printSaved(idx) {
+      const list = JSON.parse(localStorage.getItem('qlbv_records') || '[]');
+      const item = list[idx];
+      if (!item) return;
+      openPreviewModal(item.type, item);
+    }
+
+    function printFromPreview() {
+      if (!currentPreviewRecord || !currentPreviewType) return;
+      const fileName = getDocumentPdfFileName(currentPreviewType);
+      
+      const originalTitle = document.title;
+      document.title = fileName;
+
+      let html = '';
+      if (currentPreviewType === 'baotri') html = renderBaoTriHTML(currentPreviewRecord);
+      else if (currentPreviewType === 'vesinh') html = renderVeSinhHTML(currentPreviewRecord);
+      else if (currentPreviewType === 'nhatky') html = renderNhatKyHTML(currentPreviewRecord);
+
+      let printArea = document.getElementById('printable-area');
+      if (!printArea) {
+        printArea = document.createElement('div');
+        printArea.id = 'printable-area';
+        document.body.appendChild(printArea);
+      }
+      printArea.innerHTML = html;
+
+      const restoreTitle = () => {
+        document.title = originalTitle;
+        window.removeEventListener('afterprint', restoreTitle);
+      };
+      window.addEventListener('afterprint', restoreTitle);
+
+      setTimeout(() => {
+        window.print();
+        setTimeout(restoreTitle, 3000);
+      }, 150);
+    }
+
+    function exportCurrentPDF() {
+      printFromPreview();
+    }
+
+    // Modal & Toast Helpers
+    document.getElementById('user-pill-btn').addEventListener('click', () => {
+      document.getElementById('settings-modal').classList.add('active');
+    });
+    function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.style.display = 'block';
+      setTimeout(() => { t.style.display = 'none'; }, 2500);
+    }
+
+    // Đổi giao diện
+    document.getElementById('theme-btn').addEventListener('click', () => {
+      const cur = document.documentElement.getAttribute('data-theme');
+      const next = cur === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', next);
+      document.getElementById('theme-btn').textContent = next === 'dark' ? '☀️' : '🌙';
+    });
+  </script>
+</body>
+</html>
