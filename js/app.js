@@ -1096,22 +1096,65 @@ const App = {
   },
 
   /**
-   * Quản lý Giao diện Dark/Light & High Contrast
+   * Quản lý 05 Bộ Giao Diện Lâm Nghiệp Chuyên Nghiệp (5 UI Themes)
+   * 1. emerald  - 🌿 Rừng Nguyên Sinh (Emerald Eco Pro)
+   * 2. pine     - 🌲 Rừng Thông Cát Tiên (Nordic Pine & Sage)
+   * 3. earth    - 🍂 Đất Rừng Miền Đông (Earth Wood & Safari)
+   * 4. mist     - 🌊 Thác Mai - Sương Mù (Mist Glass & Ocean Jade)
+   * 5. midnight - 🌙 Tuần Tra Đêm (Midnight Ranger / High-Contrast Dark)
    */
   setupTheme() {
-    const themeBtn = document.getElementById('theme-toggle-btn');
-    const savedTheme = localStorage.getItem('qlbv_theme') || 'light';
-    document.documentElement.setAttribute('data-theme', savedTheme);
+    const savedThemeStyle = localStorage.getItem('qlbv_theme_style') || 'emerald';
+    this.setThemeStyle(savedThemeStyle, false);
 
-    if (themeBtn) {
-      themeBtn.textContent = savedTheme === 'dark' ? '☀️' : '🌙';
-      themeBtn.addEventListener('click', () => {
-        const current = document.documentElement.getAttribute('data-theme');
-        const next = current === 'dark' ? 'light' : 'dark';
-        document.documentElement.setAttribute('data-theme', next);
-        localStorage.setItem('qlbv_theme', next);
-        themeBtn.textContent = next === 'dark' ? '☀️' : '🌙';
+    const themeToggleBtn = document.getElementById('theme-toggle-btn');
+    if (themeToggleBtn) {
+      themeToggleBtn.addEventListener('click', () => {
+        this.openThemePicker();
       });
+    }
+  },
+
+  openThemePicker() {
+    const currentTheme = document.documentElement.getAttribute('data-theme-style') || 'emerald';
+    document.querySelectorAll('.theme-card-option').forEach(card => {
+      const t = card.getAttribute('data-theme-target');
+      card.classList.toggle('active', t === currentTheme);
+    });
+    this.showModal('theme-picker-modal');
+  },
+
+  setThemeStyle(themeName, showToastMsg = true) {
+    const validThemes = ['emerald', 'pine', 'earth', 'mist', 'midnight'];
+    if (!validThemes.includes(themeName)) themeName = 'emerald';
+
+    document.documentElement.setAttribute('data-theme-style', themeName);
+    localStorage.setItem('qlbv_theme_style', themeName);
+
+    // Đồng bộ thuộc tính dark nếu chọn midnight
+    if (themeName === 'midnight') {
+      document.documentElement.setAttribute('data-theme', 'dark');
+    } else {
+      document.documentElement.removeAttribute('data-theme');
+    }
+
+    // Cập nhật trạng thái card trong modal
+    document.querySelectorAll('.theme-card-option').forEach(card => {
+      const t = card.getAttribute('data-theme-target');
+      card.classList.toggle('active', t === themeName);
+    });
+
+    const themeNamesMap = {
+      emerald: '🌿 Rừng Nguyên Sinh (Emerald Eco Pro)',
+      pine: '🌲 Rừng Thông Cát Tiên (Nordic Pine & Sage)',
+      earth: '🍂 Đất Rừng Miền Đông (Earth Wood & Safari)',
+      mist: '🌊 Thác Mai - Sương Mù (Mist Glass & Ocean Jade)',
+      midnight: '🌙 Tuần Tra Đêm (Midnight Ranger)'
+    };
+
+    if (showToastMsg) {
+      this.showToast(`🎨 Đã áp dụng giao diện: ${themeNamesMap[themeName]}`, 'success');
+      this.hideModal('theme-picker-modal');
     }
   },
 

@@ -47,8 +47,8 @@
         <span>Đăng nhập</span>
       </div>
 
-      <button type="button" id="theme-toggle-btn" class="btn btn-secondary btn-sm" title="Đổi giao diện Sáng/Tối">
-        🌙
+      <button type="button" id="theme-toggle-btn" class="theme-switcher-btn" onclick="App.openThemePicker()" title="Chọn 05 Phong Cách Giao Diện Lâm Nghiệp">
+        🎨 <span>Giao Diện</span>
       </button>
     </div>
   </header>
@@ -841,8 +841,94 @@
           </button>
         </div>
       </div>
+  <!-- ================= MODAL: CHỌN 05 BỘ GIAO DIỆN LÂM NGHIỆP ================= -->
+  <div id="theme-picker-modal" class="modal-overlay">
+    <div class="modal-dialog" style="max-width: 680px;">
+      <div class="modal-header">
+        <h3 style="font-weight:700; color:var(--primary); display:flex; align-items:center; gap:0.4rem;">
+          🎨 Tùy Chọn Giao Diện Lâm Nghiệp Hiện Đại
+        </h3>
+        <button type="button" class="modal-close-btn" style="background:none; border:none; font-size:1.25rem; cursor:pointer;" onclick="App.hideModal('theme-picker-modal')">✕</button>
+      </div>
+      <div class="modal-body">
+        <div style="font-size:0.85rem; color:var(--text-muted); margin-bottom:0.85rem; line-height:1.4;">
+          🌲 Ứng dụng cung cấp <b>05 phong cách thiết kế độc quyền</b> chuẩn Lâm Nghiệp & Bảo tồn Động vật Hoang dã. Bấm chọn giao diện bạn muốn sử dụng:
+        </div>
+
+        <div class="theme-picker-grid">
+          <!-- 1. Emerald Eco Pro -->
+          <div class="theme-card-option" data-theme-target="emerald" onclick="App.setThemeStyle('emerald')">
+            <div class="theme-card-header">
+              <span class="theme-card-title">🌿 Rừng Nguyên Sinh</span>
+              <span class="theme-active-badge">Đang dùng</span>
+            </div>
+            <div class="theme-card-desc">Phong cách Emerald Eco Pro hiện đại, bóng đổ mềm mại, tông xanh ngọc bích chuẩn ứng dụng quốc tế.</div>
+            <div class="theme-color-palette">
+              <span class="theme-swatch" style="background:#15803d;" title="Chính: #15803d"></span>
+              <span class="theme-swatch" style="background:#22c55e;" title="Phụ: #22c55e"></span>
+              <span class="theme-swatch" style="background:#f3f7f4; border-color:#cbd5e1;" title="Nền: #f3f7f4"></span>
+            </div>
+          </div>
+
+          <!-- 2. Nordic Pine & Sage -->
+          <div class="theme-card-option" data-theme-target="pine" onclick="App.setThemeStyle('pine')">
+            <div class="theme-card-header">
+              <span class="theme-card-title">🌲 Rừng Thông Cát Tiên</span>
+              <span class="theme-active-badge">Đang dùng</span>
+            </div>
+            <div class="theme-card-desc">Phong cách Pine & Sage Bắc Âu thanh lịch, đường nét tinh tế, viền mảnh dịu mắt khi làm việc lâu.</div>
+            <div class="theme-color-palette">
+              <span class="theme-swatch" style="background:#065f46;" title="Chính: #065f46"></span>
+              <span class="theme-swatch" style="background:#14b8a6;" title="Phụ: #14b8a6"></span>
+              <span class="theme-swatch" style="background:#f4fbf7; border-color:#cbd5e1;" title="Nền: #f4fbf7"></span>
+            </div>
+          </div>
+
+          <!-- 3. Earth Wood & Safari -->
+          <div class="theme-card-option" data-theme-target="earth" onclick="App.setThemeStyle('earth')">
+            <div class="theme-card-header">
+              <span class="theme-card-title">🍂 Đất Rừng Miền Đông</span>
+              <span class="theme-active-badge">Đang dùng</span>
+            </div>
+            <div class="theme-card-desc">Tông màu gỗ gụ, đất rừng ấm áp & safari kiểm lâm. Độ tương phản cao, chống chói ngoài ánh sáng mặt trời.</div>
+            <div class="theme-color-palette">
+              <span class="theme-swatch" style="background:#78350f;" title="Chính: #78350f"></span>
+              <span class="theme-swatch" style="background:#2d6a4f;" title="Phụ: #2d6a4f"></span>
+              <span class="theme-swatch" style="background:#faf7f2; border-color:#cbd5e1;" title="Nền: #faf7f2"></span>
+            </div>
+          </div>
+
+          <!-- 4. Mist Glass & Ocean Jade -->
+          <div class="theme-card-option" data-theme-target="mist" onclick="App.setThemeStyle('mist')">
+            <div class="theme-card-header">
+              <span class="theme-card-title">🌊 Thác Mai - Sương Mù</span>
+              <span class="theme-active-badge">Đang dùng</span>
+            </div>
+            <div class="theme-card-desc">Hiệu ứng Kính Mờ (Glassmorphism), thẻ bán trong suốt sang trọng trên nền xanh sông Đồng Nai tươi mới.</div>
+            <div class="theme-color-palette">
+              <span class="theme-swatch" style="background:#0f766e;" title="Chính: #0f766e"></span>
+              <span class="theme-swatch" style="background:#06b6d4;" title="Phụ: #06b6d4"></span>
+              <span class="theme-swatch" style="background:#f0fdfa; border-color:#cbd5e1;" title="Nền: #f0fdfa"></span>
+            </div>
+          </div>
+
+          <!-- 5. Midnight Ranger -->
+          <div class="theme-card-option" data-theme-target="midnight" onclick="App.setThemeStyle('midnight')">
+            <div class="theme-card-header">
+              <span class="theme-card-title">🌙 Tuần Tra Đêm</span>
+              <span class="theme-active-badge">Đang dùng</span>
+            </div>
+            <div class="theme-card-desc">Giao diện tối chuyên dụng tuần tra đêm trong rừng, viền phát quang bảo vệ mắt và tiết kiệm pin điện thoại tối đa.</div>
+            <div class="theme-color-palette">
+              <span class="theme-swatch" style="background:#10b981;" title="Chính: #10b981"></span>
+              <span class="theme-swatch" style="background:#0e2419;" title="Thẻ: #0e2419"></span>
+              <span class="theme-swatch" style="background:#06130d; border-color:#334155;" title="Nền: #06130d"></span>
+            </div>
+          </div>
+        </div>
+      </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" onclick="App.hideModal('val-modal')">Đóng</button>
+        <button type="button" class="btn btn-secondary" onclick="App.hideModal('theme-picker-modal')">Đóng</button>
       </div>
     </div>
   </div>
