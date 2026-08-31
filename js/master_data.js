@@ -111,3 +111,68 @@ const MasterData = {
     });
   }
 };
+
+/**
+ * DYNAMIC VALIDATION & AUTO-LEARN STORE
+ */
+const ValidationStore = {
+  defaults: {
+    tuyen: [],
+    suCo: [],
+    nguyenNhan: [],
+    thietBi: [],
+    hoten: [],
+    chucvu: [
+      "Đội trưởng", "Đội phó", "Kỹ thuật viên", "Công nhân bảo trì",
+      "Trưởng trạm BVR", "Nhân viên BVR", "Cán bộ quản lý",
+      "Kiểm lâm viên địa bàn", "Trạm trưởng KL", "Phó Trạm trưởng KL", "Cán bộ Thanh tra"
+    ]
+  },
+  get(cat) {
+    const stored = localStorage.getItem('qlbv_val_' + cat);
+    if (stored) {
+      try { return JSON.parse(stored); } catch (e) {}
+    }
+    return this.defaults[cat] || [];
+  },
+  save(cat, list) {
+    localStorage.setItem('qlbv_val_' + cat, JSON.stringify(list));
+    this.refreshDatalists();
+  },
+  learn(cat, val) {
+    if (!val || typeof val !== 'string') return;
+    const clean = val.trim();
+    if (!clean) return;
+    let list = this.get(cat);
+    if (!list.includes(clean)) {
+      list.push(clean);
+      this.save(cat, list);
+    }
+  },
+  remove(cat, val) {
+    let list = this.get(cat).filter(x => x !== val);
+    this.save(cat, list);
+  },
+  clear(cat) {
+    localStorage.removeItem('qlbv_val_' + cat);
+    this.refreshDatalists();
+  },
+  refreshDatalists() {
+    const populateDL = (dlId, cat) => {
+      let dl = document.getElementById(dlId);
+      if (!dl) {
+        dl = document.createElement('datalist');
+        dl.id = dlId;
+        document.body.appendChild(dl);
+      }
+      const items = this.get(cat);
+      dl.innerHTML = items.map(item => `<option value="${item}">`).join('');
+    };
+    populateDL('dl-tuyen', 'tuyen');
+    populateDL('dl-su-co', 'suCo');
+    populateDL('dl-nguyen-nhan', 'nguyenNhan');
+    populateDL('dl-thietbi', 'thietBi');
+    populateDL('dl-hoten', 'hoten');
+    populateDL('dl-chucvu', 'chucvu');
+  }
+};

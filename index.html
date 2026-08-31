@@ -135,7 +135,14 @@
             <div class="launcher-desc">Phân quyền tài khoản (Admin)</div>
           </div>
 
-          <!-- 6. Cài Đặt & Đổi Mật Khẩu -->
+          <!-- 6. Quản Lý Danh Mục Gợi Ý & Pin -->
+          <div class="launcher-tile" onclick="App.openValModal()">
+            <div class="launcher-icon-box" style="background:#fef3c7; color:#b45309;">📌</div>
+            <div class="launcher-title">Danh Mục & Gợi Ý</div>
+            <div class="launcher-desc">Ghim & sửa danh mục tự động</div>
+          </div>
+
+          <!-- 7. Cài Đặt & Đổi Mật Khẩu -->
           <div class="launcher-tile" onclick="App.showModal('user-settings-modal')">
             <div class="launcher-icon-box" style="background:#f1f5f9; color:#475569;">⚙️</div>
             <div class="launcher-title">Cài Đặt Tài Khoản</div>
@@ -165,8 +172,8 @@
               <input type="time" id="bt-gio-lap" class="form-control" required />
             </div>
             <div class="form-group">
-              <label class="form-label required" for="bt-tuyen-select">Tuyến hàng rào điện</label>
-              <select id="bt-tuyen-select" class="form-select" required></select>
+              <label class="form-label required" for="bt-tuyen-input">Tuyến hàng rào điện</label>
+              <input type="text" id="bt-tuyen-input" class="form-control" list="dl-tuyen" placeholder="Nhập hoặc chọn Tuyến hàng rào..." required autocomplete="off" />
             </div>
             <div class="form-group">
               <label class="form-label" for="bt-dia-diem">Vị trí cụ thể / Trụ số</label>
@@ -174,38 +181,90 @@
             </div>
           </div>
 
-          <!-- Thành phần tham gia -->
-          <div style="font-weight: 700; margin: 1.25rem 0 0.5rem 0; color: var(--primary);">
-            I. THÀNH PHẦN THAM GIA
+          <!-- I. Thành phần tham gia (3 Đơn vị x 3 Đại diện: Họ tên + Chức vụ) -->
+          <div style="font-weight: 700; margin: 1.25rem 0 0.5rem 0; color: var(--primary); display:flex; justify-content:space-between; align-items:center;">
+            <span>I. THÀNH PHẦN THAM GIA (Họ tên & Chức vụ)</span>
+            <small style="color:var(--text-muted); font-weight:normal; font-size:0.8rem;">* Nhập đến 3 người mỗi đơn vị</small>
           </div>
-          <div class="form-grid">
-            <div class="form-group">
-              <label class="form-label" for="bt-dd-baotri">Đại diện Đơn vị Bảo trì</label>
-              <input type="text" id="bt-dd-baotri" class="form-control" placeholder="Họ tên - Chức vụ" />
-            </div>
-            <div class="form-group">
-              <label class="form-label" for="bt-dd-churung">Đại diện Đơn vị Chủ rừng</label>
-              <input type="text" id="bt-dd-churung" class="form-control" placeholder="Họ tên - Chức vụ" />
-            </div>
-            <div class="form-group">
-              <label class="form-label" for="bt-dd-kiemlam">Đại diện Cơ quan Kiểm lâm</label>
-              <input type="text" id="bt-dd-kiemlam" class="form-control" placeholder="Họ tên - Chức vụ" />
+
+          <!-- 1. Đơn vị Bảo trì -->
+          <div class="rep-card-group">
+            <div class="rep-card-header">🛠️ 1. Đại diện Đơn vị Bảo trì</div>
+            <div class="rep-grid-3">
+              <div class="rep-cell">
+                <span class="rep-label">Đại diện 1:</span>
+                <input type="text" id="bt-dd-bt-name-1" class="form-control" placeholder="Họ và tên (Đại diện 1)" list="dl-hoten" />
+                <input type="text" id="bt-dd-bt-pos-1" class="form-control" placeholder="Chức vụ (vd: Đội trưởng)" list="dl-chucvu" />
+              </div>
+              <div class="rep-cell">
+                <span class="rep-label">Đại diện 2:</span>
+                <input type="text" id="bt-dd-bt-name-2" class="form-control" placeholder="Họ và tên (Đại diện 2)" list="dl-hoten" />
+                <input type="text" id="bt-dd-bt-pos-2" class="form-control" placeholder="Chức vụ (vd: Kỹ thuật viên)" list="dl-chucvu" />
+              </div>
+              <div class="rep-cell">
+                <span class="rep-label">Đại diện 3:</span>
+                <input type="text" id="bt-dd-bt-name-3" class="form-control" placeholder="Họ và tên (Đại diện 3)" list="dl-hoten" />
+                <input type="text" id="bt-dd-bt-pos-3" class="form-control" placeholder="Chức vụ (vd: Công nhân)" list="dl-chucvu" />
+              </div>
             </div>
           </div>
 
-          <!-- Nội dung sự cố -->
+          <!-- 2. Đơn vị Chủ rừng -->
+          <div class="rep-card-group">
+            <div class="rep-card-header">🌲 2. Đại diện Đơn vị Chủ rừng</div>
+            <div class="rep-grid-3">
+              <div class="rep-cell">
+                <span class="rep-label">Đại diện 1:</span>
+                <input type="text" id="bt-dd-cr-name-1" class="form-control" placeholder="Họ và tên (Đại diện 1)" list="dl-hoten" />
+                <input type="text" id="bt-dd-cr-pos-1" class="form-control" placeholder="Chức vụ (vd: Trưởng trạm BVR)" list="dl-chucvu" />
+              </div>
+              <div class="rep-cell">
+                <span class="rep-label">Đại diện 2:</span>
+                <input type="text" id="bt-dd-cr-name-2" class="form-control" placeholder="Họ và tên (Đại diện 2)" list="dl-hoten" />
+                <input type="text" id="bt-dd-cr-pos-2" class="form-control" placeholder="Chức vụ (vd: Nhân viên BVR)" list="dl-chucvu" />
+              </div>
+              <div class="rep-cell">
+                <span class="rep-label">Đại diện 3:</span>
+                <input type="text" id="bt-dd-cr-name-3" class="form-control" placeholder="Họ và tên (Đại diện 3)" list="dl-hoten" />
+                <input type="text" id="bt-dd-cr-pos-3" class="form-control" placeholder="Chức vụ (vd: Cán bộ địa bàn)" list="dl-chucvu" />
+              </div>
+            </div>
+          </div>
+
+          <!-- 3. Cơ quan Kiểm lâm -->
+          <div class="rep-card-group">
+            <div class="rep-card-header">🦅 3. Đại diện Cơ quan Kiểm lâm sở tại</div>
+            <div class="rep-grid-3">
+              <div class="rep-cell">
+                <span class="rep-label">Đại diện 1:</span>
+                <input type="text" id="bt-dd-kl-name-1" class="form-control" placeholder="Họ và tên (Đại diện 1)" list="dl-hoten" />
+                <input type="text" id="bt-dd-kl-pos-1" class="form-control" placeholder="Chức vụ (vd: Kiểm lâm viên địa bàn)" list="dl-chucvu" />
+              </div>
+              <div class="rep-cell">
+                <span class="rep-label">Đại diện 2:</span>
+                <input type="text" id="bt-dd-kl-name-2" class="form-control" placeholder="Họ và tên (Đại diện 2)" list="dl-hoten" />
+                <input type="text" id="bt-dd-kl-pos-2" class="form-control" placeholder="Chức vụ (vd: Phó Trạm trưởng KL)" list="dl-chucvu" />
+              </div>
+              <div class="rep-cell">
+                <span class="rep-label">Đại diện 3:</span>
+                <input type="text" id="bt-dd-kl-name-3" class="form-control" placeholder="Họ và tên (Đại diện 3)" list="dl-hoten" />
+                <input type="text" id="bt-dd-kl-pos-3" class="form-control" placeholder="Chức vụ (vd: Cán bộ Thanh tra)" list="dl-chucvu" />
+              </div>
+            </div>
+          </div>
+
+          <!-- II. Nội dung xác minh sự cố -->
           <div style="font-weight: 700; margin: 1.25rem 0 0.5rem 0; color: var(--primary);">
             II. NỘI DUNG XÁC MINH SỰ CỐ
           </div>
           <div class="form-grid">
             <div class="form-group full-width">
-              <label class="form-label required" for="bt-su-co-select">Sự cố xảy ra (Chọn nhanh hoặc gõ)</label>
-              <select id="bt-su-co-select" class="form-select" style="margin-bottom: 4px;"></select>
-              <input type="text" id="bt-su-co-input" class="form-control" placeholder="Hoặc nhập chi tiết sự cố tại đây..." />
+              <label class="form-label required" for="bt-su-co-input">Sự cố xảy ra trên tuyến hàng rào</label>
+              <input type="text" id="bt-su-co-input" class="form-control" list="dl-su-co" placeholder="Nhập sự cố hoặc chọn từ gợi ý..." required autocomplete="off" />
             </div>
             <div class="form-group full-width">
               <label class="form-label" for="bt-nguyen-nhan">Nguyên nhân sự cố</label>
-              <textarea id="bt-nguyen-nhan" class="form-textarea" placeholder="Ví dụ: Cây rừng gãy đè đứt dây cáp làm mất xung điện..."></textarea>
+              <textarea id="bt-nguyen-nhan" class="form-textarea" list="dl-nguyen-nhan" placeholder="Ví dụ: Cây rừng gãy đè đứt dây cáp làm mất xung điện..."></textarea>
             </div>
           </div>
 
@@ -306,8 +365,8 @@
               <input type="time" id="vs-gio-lap" class="form-control" required />
             </div>
             <div class="form-group">
-              <label class="form-label required" for="vs-tuyen-select">Tuyến hàng rào điện</label>
-              <select id="vs-tuyen-select" class="form-select" required></select>
+              <label class="form-label required" for="vs-tuyen-input">Tuyến hàng rào điện</label>
+              <input type="text" id="vs-tuyen-input" class="form-control" list="dl-tuyen" placeholder="Nhập hoặc chọn Tuyến hàng rào..." required autocomplete="off" />
             </div>
             <div class="form-group">
               <label class="form-label" for="vs-dia-diem">Địa điểm / Tiểu khu</label>
@@ -315,24 +374,84 @@
             </div>
           </div>
 
-          <!-- Đại diện & Nhân công -->
+          <!-- Đại diện (3 Đơn vị x 3 Đại diện) & Nhân công -->
           <div style="font-weight: 700; margin: 1.25rem 0 0.5rem 0; color: var(--primary);">
             I. THÀNH PHẦN THAM GIA & NHÂN CÔNG
           </div>
+
+          <!-- 1. Đơn vị Bảo trì -->
+          <div class="rep-card-group">
+            <div class="rep-card-header">🛠️ 1. Đại diện Đơn vị Bảo trì</div>
+            <div class="rep-grid-3">
+              <div class="rep-cell">
+                <span class="rep-label">Đại diện 1:</span>
+                <input type="text" id="vs-dd-bt-name-1" class="form-control" placeholder="Họ và tên (Đại diện 1)" list="dl-hoten" />
+                <input type="text" id="vs-dd-bt-pos-1" class="form-control" placeholder="Chức vụ" list="dl-chucvu" />
+              </div>
+              <div class="rep-cell">
+                <span class="rep-label">Đại diện 2:</span>
+                <input type="text" id="vs-dd-bt-name-2" class="form-control" placeholder="Họ và tên (Đại diện 2)" list="dl-hoten" />
+                <input type="text" id="vs-dd-bt-pos-2" class="form-control" placeholder="Chức vụ" list="dl-chucvu" />
+              </div>
+              <div class="rep-cell">
+                <span class="rep-label">Đại diện 3:</span>
+                <input type="text" id="vs-dd-bt-name-3" class="form-control" placeholder="Họ và tên (Đại diện 3)" list="dl-hoten" />
+                <input type="text" id="vs-dd-bt-pos-3" class="form-control" placeholder="Chức vụ" list="dl-chucvu" />
+              </div>
+            </div>
+          </div>
+
+          <!-- 2. Đơn vị Chủ rừng -->
+          <div class="rep-card-group">
+            <div class="rep-card-header">🌲 2. Đại diện Đơn vị Chủ rừng</div>
+            <div class="rep-grid-3">
+              <div class="rep-cell">
+                <span class="rep-label">Đại diện 1:</span>
+                <input type="text" id="vs-dd-cr-name-1" class="form-control" placeholder="Họ và tên (Đại diện 1)" list="dl-hoten" />
+                <input type="text" id="vs-dd-cr-pos-1" class="form-control" placeholder="Chức vụ" list="dl-chucvu" />
+              </div>
+              <div class="rep-cell">
+                <span class="rep-label">Đại diện 2:</span>
+                <input type="text" id="vs-dd-cr-name-2" class="form-control" placeholder="Họ và tên (Đại diện 2)" list="dl-hoten" />
+                <input type="text" id="vs-dd-cr-pos-2" class="form-control" placeholder="Chức vụ" list="dl-chucvu" />
+              </div>
+              <div class="rep-cell">
+                <span class="rep-label">Đại diện 3:</span>
+                <input type="text" id="vs-dd-cr-name-3" class="form-control" placeholder="Họ và tên (Đại diện 3)" list="dl-hoten" />
+                <input type="text" id="vs-dd-cr-pos-3" class="form-control" placeholder="Chức vụ" list="dl-chucvu" />
+              </div>
+            </div>
+          </div>
+
+          <!-- 3. Cơ quan Kiểm lâm -->
+          <div class="rep-card-group">
+            <div class="rep-card-header">🦅 3. Đại diện Cơ quan Kiểm lâm sở tại</div>
+            <div class="rep-grid-3">
+              <div class="rep-cell">
+                <span class="rep-label">Đại diện 1:</span>
+                <input type="text" id="vs-dd-kl-name-1" class="form-control" placeholder="Họ và tên (Đại diện 1)" list="dl-hoten" />
+                <input type="text" id="vs-dd-kl-pos-1" class="form-control" placeholder="Chức vụ" list="dl-chucvu" />
+              </div>
+              <div class="rep-cell">
+                <span class="rep-label">Đại diện 2:</span>
+                <input type="text" id="vs-dd-kl-name-2" class="form-control" placeholder="Họ và tên (Đại diện 2)" list="dl-hoten" />
+                <input type="text" id="vs-dd-kl-pos-2" class="form-control" placeholder="Chức vụ" list="dl-chucvu" />
+              </div>
+              <div class="rep-cell">
+                <span class="rep-label">Đại diện 3:</span>
+                <input type="text" id="vs-dd-kl-name-3" class="form-control" placeholder="Họ và tên (Đại diện 3)" list="dl-hoten" />
+                <input type="text" id="vs-dd-kl-pos-3" class="form-control" placeholder="Chức vụ" list="dl-chucvu" />
+              </div>
+            </div>
+          </div>
+
           <div class="form-grid">
-            <div class="form-group">
-              <label class="form-label" for="vs-dd-baotri">Đại diện Đơn vị Bảo trì</label>
-              <input type="text" id="vs-dd-baotri" class="form-control" placeholder="Họ tên - Chức vụ" />
-            </div>
-            <div class="form-group">
-              <label class="form-label" for="vs-dd-churung">Đại diện Chủ rừng / Kiểm lâm</label>
-              <input type="text" id="vs-dd-churung" class="form-control" placeholder="Họ tên - Chức vụ" />
-            </div>
             <div class="form-group full-width">
               <label class="form-label" for="vs-nhan-cong">Danh sách Nhân công phát dọn</label>
               <input type="text" id="vs-nhan-cong" class="form-control" placeholder="Ví dụ: Nguyễn Văn A, Trần Văn B, Lê Văn C (Tổ 1)" />
             </div>
           </div>
+
 
           <!-- Chi tiết phân đoạn trụ -->
           <div style="display: flex; align-items: center; justify-content: space-between; margin: 1.25rem 0 0.5rem 0;">
@@ -672,6 +791,44 @@
     </div>
   </div>
 
+  <!-- ================= MODAL: QUẢN LÝ DANH MỤC GỢI Ý & PIN ================= -->
+  <div id="val-modal" class="modal-overlay">
+    <div class="modal-dialog" style="max-width: 560px;">
+      <div class="modal-header">
+        <h3 style="font-weight:700; color:var(--primary); display:flex; align-items:center; gap:0.4rem;">
+          📌 Quản Lý Danh Mục Gợi Ý & Pin
+        </h3>
+        <button type="button" class="modal-close-btn" style="background:none; border:none; font-size:1.25rem; cursor:pointer;" onclick="App.hideModal('val-modal')">✕</button>
+      </div>
+      <div class="modal-body">
+        <div style="font-size:0.83rem; color:var(--text-muted); margin-bottom:0.75rem; line-height:1.4;">
+          💡 Mọi nội dung bạn nhập khi lập biên bản sẽ <b>tự động học và lưu</b> vào danh mục. Bạn có thể thêm, bớt mục tại đây:
+        </div>
+        <div class="form-group" style="margin-bottom:0.75rem;">
+          <label class="form-label">Chọn nhóm danh mục</label>
+          <select id="val-cat-select" class="form-select" onchange="App.renderValTagList()">
+            <option value="tuyen">📍 Tuyến Hàng Rào Điện</option>
+            <option value="suCo">⚡ Sự Cố Thường Gặp</option>
+            <option value="nguyenNhan">🔍 Nguyên Nhân Sự Cố</option>
+            <option value="thietBi">🛠️ Thiết Bị & Phụ Tùng</option>
+            <option value="hoten">👤 Danh Sách Họ Tên Đại Diện</option>
+            <option value="chucvu">💼 Danh Sách Chức Vụ</option>
+          </select>
+        </div>
+        <div style="display:flex; gap:0.4rem; margin-bottom:0.75rem;">
+          <input type="text" id="val-new-input" class="form-control" placeholder="Nhập mục mới..." />
+          <button type="button" class="btn btn-primary btn-sm" onclick="App.addValItemFromModal()">+ Thêm</button>
+        </div>
+        <div style="font-weight:600; font-size:0.85rem; margin-bottom:0.35rem;">Danh sách mục hiện có:</div>
+        <div id="val-tags-container" class="val-tag-list"></div>
+      </div>
+      <div class="modal-footer" style="display:flex; justify-content:space-between;">
+        <button type="button" class="btn btn-danger btn-sm" onclick="App.clearCurrentCategoryVal()">🗑️ Xóa sạch nhóm này</button>
+        <button type="button" class="btn btn-secondary btn-sm" onclick="App.hideModal('val-modal')">Đóng</button>
+      </div>
+    </div>
+  </div>
+
   <!-- ================= MODAL: XEM TRƯỚC & XUẤT A4 PDF ================= -->
   <div id="pdf-preview-modal" class="modal-overlay">
     <div class="modal-dialog pdf-modal-dialog">
@@ -712,15 +869,21 @@
     </div>
   </div>
 
-  <!-- Datalist Autocomplete -->
-  <datalist id="thietbi-datalist">
-    <option value="Bộ phát xung điện (Energizer) 12V/220V"></option>
-    <option value="Bình ắc quy lưu điện 12V - 100Ah"></option>
-    <option value="Tấm pin năng lượng mặt trời Solar 100W"></option>
-    <option value="Sứ cách điện néo / Sứ đỡ dây"></option>
-    <option value="Dây cáp thép bọc kẽm 2.5mm"></option>
-    <option value="Bộ chống sét lan truyền"></option>
-    <option value="Trụ bê tông gia cố"></option>
+  <!-- Dynamic Datalists for Autocomplete & Suggestions -->
+  <datalist id="dl-tuyen"></datalist>
+  <datalist id="dl-su-co"></datalist>
+  <datalist id="dl-nguyen-nhan"></datalist>
+  <datalist id="dl-hoten"></datalist>
+  <datalist id="dl-chucvu"></datalist>
+  <datalist id="dl-thietbi"></datalist>
+  <datalist id="dl-dvt">
+    <option value="Cái">Cái</option>
+    <option value="Bộ">Bộ</option>
+    <option value="Bình">Bình</option>
+    <option value="Tấm">Tấm</option>
+    <option value="Mét">Mét</option>
+    <option value="Trụ">Trụ</option>
+    <option value="Kg">Kg</option>
   </datalist>
 
   <!-- Container for Direct A4 Printing -->

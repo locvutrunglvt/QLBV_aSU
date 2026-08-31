@@ -50,21 +50,73 @@ const PDFService = {
       </tr>
     `;
 
-    // Đại diện tham gia
-    const ddBaoTri = (record.daiDienBaoTri && record.daiDienBaoTri.length > 0) ? record.daiDienBaoTri : ['...................................................'];
-    const ddChuRung = (record.daiDienChuRung && record.daiDienChuRung.length > 0) ? record.daiDienChuRung : ['...................................................'];
-    const ddKiemLam = (record.daiDienKiemLam && record.daiDienKiemLam.length > 0) ? record.daiDienKiemLam : ['...................................................'];
+  renderRepresentativeLines(reps, fallbackStr) {
+    if (Array.isArray(reps) && reps.length > 0) {
+      return reps.map(r => {
+        if (typeof r === 'object') {
+          return `<div style="margin-left: 0.3cm;">- Ông/bà: <b>${r.name || '...'}</b> ${r.position ? ' - Chức vụ: ' + r.position : ''}</div>`;
+        }
+        return `<div style="margin-left: 0.3cm;">- Ông/bà: ${r}</div>`;
+      }).join('');
+    }
+    if (typeof fallbackStr === 'string' && fallbackStr.trim()) {
+      return fallbackStr.split(';').map(item => `<div style="margin-left: 0.3cm;">- Ông/bà: ${item.trim()}</div>`).join('');
+    }
+    return '<div style="margin-left: 0.3cm;">...........................................................................................</div>';
+  },
+
+  /**
+   * Render HTML Mẫu Biên bản Bảo Trì (Chuẩn theo file BB ghi nhan bao tri HRD.doc)
+   */
+  renderBaoTriHTML(record) {
+    const ngayParts = (record.ngayLap || '').split('-');
+    const ngayStr = ngayParts.length === 3 ? ngayParts[2] : '.....';
+    const thangStr = ngayParts.length === 3 ? ngayParts[1] : '.....';
+    const namStr = ngayParts.length === 3 ? ngayParts[0] : '2026';
+    const gioStr = record.gioLap || '.....';
+
+    const thietBiHongRows = (record.thietBiHong && record.thietBiHong.length > 0) ? record.thietBiHong.map((item, idx) => `
+      <tr>
+        <td style="text-align: center; border: 1px solid #000; padding: 2px 4px; font-size: 10.5pt;">${idx + 1}</td>
+        <td style="border: 1px solid #000; padding: 2px 6px; font-size: 10.5pt;">${item.name || ''}</td>
+        <td style="text-align: center; border: 1px solid #000; padding: 2px 4px; font-size: 10.5pt;">${item.quantity || ''} ${item.unit || 'Cái'}</td>
+        <td style="border: 1px solid #000; padding: 2px 6px; font-size: 10.5pt;">${item.status || ''}</td>
+      </tr>
+    `).join('') : `
+      <tr>
+        <td style="text-align: center; border: 1px solid #000; padding: 2px 4px; font-size: 10.5pt;">1</td>
+        <td style="border: 1px solid #000; padding: 2px 6px; font-size: 10.5pt;">Dây dẫn xung điện và phụ tùng liên quan</td>
+        <td style="text-align: center; border: 1px solid #000; padding: 2px 4px; font-size: 10.5pt;">01 Hệ thống</td>
+        <td style="border: 1px solid #000; padding: 2px 6px; font-size: 10.5pt;">Đã ghi nhận kiểm tra hiện trường</td>
+      </tr>
+    `;
+
+    const thietBiThayTheRows = (record.thietBiThayThe && record.thietBiThayThe.length > 0) ? record.thietBiThayThe.map((item, idx) => `
+      <tr>
+        <td style="text-align: center; border: 1px solid #000; padding: 2px 4px; font-size: 10.5pt;">${idx + 1}</td>
+        <td style="border: 1px solid #000; padding: 2px 6px; font-size: 10.5pt;">${item.name || ''}</td>
+        <td style="text-align: center; border: 1px solid #000; padding: 2px 4px; font-size: 10.5pt;">${item.quantity || ''} ${item.unit || 'Cái'}</td>
+        <td style="border: 1px solid #000; padding: 2px 6px; font-size: 10.5pt;">${item.note || 'Đã thay mới, hoạt động tốt'}</td>
+      </tr>
+    `).join('') : `
+      <tr>
+        <td style="text-align: center; border: 1px solid #000; padding: 2px 4px; font-size: 10.5pt;">1</td>
+        <td style="border: 1px solid #000; padding: 2px 6px; font-size: 10.5pt;">Vật tư phụ tùng thay thế tiêu chuẩn</td>
+        <td style="text-align: center; border: 1px solid #000; padding: 2px 4px; font-size: 10.5pt;">01 Bộ</td>
+        <td style="border: 1px solid #000; padding: 2px 6px; font-size: 10.5pt;">Đã thay mới, hoạt động tốt</td>
+      </tr>
+    `;
 
     const photosHTML = (record.photos && record.photos.length > 0) ? `
-      <div class="print-page-break" style="page-break-before: always; margin-top: 30px; padding-top: 15px;">
-        <div style="text-align: center; font-weight: bold; font-size: 13pt; text-transform: uppercase; margin-bottom: 15px;">
+      <div class="print-page-break" style="page-break-before: always; margin-top: 20px; padding-top: 10px;">
+        <div style="text-align: center; font-weight: bold; font-size: 12.5pt; text-transform: uppercase; margin-bottom: 12px;">
           PHỤ LỤC: HÌNH ẢNH HIỆN TRƯỜNG BẢO TRÌ SỰ CỐ
         </div>
-        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px;">
+        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;">
           ${record.photos.map((p, i) => `
-            <div style="text-align: center; border: 1px solid #777; padding: 6px; background: #fff; border-radius: 3px;">
+            <div style="text-align: center; border: 1px solid #777; padding: 5px; background: #fff; border-radius: 3px;">
               <img src="${p}" style="max-width: 100%; height: 210px; object-fit: contain; display: block; margin: 0 auto;" />
-              <div style="font-size: 11pt; font-style: italic; margin-top: 5px; color: #000;">Hình ${i+1}: Ảnh ghi nhận hiện trường bảo trì</div>
+              <div style="font-size: 10.5pt; font-style: italic; margin-top: 4px; color: #000;">Hình ${i+1}: Ảnh ghi nhận hiện trường bảo trì</div>
             </div>
           `).join('')}
         </div>
@@ -72,120 +124,116 @@ const PDFService = {
     ` : '';
 
     return `
-      <div class="a4-document-content" style="font-family: 'Times New Roman', Times, serif; font-size: 13pt; line-height: 1.35; color: #000000; background: #ffffff; text-align: justify;">
-        <!-- Quốc hiệu & Tiêu ngữ -->
-        <table style="width: 100%; border-collapse: collapse; margin-bottom: 12px;">
-          <tr>
-            <td style="width: 44%; text-align: center; vertical-align: top; padding: 0;">
-              <div style="font-weight: bold; font-size: 11pt; text-transform: uppercase;">CHI CỤC KIỂM LÂM ĐỒNG NAI</div>
-              <div style="font-weight: bold; font-size: 11pt; text-transform: uppercase;">ĐỘI BẢO TRÌ HÀNG RÀO ĐIỆN</div>
-              <div style="font-size: 11pt; margin-top: 3px;">Số: ....../BB-BT</div>
-            </td>
-            <td style="width: 56%; text-align: center; vertical-align: top; padding: 0;">
-              <div style="font-weight: bold; font-size: 12pt; text-transform: uppercase;">CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM</div>
-              <div style="font-weight: bold; font-size: 13pt;">Độc lập - Tự do - Hạnh phúc</div>
-              <div style="border-bottom: 1.5px solid #000; width: 160px; margin: 2px auto 6px auto;"></div>
-              <div style="font-style: italic; font-size: 12pt;">
-                Đồng Nai, ngày ${ngayStr} tháng ${thangStr} năm ${namStr}
-              </div>
-            </td>
-          </tr>
-        </table>
+      <div class="a4-document-content" style="font-family: 'Times New Roman', Times, serif; font-size: 12pt; line-height: 1.25; color: #000000; background: #ffffff; text-align: justify;">
+        <div class="a4-page-main" style="page-break-inside: avoid; break-inside: avoid;">
+          <!-- Quốc hiệu & Tiêu ngữ -->
+          <table style="width: 100%; border-collapse: collapse; margin-bottom: 6px;">
+            <tr>
+              <td style="width: 44%; text-align: center; vertical-align: top; padding: 0;">
+                <div style="font-weight: bold; font-size: 11pt; text-transform: uppercase;">CHI CỤC KIỂM LÂM ĐỒNG NAI</div>
+                <div style="font-weight: bold; font-size: 11pt; text-transform: uppercase;">ĐỘI BẢO TRÌ HÀNG RÀO ĐIỆN</div>
+                <div style="font-size: 11pt; margin-top: 2px;">Số: ....../BB-BT</div>
+              </td>
+              <td style="width: 56%; text-align: center; vertical-align: top; padding: 0;">
+                <div style="font-weight: bold; font-size: 11.5pt; text-transform: uppercase;">CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM</div>
+                <div style="font-weight: bold; font-size: 12pt;">Độc lập - Tự do - Hạnh phúc</div>
+                <div style="border-bottom: 1.5px solid #000; width: 150px; margin: 2px auto 4px auto;"></div>
+                <div style="font-style: italic; font-size: 11.5pt;">
+                  Đồng Nai, ngày ${ngayStr} tháng ${thangStr} năm ${namStr}
+                </div>
+              </td>
+            </tr>
+          </table>
 
-        <!-- Tiêu đề -->
-        <div style="text-align: center; margin: 15px 0 12px 0;">
-          <div style="font-weight: bold; font-size: 15pt; text-transform: uppercase;">BIÊN BẢN</div>
-          <div style="font-weight: bold; font-size: 13pt; margin-top: 4px;">
-            Xác minh hiện trạng, ghi nhận sự cố của tuyến hàng rào điện thuộc<br/>
-            Dự án khẩn cấp bảo tồn Voi tỉnh Đồng Nai trên địa bàn quản lý của ${record.diaDiem || record.tuyenHrd || '…………………………………………….'}
+          <!-- Tiêu đề -->
+          <div style="text-align: center; margin: 6px 0 6px 0;">
+            <div style="font-weight: bold; font-size: 13.5pt; text-transform: uppercase;">BIÊN BẢN</div>
+            <div style="font-weight: bold; font-size: 11.5pt; margin-top: 2px; line-height: 1.25;">
+              Xác minh hiện trạng, ghi nhận sự cố của tuyến hàng rào điện thuộc<br/>
+              Dự án khẩn cấp bảo tồn Voi tỉnh Đồng Nai trên địa bàn quản lý của ${record.diaDiem || record.tuyenHrd || '…………………………………………….'}
+            </div>
           </div>
-        </div>
 
-        <!-- Căn cứ pháp lý -->
-        <div style="text-align: justify; margin-bottom: 8px; font-style: italic; text-indent: 1.25cm;">
-          Thực hiện nội dung Quyết định số 704/QĐ-SNNMT ngày 30/6/2026 của Sở Nông nghiệp và Môi trường về việc Phê duyệt điều chỉnh, bổ sung Điều 1 Quyết định số 595/QĐ-SNNMT ngày 30/3/2026 về việc phê duyệt kế hoạch và dự toán kinh phí nhiệm vụ “quản lý, bảo vệ và vận hành các công trình xây dựng để bảo tồn Voi châu Á tại Đồng Nai năm 2026" của Chi cục Kiểm lâm;
-        </div>
+          <!-- Căn cứ pháp lý -->
+          <div style="text-align: justify; margin-bottom: 4px; font-style: italic; text-indent: 0.8cm; font-size: 11pt;">
+            Thực hiện Quyết định số 704/QĐ-SNNMT ngày 30/6/2026 & Quyết định số 595/QĐ-SNNMT ngày 30/3/2026 của Sở Nông nghiệp và Môi trường về việc phê duyệt kế hoạch và dự toán nhiệm vụ “quản lý, bảo vệ và vận hành các công trình xây dựng để bảo tồn Voi châu Á tại Đồng Nai năm 2026" của Chi cục Kiểm lâm;
+          </div>
 
-        <div style="margin-bottom: 8px; text-indent: 1.25cm;">
-          Hôm nay, vào lúc <b>${gioStr}</b>, ngày <b>${ngayStr}</b> tháng <b>${thangStr}</b> năm <b>${namStr}</b>, tại: <b>${record.tuyenHrd || record.diaDiem || '...........................................................................'}</b>, chúng tôi gồm:
-        </div>
+          <div style="margin-bottom: 4px; text-indent: 0.8cm;">
+            Hôm nay, vào lúc <b>${gioStr}</b>, ngày <b>${ngayStr}</b> tháng <b>${thangStr}</b> năm <b>${namStr}</b>, tại: <b>${record.tuyenHrd || record.diaDiem || '...........................................................................'}</b>, chúng tôi gồm:
+          </div>
 
-        <!-- I. Thành phần tham dự -->
-        <div style="font-weight: bold; margin-top: 6px;">I. Thành phần tham dự</div>
-        <div style="margin-left: 0.5cm; margin-bottom: 6px;">
-          <div style="font-weight: bold;">1. Đại diện đơn vị bảo trì:</div>
-          ${ddBaoTri.map(item => `<div style="margin-left: 0.5cm;">Ông/bà: ${item}</div>`).join('')}
-          <div style="font-weight: bold; margin-top: 3px;">2. Đại diện đơn vị chủ rừng:</div>
-          ${ddChuRung.map(item => `<div style="margin-left: 0.5cm;">Ông/bà: ${item}</div>`).join('')}
-          <div style="font-weight: bold; margin-top: 3px;">3. Đại diện Cơ quan kiểm lâm sở tại:</div>
-          ${ddKiemLam.map(item => `<div style="margin-left: 0.5cm;">Ông/bà: ${item}</div>`).join('')}
-        </div>
+          <!-- I. Thành phần tham dự -->
+          <div style="font-weight: bold; margin-top: 3px;">I. Thành phần tham dự</div>
+          <div style="margin-left: 0.3cm; margin-bottom: 3px;">
+            <div style="font-weight: bold;">1. Đại diện đơn vị bảo trì:</div>
+            ${this.renderRepresentativeLines(record.daiDienBaoTri, record.ddBt)}
+            <div style="font-weight: bold; margin-top: 2px;">2. Đại diện đơn vị chủ rừng:</div>
+            ${this.renderRepresentativeLines(record.daiDienChuRung, record.ddCr)}
+            <div style="font-weight: bold; margin-top: 2px;">3. Đại diện Cơ quan kiểm lâm sở tại:</div>
+            ${this.renderRepresentativeLines(record.daiDienKiemLam, record.ddKl)}
+          </div>
 
-        <!-- II. Nội dung xác minh, ghi nhận -->
-        <div style="font-weight: bold; margin-top: 8px;">II. Nội dung xác minh, ghi nhận:</div>
-        <div style="margin-left: 0.5cm; margin-bottom: 6px;">
-          <div>1. <b>Về sự cố xảy ra trên tuyến hàng rào:</b> ${record.suCo || '...................................................................................................................................................'}</div>
-          <div>2. <b>Về nguyên nhân:</b> ${record.nguyenNhan || '...................................................................................................................................................'}</div>
-          <div style="margin-top: 4px;">3. <b>Về thiết bị hư hỏng:</b></div>
-          <table style="width: 100%; border-collapse: collapse; margin-top: 4px; margin-bottom: 6px; font-size: 12pt;">
-            <thead>
-              <tr style="background: #f2f2f2;">
-                <th style="border: 1px solid #000; padding: 5px; width: 45px; text-align: center;">STT</th>
-                <th style="border: 1px solid #000; padding: 5px; text-align: center;">Tên thiết bị / Quy cách</th>
-                <th style="border: 1px solid #000; padding: 5px; width: 100px; text-align: center;">Số lượng</th>
-                <th style="border: 1px solid #000; padding: 5px; text-align: center;">Tình trạng hư hỏng</th>
-              </tr>
-            </thead>
-            <tbody>${thietBiHongRows}</tbody>
+          <!-- II. Nội dung xác minh, ghi nhận -->
+          <div style="font-weight: bold; margin-top: 4px;">II. Nội dung xác minh, ghi nhận sự cố:</div>
+          <div style="margin-left: 0.3cm; margin-bottom: 4px;">
+            <div>1. <b>Sự cố xảy ra:</b> ${record.suCo || '...................................................................................................................................................'}</div>
+            <div>2. <b>Nguyên nhân:</b> ${record.nguyenNhan || '...................................................................................................................................................'}</div>
+            
+            <div style="margin-top: 3px; font-weight: bold;">3. Danh mục thiết bị hư hỏng:</div>
+            <table style="width: 100%; border-collapse: collapse; margin-top: 2px; margin-bottom: 3px; font-size: 10.5pt;">
+              <thead>
+                <tr style="background: #f2f2f2;">
+                  <th style="border: 1px solid #000; padding: 2px; width: 35px; text-align: center;">STT</th>
+                  <th style="border: 1px solid #000; padding: 2px; text-align: center;">Tên thiết bị / Quy cách</th>
+                  <th style="border: 1px solid #000; padding: 2px; width: 85px; text-align: center;">Số lượng</th>
+                  <th style="border: 1px solid #000; padding: 2px; text-align: center;">Tình trạng hư hỏng</th>
+                </tr>
+              </thead>
+              <tbody>${thietBiHongRows}</tbody>
+            </table>
+
+            <div style="margin-top: 3px; font-weight: bold;">4. Vật tư / Thiết bị thay thế, khắc phục:</div>
+            <table style="width: 100%; border-collapse: collapse; margin-top: 2px; margin-bottom: 3px; font-size: 10.5pt;">
+              <thead>
+                <tr style="background: #f2f2f2;">
+                  <th style="border: 1px solid #000; padding: 2px; width: 35px; text-align: center;">STT</th>
+                  <th style="border: 1px solid #000; padding: 2px; text-align: center;">Tên vật tư thay thế</th>
+                  <th style="border: 1px solid #000; padding: 2px; width: 85px; text-align: center;">Số lượng</th>
+                  <th style="border: 1px solid #000; padding: 2px; text-align: center;">Ghi chú / Tình trạng</th>
+                </tr>
+              </thead>
+              <tbody>${thietBiThayTheRows}</tbody>
+            </table>
+          </div>
+
+          <!-- III. Kết luận -->
+          <div style="font-weight: bold; margin-top: 4px;">III. Kết luận</div>
+          <div style="margin-left: 0.3cm;">
+            <div style="text-indent: 0.6cm;">Các thành phần tham dự cùng thống nhất nghiệm thu kết quả xử lý sự cố. Hệ thống điện xung hoạt động ổn định, đủ điện áp kỹ thuật ngăn Voi./.</div>
+          </div>
+
+          <!-- Chữ ký 3 bên -->
+          <table style="width: 100%; border-collapse: collapse; margin-top: 8px; text-align: center; page-break-inside: avoid;">
+            <tr>
+              <td style="width: 33.3%; font-weight: bold; vertical-align: top; font-size: 11pt;">
+                ĐD. ĐƠN VỊ BẢO TRÌ<br/>TUYẾN HÀNG RÀO ĐIỆN<br/>
+                <span style="font-size: 10pt; font-weight: normal; font-style: italic;">(Ký, ghi rõ họ tên)</span>
+                <div style="height: 44px;"></div>
+              </td>
+              <td style="width: 33.3%; font-weight: bold; vertical-align: top; font-size: 11pt;">
+                ĐD. ĐƠN VỊ CHỦ RỪNG<br/><br/>
+                <span style="font-size: 10pt; font-weight: normal; font-style: italic;">(Ký, ghi rõ họ tên)</span>
+                <div style="height: 44px;"></div>
+              </td>
+              <td style="width: 33.4%; font-weight: bold; vertical-align: top; font-size: 11pt;">
+                ĐD. CƠ QUAN KIỂM LÂM SỞ TẠI<br/><br/>
+                <span style="font-size: 10pt; font-weight: normal; font-style: italic;">(Ký, ghi rõ họ tên)</span>
+                <div style="height: 44px;"></div>
+              </td>
+            </tr>
           </table>
         </div>
-
-        <!-- III. Kết luận -->
-        <div style="font-weight: bold; margin-top: 8px;">III. Kết luận</div>
-        <div style="margin-left: 0.5cm;">
-          <div style="text-indent: 0.75cm;">Qua kết quả xác minh, ghi nhận sự cố nêu trên, các thành phần tham dự cùng thống nhất kết luận, nội dung sau:</div>
-          <div style="margin-top: 4px;">- <b>Về các thiết bị cần thay thế:</b></div>
-          <table style="width: 100%; border-collapse: collapse; margin-top: 4px; margin-bottom: 6px; font-size: 12pt;">
-            <thead>
-              <tr style="background: #f2f2f2;">
-                <th style="border: 1px solid #000; padding: 5px; width: 45px; text-align: center;">STT</th>
-                <th style="border: 1px solid #000; padding: 5px; text-align: center;">Tên vật tư thiết bị thay thế</th>
-                <th style="border: 1px solid #000; padding: 5px; width: 100px; text-align: center;">Số lượng</th>
-                <th style="border: 1px solid #000; padding: 5px; text-align: center;">Ghi chú / Tình trạng</th>
-              </tr>
-            </thead>
-            <tbody>${thietBiThayTheRows}</tbody>
-          </table>
-          <div>- <b>Về kết quả thay thế/khắc phục sự cố:</b> ${record.ketQuaKhacPhuc || 'Đã tiến hành xử lý hoàn tất, hệ thống xung điện hoạt động bình thường.'}</div>
-          <div>- <b>Về tình trạng hoạt động của tuyến hàng rào điện sau khắc phục, sửa chữa:</b> ${record.tinhTrang || 'Đạt yêu cầu kỹ thuật ngăn voi, điện áp duy trì ổn định.'}</div>
-        </div>
-
-        <div style="margin-top: 10px; font-style: italic; text-indent: 1.25cm;">
-          Biên bản kết thúc vào lúc ..... giờ....... phút, cùng ngày và được thông qua, thống nhất. Biên bản được lập thành 04 bản, Đơn vị bảo trì giữ 01 bản, đơn vị chủ rừng 01 bản, Cơ quan kiểm lâm sở tại giữ 01 bản và lưu hồ sơ thanh quyết toán 01 bản./.
-        </div>
-
-        <!-- Chữ ký 3 bên -->
-        <table style="width: 100%; border-collapse: collapse; margin-top: 18px; text-align: center;">
-          <tr>
-            <td style="width: 33.3%; font-weight: bold; vertical-align: top; font-size: 12pt;">
-              ĐD. ĐƠN VỊ BẢO TRÌ<br/>TUYẾN HÀNG RÀO ĐIỆN<br/>
-              <span style="font-size: 11pt; font-weight: normal; font-style: italic;">(Ký, ghi rõ họ tên)</span>
-              <div style="height: 75px;"></div>
-            </td>
-            <td style="width: 33.3%; font-weight: bold; vertical-align: top; font-size: 12pt;">
-              ĐD. ĐƠN VỊ CHỦ RỪNG<br/><br/>
-              <span style="font-size: 11pt; font-weight: normal; font-style: italic;">(Ký, ghi rõ họ tên)</span>
-              <div style="height: 75px;"></div>
-            </td>
-            <td style="width: 33.4%; font-weight: bold; vertical-align: top; font-size: 12pt;">
-              ĐD. CƠ QUAN KIỂM LÂM SỞ TẠI<br/><br/>
-              <span style="font-size: 11pt; font-weight: normal; font-style: italic;">(Ký, ghi rõ họ tên)</span>
-              <div style="height: 75px;"></div>
-            </td>
-          </tr>
-        </table>
-
-        <!-- Trang phụ lục ảnh nếu có -->
         ${photosHTML}
       </div>
     `;
@@ -199,40 +247,37 @@ const PDFService = {
     const ngayStr = ngayParts.length === 3 ? ngayParts[2] : '.....';
     const thangStr = ngayParts.length === 3 ? ngayParts[1] : '.....';
     const namStr = ngayParts.length === 3 ? ngayParts[0] : '2026';
-    const gioStr = record.gioLap || '.....';
 
     const doanRows = (record.cacDoanVeSinh && record.cacDoanVeSinh.length > 0) ? record.cacDoanVeSinh.map((d, idx) => `
       <tr>
-        <td style="text-align: center; border: 1px solid #000; padding: 5px 4px; font-size: 12pt;">${idx + 1}</td>
-        <td style="border: 1px solid #000; padding: 5px 6px; text-align: center; font-size: 12pt;">Từ trụ số: <b>${d.from || ''}</b> đến trụ số: <b>${d.to || ''}</b></td>
-        <td style="border: 1px solid #000; padding: 5px 6px; text-align: right; font-size: 12pt;">${d.length || '0'} m</td>
-        <td style="border: 1px solid #000; padding: 5px 6px; text-align: right; font-size: 12pt;">${d.width || '0'} m</td>
-        <td style="border: 1px solid #000; padding: 5px 6px; text-align: right; font-weight: bold; font-size: 12pt;">${d.area || '0'} m²</td>
+        <td style="text-align: center; border: 1px solid #000; padding: 2px 4px; font-size: 10.5pt;">${idx + 1}</td>
+        <td style="border: 1px solid #000; padding: 2px 6px; text-align: center; font-size: 10.5pt;">Từ trụ số: <b>${d.from || ''}</b> đến trụ số: <b>${d.to || ''}</b></td>
+        <td style="border: 1px solid #000; padding: 2px 6px; text-align: right; font-size: 10.5pt;">${d.length || '0'} m</td>
+        <td style="border: 1px solid #000; padding: 2px 6px; text-align: right; font-size: 10.5pt;">${d.width || '3.0'} m</td>
+        <td style="border: 1px solid #000; padding: 2px 6px; text-align: right; font-weight: bold; font-size: 10.5pt;">${d.area || '0'} m²</td>
       </tr>
     `).join('') : `
       <tr>
-        <td style="text-align: center; border: 1px solid #000; padding: 5px 4px; font-size: 12pt;">1</td>
-        <td style="border: 1px solid #000; padding: 5px 6px; text-align: center; font-size: 12pt;">Từ trụ số: ............ đến trụ số: ............</td>
-        <td style="border: 1px solid #000; padding: 5px 6px; text-align: right; font-size: 12pt;">...... m</td>
-        <td style="border: 1px solid #000; padding: 5px 6px; text-align: right; font-size: 12pt;">...... m</td>
-        <td style="border: 1px solid #000; padding: 5px 6px; text-align: right; font-size: 12pt;">...... m²</td>
+        <td style="text-align: center; border: 1px solid #000; padding: 2px 4px; font-size: 10.5pt;">1</td>
+        <td style="border: 1px solid #000; padding: 2px 6px; text-align: center; font-size: 10.5pt;">Toàn phân đoạn thực bì tuyến rào</td>
+        <td style="border: 1px solid #000; padding: 2px 6px; text-align: right; font-size: 10.5pt;">${record.tongChieuDai || '0'} m</td>
+        <td style="border: 1px solid #000; padding: 2px 6px; text-align: right; font-size: 10.5pt;">3.0 m</td>
+        <td style="border: 1px solid #000; padding: 2px 6px; text-align: right; font-weight: bold; font-size: 10.5pt;">${record.tongDienTich || '0'} m²</td>
       </tr>
     `;
 
-    const ddBaoTri = (record.daiDienBaoTri && record.daiDienBaoTri.length > 0) ? record.daiDienBaoTri : ['...................................................'];
-    const ddChuRung = (record.daiDienChuRung && record.daiDienChuRung.length > 0) ? record.daiDienChuRung : ['...................................................'];
-    const dsNhanCong = (record.dsNhanCong && record.dsNhanCong.length > 0) ? record.dsNhanCong.join(', ') : '...........................................................................................';
+    const dsNhanCong = (record.dsNhanCong && record.dsNhanCong.length > 0) ? record.dsNhanCong.join(', ') : 'Đội công nhân phát dọn thực bì';
 
     const photosHTML = (record.photos && record.photos.length > 0) ? `
-      <div class="print-page-break" style="page-break-before: always; margin-top: 30px; padding-top: 15px;">
-        <div style="text-align: center; font-weight: bold; font-size: 13pt; text-transform: uppercase; margin-bottom: 15px;">
+      <div class="print-page-break" style="page-break-before: always; margin-top: 20px; padding-top: 10px;">
+        <div style="text-align: center; font-weight: bold; font-size: 12.5pt; text-transform: uppercase; margin-bottom: 12px;">
           PHỤ LỤC: HÌNH ẢNH THỰC TẾ PHÁT DỌN VỆ SINH TUYẾN HÀNG RÀO ĐIỆN
         </div>
-        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px;">
+        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;">
           ${record.photos.map((p, i) => `
-            <div style="text-align: center; border: 1px solid #777; padding: 6px; background: #fff; border-radius: 3px;">
+            <div style="text-align: center; border: 1px solid #777; padding: 5px; background: #fff; border-radius: 3px;">
               <img src="${p}" style="max-width: 100%; height: 210px; object-fit: contain; display: block; margin: 0 auto;" />
-              <div style="font-size: 11pt; font-style: italic; margin-top: 5px; color: #000;">Hình ${i+1}: Ảnh kiểm tra sau phát dọn thực bì</div>
+              <div style="font-size: 10.5pt; font-style: italic; margin-top: 4px; color: #000;">Hình ${i+1}: Ảnh kiểm tra sau phát dọn</div>
             </div>
           `).join('')}
         </div>
@@ -240,64 +285,110 @@ const PDFService = {
     ` : '';
 
     return `
-      <div class="a4-document-content" style="font-family: 'Times New Roman', Times, serif; font-size: 13pt; line-height: 1.35; color: #000000; background: #ffffff; text-align: justify;">
-        <!-- Quốc hiệu & Tiêu ngữ -->
-        <table style="width: 100%; border-collapse: collapse; margin-bottom: 12px;">
-          <tr>
-            <td style="width: 44%; text-align: center; vertical-align: top; padding: 0;">
-              <div style="font-weight: bold; font-size: 11pt; text-transform: uppercase;">CHI CỤC KIỂM LÂM ĐỒNG NAI</div>
-              <div style="font-weight: bold; font-size: 11pt; text-transform: uppercase;">ĐỘI BẢO TRÌ HÀNG RÀO ĐIỆN</div>
-              <div style="font-size: 11pt; margin-top: 3px;">Số: ....../BB-VS</div>
-            </td>
-            <td style="width: 56%; text-align: center; vertical-align: top; padding: 0;">
-              <div style="font-weight: bold; font-size: 12pt; text-transform: uppercase;">CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM</div>
-              <div style="font-weight: bold; font-size: 13pt;">Độc lập - Tự do - Hạnh phúc</div>
-              <div style="border-bottom: 1.5px solid #000; width: 160px; margin: 2px auto 6px auto;"></div>
-              <div style="font-style: italic; font-size: 12pt;">
-                Đồng Nai, ngày ${ngayStr} tháng ${thangStr} năm ${namStr}
-              </div>
-            </td>
-          </tr>
-        </table>
+      <div class="a4-document-content" style="font-family: 'Times New Roman', Times, serif; font-size: 12pt; line-height: 1.25; color: #000000; background: #ffffff; text-align: justify;">
+        <div class="a4-page-main" style="page-break-inside: avoid; break-inside: avoid;">
+          <!-- Quốc hiệu & Tiêu ngữ -->
+          <table style="width: 100%; border-collapse: collapse; margin-bottom: 6px;">
+            <tr>
+              <td style="width: 44%; text-align: center; vertical-align: top; padding: 0;">
+                <div style="font-weight: bold; font-size: 11pt; text-transform: uppercase;">CHI CỤC KIỂM LÂM ĐỒNG NAI</div>
+                <div style="font-weight: bold; font-size: 11pt; text-transform: uppercase;">ĐỘI BẢO TRÌ HÀNG RÀO ĐIỆN</div>
+                <div style="font-size: 11pt; margin-top: 2px;">Số: ....../BB-VS</div>
+              </td>
+              <td style="width: 56%; text-align: center; vertical-align: top; padding: 0;">
+                <div style="font-weight: bold; font-size: 11.5pt; text-transform: uppercase;">CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM</div>
+                <div style="font-weight: bold; font-size: 12pt;">Độc lập - Tự do - Hạnh phúc</div>
+                <div style="border-bottom: 1.5px solid #000; width: 150px; margin: 2px auto 4px auto;"></div>
+                <div style="font-style: italic; font-size: 11.5pt;">
+                  Đồng Nai, ngày ${ngayStr} tháng ${thangStr} năm ${namStr}
+                </div>
+              </td>
+            </tr>
+          </table>
 
-        <!-- Tiêu đề -->
-        <div style="text-align: center; margin: 15px 0 12px 0;">
-          <div style="font-weight: bold; font-size: 15pt; text-transform: uppercase;">BIÊN BẢN</div>
-          <div style="font-weight: bold; font-size: 13pt; margin-top: 4px;">
-            Ghi nhận kết quả thực hiện công việc tuyến hàng rào điện thuộc<br/>
-            Dự án khẩn cấp bảo tồn Voi tỉnh Đồng Nai trên địa bàn quản lý của ${record.diaDiem || record.tuyenHrd || '…………………………………………….'}
+          <!-- Tiêu đề -->
+          <div style="text-align: center; margin: 6px 0 6px 0;">
+            <div style="font-weight: bold; font-size: 13.5pt; text-transform: uppercase;">BIÊN BẢN</div>
+            <div style="font-weight: bold; font-size: 11.5pt; margin-top: 2px; line-height: 1.25;">
+              Ghi nhận kết quả thực hiện công việc tuyến hàng rào điện thuộc<br/>
+              Dự án khẩn cấp bảo tồn Voi tỉnh Đồng Nai trên địa bàn quản lý của ${record.diaDiem || record.tuyenHrd || '…………………………………………….'}
+            </div>
           </div>
-        </div>
 
-        <!-- Căn cứ pháp lý -->
-        <div style="text-align: justify; margin-bottom: 8px; font-style: italic; text-indent: 1.25cm;">
-          Thực hiện nội dung Quyết định số 704/QĐ-SNNMT ngày 30/6/2026 của Sở Nông nghiệp và Môi trường về việc Phê duyệt điều chỉnh, bổ sung Điều 1 Quyết định số 595/QĐ-SNNMT ngày 30/3/2026 về việc phê duyệt kế hoạch và dự toán kinh phí nhiệm vụ “quản lý, bảo vệ và vận hành các công trình xây dựng để bảo tồn Voi châu Á tại Đồng Nai năm 2026" của Chi cục Kiểm lâm;
-        </div>
+          <!-- Căn cứ pháp lý -->
+          <div style="text-align: justify; margin-bottom: 4px; font-style: italic; text-indent: 0.8cm; font-size: 11pt;">
+            Thực hiện Quyết định số 704/QĐ-SNNMT ngày 30/6/2026 & Quyết định số 595/QĐ-SNNMT ngày 30/3/2026 của Sở Nông nghiệp và Môi trường về việc phê duyệt kế hoạch và dự toán nhiệm vụ “quản lý, bảo vệ và vận hành các công trình xây dựng để bảo tồn Voi châu Á tại Đồng Nai năm 2026" của Chi cục Kiểm lâm;
+          </div>
 
-        <div style="margin-bottom: 8px; text-indent: 1.25cm;">
-          Hôm nay, vào lúc <b>${gioStr}</b>, ngày <b>${ngayStr}</b> tháng <b>${thangStr}</b> năm <b>${namStr}</b>, tại: <b>${record.diaDiem || record.tuyenHrd || '...........................................................................'}</b>, chúng tôi gồm:
-        </div>
+          <div style="margin-bottom: 4px; text-indent: 0.8cm;">
+            Hôm nay, ngày <b>${ngayStr}</b> tháng <b>${thangStr}</b> năm <b>${namStr}</b>, tại: <b>${record.diaDiem || record.tuyenHrd || '...........................................................................'}</b>, chúng tôi gồm:
+          </div>
 
-        <!-- I. Thành phần tham dự -->
-        <div style="font-weight: bold; margin-top: 6px;">I. Thành phần tham dự</div>
-        <div style="margin-left: 0.5cm; margin-bottom: 6px;">
-          <div style="font-weight: bold;">1. Đại diện đơn vị bảo trì:</div>
-          ${ddBaoTri.map(item => `<div style="margin-left: 0.5cm;">Ông/bà: ${item}</div>`).join('')}
-          <div style="font-weight: bold; margin-top: 3px;">2. Các cá nhân thực hiện phát dọn, vệ sinh tuyến hàng rào điện:</div>
-          <div style="margin-left: 0.5cm;">Danh sách: ${dsNhanCong}</div>
-          <div style="font-weight: bold; margin-top: 3px;">3. Đại diện đơn vị chủ rừng:</div>
-          ${ddChuRung.map(item => `<div style="margin-left: 0.5cm;">Ông/bà: ${item}</div>`).join('')}
-        </div>
+          <!-- I. Thành phần tham dự -->
+          <div style="font-weight: bold; margin-top: 3px;">I. Thành phần tham dự</div>
+          <div style="margin-left: 0.3cm; margin-bottom: 3px;">
+            <div style="font-weight: bold;">1. Đại diện đơn vị bảo trì:</div>
+            ${this.renderRepresentativeLines(record.daiDienBaoTri, record.ddBt)}
+            <div style="font-weight: bold; margin-top: 2px;">2. Đại diện đơn vị chủ rừng:</div>
+            ${this.renderRepresentativeLines(record.daiDienChuRung, record.ddCr)}
+            <div style="font-weight: bold; margin-top: 2px;">3. Đại diện Cơ quan kiểm lâm sở tại:</div>
+            ${this.renderRepresentativeLines(record.daiDienKiemLam, record.ddKl)}
+            <div style="margin-top: 2px;">4. <b>Các cá nhân thực hiện phát dọn:</b> ${dsNhanCong}</div>
+          </div>
 
-        <!-- II. Nội dung ghi nhận kết quả vệ sinh -->
-        <div style="font-weight: bold; margin-top: 8px;">II. Nội dung ghi nhận kết quả vệ sinh:</div>
-        <div style="margin-left: 0.5cm; margin-bottom: 6px;">
-          <div>1. <b>Về kết quả vệ sinh tuyến hàng rào:</b></div>
-          <div style="margin-left: 0.5cm;">- Tuyến hàng rào được vệ sinh: <b>${record.tuyenHrd || '...................................................'}</b></div>
-          <div style="margin-left: 0.5cm;">- Tổng chiều dài/diện tích tuyến đã thực hiện: <b>${record.tongChieuDai || '0'} m</b> / <b>${record.tongDienTich || '0'} m²</b> <i>(${((parseFloat(record.tongDienTich) || 0) / 10000).toFixed(4)} ha)</i></div>
-          
-          <div style="margin-top: 6px; font-weight: bold;">Chi tiết từng phân đoạn phát dọn:</div>
-          <table style="width: 100%; border-collapse: collapse; margin-top: 4px; margin-bottom: 6px; font-size: 12pt;">
+          <!-- II. Nội dung ghi nhận kết quả vệ sinh -->
+          <div style="font-weight: bold; margin-top: 4px;">II. Nội dung ghi nhận kết quả vệ sinh:</div>
+          <div style="margin-left: 0.3cm; margin-bottom: 4px;">
+            <div>- <b>Tuyến hàng rào được vệ sinh:</b> <b>${record.tuyenHrd || '...................................................'}</b></div>
+            <div>- <b>Tổng chiều dài thực hiện:</b> <b>${record.tongChieuDai || '0'} m</b> | <b>Tổng diện tích phát dọn:</b> <b>${record.tongDienTich || '0'} m²</b> <i>(${((parseFloat(record.tongDienTich) || 0) / 10000).toFixed(4)} ha)</i></div>
+            
+            <div style="margin-top: 3px; font-weight: bold;">Chi tiết từng phân đoạn phát dọn:</div>
+            <table style="width: 100%; border-collapse: collapse; margin-top: 2px; margin-bottom: 3px; font-size: 10.5pt;">
+              <thead>
+                <tr style="background: #f2f2f2;">
+                  <th style="border: 1px solid #000; padding: 2px; width: 35px; text-align: center;">STT</th>
+                  <th style="border: 1px solid #000; padding: 2px; text-align: center;">Phân đoạn trụ</th>
+                  <th style="border: 1px solid #000; padding: 2px; width: 80px; text-align: center;">Chiều dài</th>
+                  <th style="border: 1px solid #000; padding: 2px; width: 80px; text-align: center;">Bề rộng</th>
+                  <th style="border: 1px solid #000; padding: 2px; width: 90px; text-align: center;">Diện tích</th>
+                </tr>
+              </thead>
+              <tbody>${doanRows}</tbody>
+            </table>
+            <div>- <b>Đánh giá chất lượng vệ sinh:</b> Đã phát dọn sạch thực bì dưới hành lang dây điện, không còn cành cây chạm vào dây rào, thông thoáng và đảm bảo an toàn phóng điện ngăn Voi.</div>
+          </div>
+
+          <!-- III. Kết luận -->
+          <div style="font-weight: bold; margin-top: 4px;">III. Kết luận</div>
+          <div style="margin-left: 0.3cm;">
+            <div style="text-indent: 0.6cm;">Các thành phần tham dự cùng thống nhất nghiệm thu khối lượng vệ sinh thực bì theo kế hoạch./.</div>
+          </div>
+
+          <!-- Chữ ký 3 bên -->
+          <table style="width: 100%; border-collapse: collapse; margin-top: 8px; text-align: center; page-break-inside: avoid;">
+            <tr>
+              <td style="width: 33.3%; font-weight: bold; vertical-align: top; font-size: 11pt;">
+                ĐD. ĐƠN VỊ VỆ SINH<br/>TUYẾN HÀNG RÀO ĐIỆN<br/>
+                <span style="font-size: 10pt; font-weight: normal; font-style: italic;">(Ký, ghi rõ họ tên)</span>
+                <div style="height: 44px;"></div>
+              </td>
+              <td style="width: 33.3%; font-weight: bold; vertical-align: top; font-size: 11pt;">
+                ĐD. ĐƠN VỊ CHỦ RỪNG<br/><br/>
+                <span style="font-size: 10pt; font-weight: normal; font-style: italic;">(Ký, ghi rõ họ tên)</span>
+                <div style="height: 44px;"></div>
+              </td>
+              <td style="width: 33.4%; font-weight: bold; vertical-align: top; font-size: 11pt;">
+                ĐD. CƠ QUAN KIỂM LÂM SỞ TẠI<br/><br/>
+                <span style="font-size: 10pt; font-weight: normal; font-style: italic;">(Ký, ghi rõ họ tên)</span>
+                <div style="height: 44px;"></div>
+              </td>
+            </tr>
+          </table>
+        </div>
+        ${photosHTML}
+      </div>
+    `;
+  },
             <thead>
               <tr style="background: #f2f2f2;">
                 <th style="border: 1px solid #000; padding: 5px; width: 45px; text-align: center;">STT</th>
@@ -536,17 +627,14 @@ const PDFService = {
     if (!r || !f) return;
 
     let htmlContent = '';
-    let defaultFilename = 'BienBan_QLBV.pdf';
+    let defaultFilename = `${this.getDocumentPdfFileName(f)}.pdf`;
 
     if (f === 'baotri') {
       htmlContent = this.renderBaoTriHTML(r);
-      defaultFilename = `BB_BaoTri_${r.ngayLap || '2026'}.pdf`;
     } else if (f === 'vesinh') {
       htmlContent = this.renderVeSinhHTML(r);
-      defaultFilename = `BB_VeSinh_${r.ngayLap || '2026'}.pdf`;
     } else if (f === 'nhatky') {
       htmlContent = this.renderNhatKyHTML(r);
-      defaultFilename = `NhatKy_${r.ngayGhi || '2026'}.pdf`;
     }
 
     const filename = customFilename || defaultFilename;

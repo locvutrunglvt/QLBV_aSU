@@ -643,6 +643,109 @@
 
     #printable-area { display: none; }
 
+    /* 3 Đơn vị x 3 Đại diện Styling */
+    .rep-card-group {
+      background: var(--bg-subtle);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 0.75rem;
+      margin-bottom: 0.75rem;
+    }
+    .rep-card-header {
+      font-weight: 700;
+      font-size: 0.88rem;
+      color: var(--primary);
+      margin-bottom: 0.45rem;
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+    .rep-grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.5rem;
+    }
+    @media (max-width: 768px) {
+      .rep-grid-3 {
+        grid-template-columns: 1fr;
+      }
+    }
+    .rep-cell {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      padding: 0.45rem 0.55rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+    }
+    .rep-label {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+
+    /* Dynamic table */
+    .dynamic-table-wrapper {
+      overflow-x: auto;
+      margin-bottom: 0.75rem;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      background: var(--bg-surface);
+    }
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+    }
+    .data-table th {
+      background: var(--bg-subtle);
+      padding: 0.5rem;
+      text-align: left;
+      font-weight: 600;
+      border-bottom: 1px solid var(--border-color);
+    }
+    .data-table td {
+      padding: 0.4rem;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    /* Validation Manager Tags */
+    .val-tag-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      max-height: 220px;
+      overflow-y: auto;
+      padding: 0.5rem;
+      background: var(--bg-subtle);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+    }
+    .val-tag-item {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      padding: 0.25rem 0.6rem;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+    .val-tag-item.pinned {
+      border-color: var(--primary);
+      background: #d8f3dc;
+      color: #1b4332;
+      font-weight: 600;
+    }
+    .val-tag-del {
+      cursor: pointer;
+      color: var(--danger);
+      font-weight: bold;
+      margin-left: 2px;
+    }
+
     .pdf-modal-dialog {
       max-width: 860px !important;
       width: 96% !important;
@@ -824,7 +927,14 @@
             <div class="launcher-desc">Phân quyền tài khoản (Admin)</div>
           </div>
 
-          <!-- 6. Cài Đặt & Đổi Mật Khẩu -->
+          <!-- 6. Quản Lý Danh Mục Gợi Ý & Pin -->
+          <div class="launcher-tile" onclick="openValModal()">
+            <div class="launcher-icon-box" style="background:#fef3c7; color:#b45309;">📌</div>
+            <div class="launcher-title">Danh Mục & Gợi Ý</div>
+            <div class="launcher-desc">Ghim & sửa danh mục tự động</div>
+          </div>
+
+          <!-- 7. Cài Đặt & Đổi Mật Khẩu -->
           <div class="launcher-tile" onclick="openSettingsModal()">
             <div class="launcher-icon-box" style="background:#f1f5f9; color:#475569;">⚙️</div>
             <div class="launcher-title">Cài Đặt Tài Khoản</div>
@@ -838,13 +948,14 @@
     <section id="view-baotri" class="tab-view" style="display:none;">
       <div class="card-panel">
         <div class="card-header">
-          <h2>🔧 Biên Bản Bảo Trì Sự Cố Hàng Rào Điện</h2>
+          <h2>🔧 Biên Bản Xác Minh Hiện Trạng & Bảo Trì HRD</h2>
           <button type="button" class="btn btn-secondary btn-sm" onclick="switchTab('dashboard')">⬅️ Về Trang Chủ</button>
         </div>
         <form id="f-baotri">
+          <!-- Thời gian & Tuyến -->
           <div class="form-grid">
             <div class="form-group">
-              <label class="form-label required">Ngày lập</label>
+              <label class="form-label required">Ngày lập biên bản</label>
               <input type="date" id="bt-date" class="form-control" required />
             </div>
             <div class="form-group">
@@ -852,39 +963,139 @@
               <input type="time" id="bt-time" class="form-control" required />
             </div>
             <div class="form-group">
-              <label class="form-label required">Tuyến hàng rào</label>
-              <select id="bt-tuyen" class="form-select" required></select>
+              <label class="form-label required">Tuyến hàng rào điện</label>
+              <input type="text" id="bt-tuyen" class="form-control" list="dl-tuyen" placeholder="Nhập hoặc chọn Tuyến hàng rào..." required autocomplete="off" />
             </div>
             <div class="form-group">
-              <label class="form-label">Vị trí / Trụ số</label>
-              <input type="text" id="bt-location" class="form-control" placeholder="Trụ số 45 - 50..." />
+              <label class="form-label">Vị trí cụ thể / Trụ số</label>
+              <input type="text" id="bt-location" class="form-control" placeholder="Ví dụ: Khu vực Trụ 45 - Trụ 48..." />
             </div>
           </div>
 
-          <div class="form-grid">
-            <div class="form-group">
-              <label class="form-label">Đại diện Đơn vị Bảo trì</label>
-              <input type="text" id="bt-dd-bt" class="form-control" placeholder="Họ tên - Chức vụ" />
+          <!-- I. Thành phần tham gia (3 Đơn vị x 3 Đại diện: Họ tên + Chức vụ) -->
+          <div style="font-weight: 700; margin: 1.25rem 0 0.5rem 0; color: var(--primary); display:flex; justify-content:space-between; align-items:center;">
+            <span>I. THÀNH PHẦN THAM GIA (Họ tên & Chức vụ)</span>
+            <small style="color:var(--text-muted); font-weight:normal; font-size:0.8rem;">* Có thể nhập đến 3 người mỗi đơn vị</small>
+          </div>
+
+          <!-- 1. Đơn vị Bảo trì -->
+          <div class="rep-card-group">
+            <div class="rep-card-header">🛠️ 1. Đại diện Đơn vị Bảo trì</div>
+            <div class="rep-grid-3">
+              <div class="rep-cell">
+                <span class="rep-label">Đại diện 1:</span>
+                <input type="text" id="bt-dd-bt-name-1" class="form-control" placeholder="Họ và tên (Đại diện 1)" list="dl-hoten" />
+                <input type="text" id="bt-dd-bt-pos-1" class="form-control" placeholder="Chức vụ (vd: Đội trưởng)" list="dl-chucvu" />
+              </div>
+              <div class="rep-cell">
+                <span class="rep-label">Đại diện 2:</span>
+                <input type="text" id="bt-dd-bt-name-2" class="form-control" placeholder="Họ và tên (Đại diện 2)" list="dl-hoten" />
+                <input type="text" id="bt-dd-bt-pos-2" class="form-control" placeholder="Chức vụ (vd: Kỹ thuật viên)" list="dl-chucvu" />
+              </div>
+              <div class="rep-cell">
+                <span class="rep-label">Đại diện 3:</span>
+                <input type="text" id="bt-dd-bt-name-3" class="form-control" placeholder="Họ và tên (Đại diện 3)" list="dl-hoten" />
+                <input type="text" id="bt-dd-bt-pos-3" class="form-control" placeholder="Chức vụ (vd: Công nhân bảo trì)" list="dl-chucvu" />
+              </div>
             </div>
-            <div class="form-group">
-              <label class="form-label">Đại diện Đơn vị Chủ rừng</label>
-              <input type="text" id="bt-dd-cr" class="form-control" placeholder="Họ tên - Chức vụ" />
+          </div>
+
+          <!-- 2. Đơn vị Chủ rừng -->
+          <div class="rep-card-group">
+            <div class="rep-card-header">🌲 2. Đại diện Đơn vị Chủ rừng</div>
+            <div class="rep-grid-3">
+              <div class="rep-cell">
+                <span class="rep-label">Đại diện 1:</span>
+                <input type="text" id="bt-dd-cr-name-1" class="form-control" placeholder="Họ và tên (Đại diện 1)" list="dl-hoten" />
+                <input type="text" id="bt-dd-cr-pos-1" class="form-control" placeholder="Chức vụ (vd: Trưởng trạm BVR)" list="dl-chucvu" />
+              </div>
+              <div class="rep-cell">
+                <span class="rep-label">Đại diện 2:</span>
+                <input type="text" id="bt-dd-cr-name-2" class="form-control" placeholder="Họ và tên (Đại diện 2)" list="dl-hoten" />
+                <input type="text" id="bt-dd-cr-pos-2" class="form-control" placeholder="Chức vụ (vd: Nhân viên BVR)" list="dl-chucvu" />
+              </div>
+              <div class="rep-cell">
+                <span class="rep-label">Đại diện 3:</span>
+                <input type="text" id="bt-dd-cr-name-3" class="form-control" placeholder="Họ và tên (Đại diện 3)" list="dl-hoten" />
+                <input type="text" id="bt-dd-cr-pos-3" class="form-control" placeholder="Chức vụ (vd: Cán bộ địa bàn)" list="dl-chucvu" />
+              </div>
             </div>
-            <div class="form-group">
-              <label class="form-label">Đại diện Cơ quan Kiểm lâm</label>
-              <input type="text" id="bt-dd-kl" class="form-control" placeholder="Họ tên - Chức vụ" />
+          </div>
+
+          <!-- 3. Cơ quan Kiểm lâm -->
+          <div class="rep-card-group">
+            <div class="rep-card-header">🦅 3. Đại diện Cơ quan Kiểm lâm sở tại</div>
+            <div class="rep-grid-3">
+              <div class="rep-cell">
+                <span class="rep-label">Đại diện 1:</span>
+                <input type="text" id="bt-dd-kl-name-1" class="form-control" placeholder="Họ và tên (Đại diện 1)" list="dl-hoten" />
+                <input type="text" id="bt-dd-kl-pos-1" class="form-control" placeholder="Chức vụ (vd: Kiểm lâm viên địa bàn)" list="dl-chucvu" />
+              </div>
+              <div class="rep-cell">
+                <span class="rep-label">Đại diện 2:</span>
+                <input type="text" id="bt-dd-kl-name-2" class="form-control" placeholder="Họ và tên (Đại diện 2)" list="dl-hoten" />
+                <input type="text" id="bt-dd-kl-pos-2" class="form-control" placeholder="Chức vụ (vd: Phó Trạm trưởng KL)" list="dl-chucvu" />
+              </div>
+              <div class="rep-cell">
+                <span class="rep-label">Đại diện 3:</span>
+                <input type="text" id="bt-dd-kl-name-3" class="form-control" placeholder="Họ và tên (Đại diện 3)" list="dl-hoten" />
+                <input type="text" id="bt-dd-kl-pos-3" class="form-control" placeholder="Chức vụ (vd: Cán bộ Thanh tra - Pháp chế)" list="dl-chucvu" />
+              </div>
             </div>
+          </div>
+
+          <!-- II. Nội dung xác minh sự cố -->
+          <div style="font-weight: 700; margin: 1.25rem 0 0.5rem 0; color: var(--primary);">
+            II. NỘI DUNG XÁC MINH SỰ CỐ & THIẾT BỊ
+          </div>
+          <div class="form-group" style="margin-bottom:0.75rem;">
+            <label class="form-label required">1. Sự cố xảy ra trên tuyến hàng rào</label>
+            <input type="text" id="bt-su-co" class="form-control" list="dl-su-co" placeholder="Nhập sự cố hoặc chọn từ danh sách gợi ý..." required autocomplete="off" />
           </div>
 
           <div class="form-group" style="margin-bottom:0.75rem;">
-            <label class="form-label required">Sự cố xảy ra</label>
-            <select id="bt-su-co-sel" class="form-select" style="margin-bottom:4px;"></select>
-            <input type="text" id="bt-su-co" class="form-control" placeholder="Hoặc nhập sự cố chi tiết..." />
+            <label class="form-label">2. Nguyên nhân sự cố</label>
+            <textarea id="bt-reason" class="form-textarea" list="dl-nguyen-nhan" placeholder="Nhập nguyên nhân (vd: Cây gãy đè đứt dây cáp làm mất xung điện, sét đánh...)..."></textarea>
           </div>
 
-          <div class="form-group" style="margin-bottom:0.75rem;">
-            <label class="form-label">Nguyên nhân sự cố</label>
-            <textarea id="bt-reason" class="form-textarea" placeholder="Cây gãy đè đứt dây, sét đánh..."></textarea>
+          <!-- Bảng Thiết bị hỏng -->
+          <div style="display: flex; align-items: center; justify-content: space-between; margin: 1rem 0 0.4rem 0;">
+            <div style="font-weight: 700; color: var(--danger);">3. Danh mục Thiết bị Hư hỏng:</div>
+            <button type="button" class="btn btn-secondary btn-sm" onclick="addBtThietBiHongRow()">+ Thêm thiết bị</button>
+          </div>
+          <div class="dynamic-table-wrapper">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th style="width: 35px; text-align: center;">STT</th>
+                  <th>Tên thiết bị / Quy cách</th>
+                  <th style="width: 130px;">Số lượng</th>
+                  <th>Tình trạng hư hỏng</th>
+                  <th style="width: 40px; text-align: center;">Xóa</th>
+                </tr>
+              </thead>
+              <tbody id="bt-thietbi-hong-tbody"></tbody>
+            </table>
+          </div>
+
+          <!-- Bảng Thiết bị thay thế -->
+          <div style="display: flex; align-items: center; justify-content: space-between; margin: 1rem 0 0.4rem 0;">
+            <div style="font-weight: 700; color: var(--success);">4. Vật tư / Thiết bị Thay thế, Khắc phục:</div>
+            <button type="button" class="btn btn-secondary btn-sm" onclick="addBtThietBiThayTheRow()">+ Thêm vật tư</button>
+          </div>
+          <div class="dynamic-table-wrapper">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th style="width: 35px; text-align: center;">STT</th>
+                  <th>Tên vật tư thay thế</th>
+                  <th style="width: 130px;">Số lượng</th>
+                  <th>Ghi chú / Tình trạng</th>
+                  <th style="width: 40px; text-align: center;">Xóa</th>
+                </tr>
+              </thead>
+              <tbody id="bt-thietbi-thaythe-tbody"></tbody>
+            </table>
           </div>
 
           <!-- Chụp ảnh GPS -->
@@ -921,27 +1132,88 @@
             </div>
             <div class="form-group">
               <label class="form-label required">Tuyến hàng rào</label>
-              <select id="vs-tuyen" class="form-select" required></select>
+              <input type="text" id="vs-tuyen" class="form-control" list="dl-tuyen" placeholder="Nhập hoặc chọn Tuyến hàng rào..." required autocomplete="off" />
             </div>
             <div class="form-group">
               <label class="form-label">Địa điểm / Tiểu khu</label>
-              <input type="text" id="vs-location" class="form-control" placeholder="Tiểu khu 120..." />
+              <input type="text" id="vs-location" class="form-control" placeholder="Tiểu khu 120, Khoảnh 3..." />
             </div>
           </div>
 
-          <div class="form-grid">
-            <div class="form-group">
-              <label class="form-label">Đại diện Đơn vị Bảo trì</label>
-              <input type="text" id="vs-dd-bt" class="form-control" />
+          <!-- Thành phần tham gia Vệ sinh (3 Đơn vị x 3 Đại diện) -->
+          <div style="font-weight: 700; margin: 1.25rem 0 0.5rem 0; color: var(--primary);">
+            I. THÀNH PHẦN THAM GIA (Họ tên & Chức vụ)
+          </div>
+
+          <!-- 1. Đơn vị Bảo trì -->
+          <div class="rep-card-group">
+            <div class="rep-card-header">🛠️ 1. Đại diện Đơn vị Bảo trì</div>
+            <div class="rep-grid-3">
+              <div class="rep-cell">
+                <span class="rep-label">Đại diện 1:</span>
+                <input type="text" id="vs-dd-bt-name-1" class="form-control" placeholder="Họ và tên (Đại diện 1)" list="dl-hoten" />
+                <input type="text" id="vs-dd-bt-pos-1" class="form-control" placeholder="Chức vụ" list="dl-chucvu" />
+              </div>
+              <div class="rep-cell">
+                <span class="rep-label">Đại diện 2:</span>
+                <input type="text" id="vs-dd-bt-name-2" class="form-control" placeholder="Họ và tên (Đại diện 2)" list="dl-hoten" />
+                <input type="text" id="vs-dd-bt-pos-2" class="form-control" placeholder="Chức vụ" list="dl-chucvu" />
+              </div>
+              <div class="rep-cell">
+                <span class="rep-label">Đại diện 3:</span>
+                <input type="text" id="vs-dd-bt-name-3" class="form-control" placeholder="Họ và tên (Đại diện 3)" list="dl-hoten" />
+                <input type="text" id="vs-dd-bt-pos-3" class="form-control" placeholder="Chức vụ" list="dl-chucvu" />
+              </div>
             </div>
-            <div class="form-group">
-              <label class="form-label">Đại diện Chủ rừng / Kiểm lâm</label>
-              <input type="text" id="vs-dd-cr" class="form-control" />
+          </div>
+
+          <!-- 2. Đơn vị Chủ rừng -->
+          <div class="rep-card-group">
+            <div class="rep-card-header">🌲 2. Đại diện Đơn vị Chủ rừng</div>
+            <div class="rep-grid-3">
+              <div class="rep-cell">
+                <span class="rep-label">Đại diện 1:</span>
+                <input type="text" id="vs-dd-cr-name-1" class="form-control" placeholder="Họ và tên (Đại diện 1)" list="dl-hoten" />
+                <input type="text" id="vs-dd-cr-pos-1" class="form-control" placeholder="Chức vụ" list="dl-chucvu" />
+              </div>
+              <div class="rep-cell">
+                <span class="rep-label">Đại diện 2:</span>
+                <input type="text" id="vs-dd-cr-name-2" class="form-control" placeholder="Họ và tên (Đại diện 2)" list="dl-hoten" />
+                <input type="text" id="vs-dd-cr-pos-2" class="form-control" placeholder="Chức vụ" list="dl-chucvu" />
+              </div>
+              <div class="rep-cell">
+                <span class="rep-label">Đại diện 3:</span>
+                <input type="text" id="vs-dd-cr-name-3" class="form-control" placeholder="Họ và tên (Đại diện 3)" list="dl-hoten" />
+                <input type="text" id="vs-dd-cr-pos-3" class="form-control" placeholder="Chức vụ" list="dl-chucvu" />
+              </div>
             </div>
-            <div class="form-group full-width">
-              <label class="form-label">Danh sách Nhân công</label>
-              <input type="text" id="vs-workers" class="form-control" placeholder="Nguyễn Văn A, Trần Văn B..." />
+          </div>
+
+          <!-- 3. Cơ quan Kiểm lâm -->
+          <div class="rep-card-group">
+            <div class="rep-card-header">🦅 3. Đại diện Cơ quan Kiểm lâm sở tại</div>
+            <div class="rep-grid-3">
+              <div class="rep-cell">
+                <span class="rep-label">Đại diện 1:</span>
+                <input type="text" id="vs-dd-kl-name-1" class="form-control" placeholder="Họ và tên (Đại diện 1)" list="dl-hoten" />
+                <input type="text" id="vs-dd-kl-pos-1" class="form-control" placeholder="Chức vụ" list="dl-chucvu" />
+              </div>
+              <div class="rep-cell">
+                <span class="rep-label">Đại diện 2:</span>
+                <input type="text" id="vs-dd-kl-name-2" class="form-control" placeholder="Họ và tên (Đại diện 2)" list="dl-hoten" />
+                <input type="text" id="vs-dd-kl-pos-2" class="form-control" placeholder="Chức vụ" list="dl-chucvu" />
+              </div>
+              <div class="rep-cell">
+                <span class="rep-label">Đại diện 3:</span>
+                <input type="text" id="vs-dd-kl-name-3" class="form-control" placeholder="Họ và tên (Đại diện 3)" list="dl-hoten" />
+                <input type="text" id="vs-dd-kl-pos-3" class="form-control" placeholder="Chức vụ" list="dl-chucvu" />
+              </div>
             </div>
+          </div>
+
+          <div class="form-group full-width" style="margin-bottom: 0.75rem;">
+            <label class="form-label">Danh sách Nhân công thực hiện</label>
+            <input type="text" id="vs-workers" class="form-control" placeholder="Nguyễn Văn A, Trần Văn B, Lê Văn C..." />
           </div>
 
           <!-- Chi tiết phân đoạn -->
@@ -1196,69 +1468,125 @@
     </div>
   </div>
 
-  <!-- ================= MODAL: XEM TRƯỚC & XUẤT A4 PDF ================= -->
-  <div id="pdf-preview-modal" class="modal-overlay">
-    <div class="modal-dialog pdf-modal-dialog">
-      <div style="background: var(--bg-surface-elevated); padding: 0.85rem 1.25rem; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color);">
-        <h3 id="pdf-preview-title" style="display: flex; align-items: center; gap: 0.5rem; font-size: 1.05rem; font-weight: 700; color: var(--primary);">
-          📄 Xem Trước Văn Bản Khổ A4
+  <!-- ================= MODAL: QUẢN LÝ DANH MỤC GỢI Ý & PIN (PIN & VALIDATION) ================= -->
+  <div id="val-modal" class="modal-overlay">
+    <div class="modal-card" style="max-width: 580px; width: 95%;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+        <h3 style="font-weight:700; color:var(--primary); display:flex; align-items:center; gap:0.4rem;">
+          📌 Quản Lý Danh Mục & Gợi Ý Tự Động
         </h3>
-        <div style="display: flex; align-items: center; gap: 0.5rem;">
-          <button type="button" class="btn btn-primary btn-sm" onclick="exportCurrentPDF()" title="Tải file PDF về máy">
-            📥 Xuất File PDF (A4)
-          </button>
-          <button type="button" class="btn btn-secondary btn-sm" onclick="printFromPreview()" title="Mở hộp thoại in trình duyệt">
-            🖨️ In Trình Duyệt
-          </button>
-          <button type="button" class="btn btn-secondary btn-sm" onclick="closeModal('pdf-preview-modal')" style="padding: 0.35rem 0.65rem;" title="Đóng">
-            ✕
-          </button>
-        </div>
+        <button type="button" class="btn btn-secondary btn-sm" onclick="closeModal('val-modal')">✕</button>
       </div>
-      <div style="padding: 0.75rem;">
-        <div class="pdf-preview-container">
-          <div id="pdf-preview-sheet" class="a4-preview-sheet"></div>
-        </div>
+
+      <div style="font-size:0.83rem; color:var(--text-muted); margin-bottom:0.75rem; line-height:1.4;">
+        💡 <b>Cơ chế thông minh:</b> Mọi nội dung bạn nhập khi lập biên bản sẽ được <b>tự động lưu vào danh mục</b> này. Bạn có thể tự do thêm mới, xóa các mục bên dưới hoặc xóa sạch để nhập từ đầu:
       </div>
-      <div style="padding: 0.75rem 1.25rem; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-color);">
-        <div style="font-size: 0.82rem; color: var(--text-muted);">
-          💡 Chuẩn thể thức văn bản: Phông Times New Roman, Khổ A4 Portrait, Cỡ chữ 12–13pt.
-        </div>
-        <div style="display: flex; gap: 0.5rem;">
-          <button type="button" class="btn btn-primary" onclick="exportCurrentPDF()">
-            📥 Tải Xuống PDF (A4)
-          </button>
-          <button type="button" class="btn btn-secondary" onclick="closeModal('pdf-preview-modal')">
-            Đóng
-          </button>
-        </div>
+
+      <div class="form-group" style="margin-bottom:0.75rem;">
+        <label class="form-label">Chọn nhóm danh mục để quản lý</label>
+        <select id="val-cat-select" class="form-select" onchange="renderValTagList()">
+          <option value="tuyen">📍 Tuyến Hàng Rào Điện</option>
+          <option value="suCo">⚡ Sự Cố Thường Gặp</option>
+          <option value="nguyenNhan">🔍 Nguyên Nhân Sự Cố</option>
+          <option value="thietBi">🛠️ Thiết Bị & Phụ Tùng</option>
+          <option value="hoten">👤 Danh Sách Họ Tên Đại Diện</option>
+          <option value="chucvu">💼 Danh Sách Chức Vụ</option>
+        </select>
+      </div>
+
+      <div style="display:flex; gap:0.4rem; margin-bottom:0.75rem;">
+        <input type="text" id="val-new-input" class="form-control" placeholder="Nhập mục mới cần thêm vào danh mục..." />
+        <button type="button" class="btn btn-primary btn-sm" onclick="addValItemFromModal()">+ Thêm</button>
+      </div>
+
+      <div style="font-weight:600; font-size:0.85rem; margin-bottom:0.35rem; color:var(--text-main);">
+        Danh sách mục gợi ý hiện có (Bấm ✕ để xóa mục):
+      </div>
+      <div id="val-tags-container" class="val-tag-list"></div>
+
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-top:1rem; border-top:1px solid var(--border-color); padding-top:0.75rem;">
+        <button type="button" class="btn btn-danger btn-sm" onclick="clearCurrentCategoryVal()">🗑️ Xóa sạch nhóm này</button>
+        <button type="button" class="btn btn-secondary btn-sm" onclick="closeModal('val-modal')">Đóng</button>
       </div>
     </div>
   </div>
 
-  <!-- Toast Notification Box -->
-  <div id="toast" class="toast-box"></div>
-
-  <!-- Printable A4 Area -->
-  <div id="printable-area"></div>
+  <!-- Dynamic Datalists for Autocomplete & Suggestions -->
+  <datalist id="dl-tuyen"></datalist>
+  <datalist id="dl-su-co"></datalist>
+  <datalist id="dl-nguyen-nhan"></datalist>
+  <datalist id="dl-hoten"></datalist>
+  <datalist id="dl-chucvu"></datalist>
+  <datalist id="dl-thietbi"></datalist>
+  <datalist id="dl-dvt">
+    <option value="Cái">Cái</option>
+    <option value="Bộ">Bộ</option>
+    <option value="Bình">Bình</option>
+    <option value="Tấm">Tấm</option>
+    <option value="Mét">Mét</option>
+    <option value="Trụ">Trụ</option>
+    <option value="Kg">Kg</option>
+  </datalist>
 
   <!-- ================= ALL-IN-ONE JAVASCRIPT LOGIC ================= -->
   <script>
-    // Master Data mẫu
-    const MASTER_DATA = {
-      tuyen: [
-        "Tuyến Hàng rào điện Định Quán (Đoạn 1)",
-        "Tuyến Hàng rào điện Vĩnh Cửu (Đoạn 2)",
-        "Tuyến Hàng rào điện Tân Phú (Đoạn 3)",
-        "Tuyến Hàng rào điện Bù Gia Mập giáp ranh"
-      ],
-      suCo: [
-        "Đứt dây dẫn xung điện do cây gãy đè",
-        "Sét đánh hỏng bộ tạo xung (Energizer)",
-        "Bình ắc quy / Pin mặt trời hỏng, yếu điện",
-        "Sứ cách điện bị vỡ làm rò điện xuống đất",
-        "Trụ rào bị nghiêng gãy do voi va quẹt"
-      ]
+    // ================= DYNAMIC VALIDATION & SUGGESTIONS (PIN & VALIDATION) =================
+    const ValStore = {
+      defaults: {
+        tuyen: [],
+        suCo: [],
+        nguyenNhan: [],
+        thietBi: [],
+        hoten: [],
+        chucvu: [
+          "Đội trưởng", "Đội phó", "Kỹ thuật viên", "Công nhân bảo trì",
+          "Trưởng trạm BVR", "Nhân viên BVR", "Cán bộ quản lý",
+          "Kiểm lâm viên địa bàn", "Trạm trưởng KL", "Phó Trạm trưởng KL", "Cán bộ Thanh tra"
+        ]
+      },
+      get(cat) {
+        const stored = localStorage.getItem('qlbv_val_' + cat);
+        if (stored) {
+          try { return JSON.parse(stored); } catch (e) {}
+        }
+        return this.defaults[cat] || [];
+      },
+      save(cat, list) {
+        localStorage.setItem('qlbv_val_' + cat, JSON.stringify(list));
+        this.refreshDatalists();
+      },
+      learn(cat, val) {
+        if (!val || typeof val !== 'string') return;
+        const clean = val.trim();
+        if (!clean) return;
+        let list = this.get(cat);
+        if (!list.includes(clean)) {
+          list.push(clean);
+          this.save(cat, list);
+        }
+      },
+      remove(cat, val) {
+        let list = this.get(cat).filter(x => x !== val);
+        this.save(cat, list);
+      },
+      clear(cat) {
+        localStorage.removeItem('qlbv_val_' + cat);
+        this.refreshDatalists();
+      },
+      refreshDatalists() {
+        const populateDL = (dlId, cat) => {
+          const dl = document.getElementById(dlId);
+          if (!dl) return;
+          const items = this.get(cat);
+          dl.innerHTML = items.map(item => `<option value="${item}">`).join('');
+        };
+        populateDL('dl-tuyen', 'tuyen');
+        populateDL('dl-su-co', 'suCo');
+        populateDL('dl-nguyen-nhan', 'nguyenNhan');
+        populateDL('dl-thietbi', 'thietBi');
+        populateDL('dl-hoten', 'hoten');
+        populateDL('dl-chucvu', 'chucvu');
+      }
     };
 
     let currentUser = null;
@@ -1269,10 +1597,12 @@
     window.addEventListener('DOMContentLoaded', () => {
       initGPS();
       initUserSession();
-      initDropdowns();
+      ValStore.refreshDatalists();
       setDefaultDates();
       updateDashboardKPI();
       addVsRow(); // Mặc định 1 dòng phân đoạn vệ sinh
+      addBtThietBiHongRow();
+      addBtThietBiThayTheRow();
     });
 
     // Lấy GPS nền
@@ -1290,10 +1620,6 @@
       const saved = localStorage.getItem('qlbv_user');
       if (saved) {
         currentUser = JSON.parse(saved);
-        if (currentUser && currentUser.username.toLowerCase() === 'admin' && currentUser.fullName.includes('Lộc Vũ Trung')) {
-          currentUser.fullName = 'Nguyễn Viết Sử (admin)';
-          localStorage.setItem('qlbv_user', JSON.stringify(currentUser));
-        }
         updateUserBadge();
       } else {
         updateUserBadge();
@@ -1318,21 +1644,119 @@
         roleEl.textContent = currentUser.role || 'Worker';
         roleEl.className = 'role-badge role-' + (currentUser.role ? currentUser.role.toLowerCase() : 'worker');
 
-        // Nếu là Admin -> Hiển thị nút Nhân Sự trên thanh điều hướng & Dashboard
         const navUsers = document.getElementById('nav-item-users');
-        if (navUsers) {
-          navUsers.style.display = (currentUser.role === 'Admin') ? 'flex' : 'none';
-        }
+        if (navUsers) navUsers.style.display = (currentUser.role === 'Admin') ? 'flex' : 'none';
         const dashUsers = document.getElementById('dash-tile-users');
-        if (dashUsers) {
-          dashUsers.style.display = (currentUser.role === 'Admin') ? 'flex' : 'none';
-        }
+        if (dashUsers) dashUsers.style.display = (currentUser.role === 'Admin') ? 'flex' : 'none';
       } else {
         if (loginScreen) loginScreen.style.display = 'flex';
         if (mainContainer) mainContainer.style.display = 'none';
         if (bottomNav) bottomNav.style.display = 'none';
         if (topNavbar) topNavbar.style.display = 'none';
       }
+    }
+
+    // ================= QUẢN LÝ DANH MỤC GỢI Ý (PIN & VALIDATION MODAL) =================
+    function openValModal() {
+      renderValTagList();
+      document.getElementById('val-modal').classList.add('active');
+    }
+
+    function renderValTagList() {
+      const cat = document.getElementById('val-cat-select').value;
+      const container = document.getElementById('val-tags-container');
+      const items = ValStore.get(cat);
+
+      if (items.length === 0) {
+        container.innerHTML = '<span style="color:var(--text-muted); font-size:0.8rem;">Chưa có mục gợi ý nào trong nhóm này. Hãy nhập ở trên hoặc khi điền form hệ thống sẽ tự học!</span>';
+        return;
+      }
+
+      container.innerHTML = items.map(item => `
+        <span class="val-tag-item">
+          <span>${item}</span>
+          <span class="val-tag-del" onclick="deleteValTag('${item}')" title="Xóa">✕</span>
+        </span>
+      `).join('');
+    }
+
+    function addValItemFromModal() {
+      const cat = document.getElementById('val-cat-select').value;
+      const inp = document.getElementById('val-new-input');
+      const val = inp.value.trim();
+      if (!val) return;
+      ValStore.learn(cat, val);
+      inp.value = '';
+      renderValTagList();
+      showToast(`✅ Đã thêm [${val}] vào danh mục gợi ý!`);
+    }
+
+    function deleteValTag(val) {
+      const cat = document.getElementById('val-cat-select').value;
+      ValStore.remove(cat, val);
+      renderValTagList();
+      showToast(`Đã xóa [${val}]`);
+    }
+
+    function clearCurrentCategoryVal() {
+      const cat = document.getElementById('val-cat-select').value;
+      if (!confirm('Bạn có chắc chắn muốn xóa toàn bộ mục gợi ý của nhóm này?')) return;
+      ValStore.clear(cat);
+      renderValTagList();
+      showToast('Đã xóa sạch danh mục nhóm này!');
+    }
+
+    // ================= QUẢN LÝ THIẾT BỊ HƯ HỎNG & THAY THẾ =================
+    function addBtThietBiHongRow() {
+      const tbody = document.getElementById('bt-thietbi-hong-tbody');
+      if (!tbody) return;
+      const idx = tbody.children.length + 1;
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td style="text-align: center;">${idx}</td>
+        <td>
+          <input type="text" class="form-control tb-hong-name" list="dl-thietbi" placeholder="Nhập tên thiết bị hư hỏng..." />
+        </td>
+        <td>
+          <div style="display:flex; gap:3px;">
+            <input type="number" class="form-control tb-hong-qty" value="1" min="1" style="width:55px;" />
+            <input type="text" class="form-control tb-hong-unit" list="dl-dvt" value="Cái" style="width:65px;" />
+          </div>
+        </td>
+        <td>
+          <input type="text" class="form-control tb-hong-status" placeholder="Tình trạng hỏng..." />
+        </td>
+        <td style="text-align:center;">
+          <button type="button" class="btn btn-danger btn-sm" onclick="this.closest('tr').remove();">✕</button>
+        </td>
+      `;
+      tbody.appendChild(tr);
+    }
+
+    function addBtThietBiThayTheRow() {
+      const tbody = document.getElementById('bt-thietbi-thaythe-tbody');
+      if (!tbody) return;
+      const idx = tbody.children.length + 1;
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td style="text-align: center;">${idx}</td>
+        <td>
+          <input type="text" class="form-control tb-thay-name" list="dl-thietbi" placeholder="Nhập tên vật tư thay thế..." />
+        </td>
+        <td>
+          <div style="display:flex; gap:3px;">
+            <input type="number" class="form-control tb-thay-qty" value="1" min="1" style="width:55px;" />
+            <input type="text" class="form-control tb-thay-unit" list="dl-dvt" value="Cái" style="width:65px;" />
+          </div>
+        </td>
+        <td>
+          <input type="text" class="form-control tb-thay-note" value="Đã thay mới, hoạt động tốt" />
+        </td>
+        <td style="text-align:center;">
+          <button type="button" class="btn btn-danger btn-sm" onclick="this.closest('tr').remove();">✕</button>
+        </td>
+      `;
+      tbody.appendChild(tr);
     }
 
     // ================= QUÊN MẬT KHẨU =================
@@ -1343,8 +1767,6 @@
     document.getElementById('f-forgot').addEventListener('submit', (e) => {
       e.preventDefault();
       const val = document.getElementById('forgot-input').value.trim();
-      
-      // Xử lý cục bộ
       let localUsers = getLocalUsersList();
       let found = localUsers.find(u => u.username.toLowerCase() === val.toLowerCase() || u.phone === val);
 
@@ -1369,7 +1791,6 @@
       ];
       let list = JSON.parse(localStorage.getItem('qlbv_all_users') || 'null');
       if (!list) return defaultUsers;
-      // Tự động cập nhật tên Admin mới nếu đang lưu tên cũ
       list.forEach(u => {
         if (u.username.toLowerCase() === 'admin' && u.fullName.includes('Lộc Vũ Trung')) {
           u.fullName = 'Nguyễn Viết Sử (admin)';
@@ -1416,8 +1837,8 @@
     }
 
     function openAddUserModal() {
-      document.getElementById('user-modal-title').textContent = '➕ Thêm Nhân Sự Mới';
       document.getElementById('usr-mode').value = 'add';
+      document.getElementById('user-modal-title').textContent = '➕ Thêm Nhân Sự Mới';
       document.getElementById('usr-username').disabled = false;
       document.getElementById('f-save-user').reset();
       document.getElementById('user-modal').classList.add('active');
@@ -1428,23 +1849,24 @@
       const u = users[idx];
       if (!u) return;
 
-      document.getElementById('user-modal-title').textContent = '✏️ Sửa Thông Tin Nhân Sự';
       document.getElementById('usr-mode').value = 'edit';
+      document.getElementById('user-modal-title').textContent = '✏️ Chỉnh Sửa Nhân Sự';
+      document.getElementById('usr-fullname').value = u.fullName;
       document.getElementById('usr-username').value = u.username;
       document.getElementById('usr-username').disabled = true;
-      document.getElementById('usr-fullname').value = u.fullName;
       document.getElementById('usr-phone').value = u.phone || '';
       document.getElementById('usr-role').value = u.role || 'Worker';
       document.getElementById('usr-status').value = u.status || 'Active';
       document.getElementById('usr-org').value = u.organization || '';
+
       document.getElementById('user-modal').classList.add('active');
     }
 
     document.getElementById('f-save-user').addEventListener('submit', (e) => {
       e.preventDefault();
       const mode = document.getElementById('usr-mode').value;
-      const username = document.getElementById('usr-username').value.trim();
       const fullName = document.getElementById('usr-fullname').value.trim();
+      const username = document.getElementById('usr-username').value.trim();
       const phone = document.getElementById('usr-phone').value.trim();
       const role = document.getElementById('usr-role').value;
       const status = document.getElementById('usr-status').value;
@@ -1453,18 +1875,18 @@
       let users = getLocalUsersList();
 
       if (mode === 'add') {
-        if (users.find(u => u.username.toLowerCase() === username.toLowerCase())) {
+        if (users.some(u => u.username.toLowerCase() === username.toLowerCase())) {
           showToast('❌ Tên đăng nhập này đã tồn tại!');
           return;
         }
         users.push({
-          userId: 'U' + (users.length + 1),
+          userId: 'U' + String(Date.now()).slice(-4),
           username: username,
           pass: '123456',
           fullName: fullName,
+          phone: phone,
           role: role,
           organization: org,
-          phone: phone,
           status: status
         });
         showToast('✅ Đã thêm nhân sự thành công! (Mật khẩu mặc định: 123456)');
@@ -1521,15 +1943,13 @@
       const u = document.getElementById('inp-user').value.trim();
       const p = document.getElementById('inp-pass').value;
 
-      // Tài khoản mẫu phân quyền
-      const accounts = [
-        { username: 'admin', pass: '123456', fullName: 'Nguyễn Viết Sử (admin)', role: 'Admin' },
-        { username: 'giamsat', pass: '123456', fullName: 'Cán Bộ Giám Sát', role: 'Supervisor' },
-        { username: 'baotri01', pass: '123456', fullName: 'Đội Trưởng Bảo Trì 1', role: 'Worker' }
-      ];
-
-      const found = accounts.find(a => a.username.toLowerCase() === u.toLowerCase() && a.pass === p);
+      const accounts = getLocalUsersList();
+      const found = accounts.find(a => (a.username.toLowerCase() === u.toLowerCase() || (a.phone && a.phone === u)) && a.pass === p);
       if (found) {
+        if (found.status === 'Inactive') {
+          showToast('⛔ Tài khoản này đã bị khóa!');
+          return;
+        }
         currentUser = found;
         localStorage.setItem('qlbv_user', JSON.stringify(found));
         updateUserBadge();
@@ -1558,25 +1978,6 @@
       if (tabId === 'dashboard') updateDashboardKPI();
       if (tabId === 'users') loadUsersTable();
       window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-
-    // Nạp dropdown
-    function initDropdowns() {
-      const btTuyen = document.getElementById('bt-tuyen');
-      const vsTuyen = document.getElementById('vs-tuyen');
-      MASTER_DATA.tuyen.forEach(t => {
-        btTuyen.innerHTML += `<option value="${t}">${t}</option>`;
-        vsTuyen.innerHTML += `<option value="${t}">${t}</option>`;
-      });
-
-      const btSuCo = document.getElementById('bt-su-co-sel');
-      btSuCo.innerHTML = '<option value="">-- Chọn sự cố thường gặp --</option>';
-      MASTER_DATA.suCo.forEach(s => {
-        btSuCo.innerHTML += `<option value="${s}">${s}</option>`;
-      });
-      btSuCo.addEventListener('change', () => {
-        if (btSuCo.value) document.getElementById('bt-su-co').value = btSuCo.value;
-      });
     }
 
     function setDefaultDates() {
@@ -1700,20 +2101,92 @@
       renderPhotos(type === 'baotri' ? 'bt-photos-grid' : 'vs-photos-grid', type);
     }
 
+    // Thu thập đại diện 3 Đơn vị (3 người mỗi đơn vị)
+    function collectRepresentatives(prefix) {
+      const getUnitReps = (unitKey) => {
+        const reps = [];
+        for (let i = 1; i <= 3; i++) {
+          const name = document.getElementById(`${prefix}-dd-${unitKey}-name-${i}`)?.value.trim() || '';
+          const pos = document.getElementById(`${prefix}-dd-${unitKey}-pos-${i}`)?.value.trim() || '';
+          if (name) {
+            reps.push({ name: name, position: pos });
+            ValStore.learn('hoten', name);
+            if (pos) ValStore.learn('chucvu', pos);
+          }
+        }
+        return reps;
+      };
+
+      return {
+        bt: getUnitReps('bt'),
+        cr: getUnitReps('cr'),
+        kl: getUnitReps('kl')
+      };
+    }
+
+    function formatRepsString(reps) {
+      return reps.map(r => r.position ? `${r.name} (${r.position})` : r.name).join('; ');
+    }
+
     // Submit Forms
     document.getElementById('f-baotri').addEventListener('submit', (e) => {
       e.preventDefault();
+      const tuyen = document.getElementById('bt-tuyen').value.trim();
+      const suCo = document.getElementById('bt-su-co').value.trim();
+      const reason = document.getElementById('bt-reason').value.trim();
+
+      // Auto-learn validation
+      if (tuyen) ValStore.learn('tuyen', tuyen);
+      if (suCo) ValStore.learn('suCo', suCo);
+      if (reason) ValStore.learn('nguyenNhan', reason);
+
+      const reps = collectRepresentatives('bt');
+
+      // Thu thập thiết bị
+      const thietBiHong = [];
+      document.querySelectorAll('#bt-thietbi-hong-tbody tr').forEach(r => {
+        const name = r.querySelector('.tb-hong-name')?.value.trim() || '';
+        if (name) {
+          thietBiHong.push({
+            name: name,
+            quantity: r.querySelector('.tb-hong-qty')?.value || '1',
+            unit: r.querySelector('.tb-hong-unit')?.value || 'Cái',
+            status: r.querySelector('.tb-hong-status')?.value || ''
+          });
+          ValStore.learn('thietBi', name);
+        }
+      });
+
+      const thietBiThayThe = [];
+      document.querySelectorAll('#bt-thietbi-thaythe-tbody tr').forEach(r => {
+        const name = r.querySelector('.tb-thay-name')?.value.trim() || '';
+        if (name) {
+          thietBiThayThe.push({
+            name: name,
+            quantity: r.querySelector('.tb-thay-qty')?.value || '1',
+            unit: r.querySelector('.tb-thay-unit')?.value || 'Cái',
+            note: r.querySelector('.tb-thay-note')?.value || ''
+          });
+          ValStore.learn('thietBi', name);
+        }
+      });
+
       const rec = {
         type: 'baotri',
         date: document.getElementById('bt-date').value,
         time: document.getElementById('bt-time').value,
-        tuyen: document.getElementById('bt-tuyen').value,
+        tuyen: tuyen,
         loc: document.getElementById('bt-location').value,
-        suCo: document.getElementById('bt-su-co').value || document.getElementById('bt-su-co-sel').value,
-        reason: document.getElementById('bt-reason').value,
-        ddBt: document.getElementById('bt-dd-bt').value,
-        ddCr: document.getElementById('bt-dd-cr').value,
-        ddKl: document.getElementById('bt-dd-kl').value,
+        suCo: suCo,
+        reason: reason,
+        daiDienBaoTri: reps.bt,
+        daiDienChuRung: reps.cr,
+        daiDienKiemLam: reps.kl,
+        ddBt: formatRepsString(reps.bt),
+        ddCr: formatRepsString(reps.cr),
+        ddKl: formatRepsString(reps.kl),
+        thietBiHong: thietBiHong,
+        thietBiThayThe: thietBiThayThe,
         photos: photosState.baotri
       };
       saveRecord(rec);
@@ -1721,6 +2194,11 @@
 
     document.getElementById('f-vesinh').addEventListener('submit', (e) => {
       e.preventDefault();
+      const tuyen = document.getElementById('vs-tuyen').value.trim();
+      if (tuyen) ValStore.learn('tuyen', tuyen);
+
+      const reps = collectRepresentatives('vs');
+
       const cacDoan = [];
       document.querySelectorAll('#vs-rows-container > div').forEach(r => {
         const from = r.querySelector('.vs-from')?.value || '';
@@ -1736,11 +2214,15 @@
       const rec = {
         type: 'vesinh',
         date: document.getElementById('vs-date').value,
-        tuyen: document.getElementById('vs-tuyen').value,
+        tuyen: tuyen,
         loc: document.getElementById('vs-location').value,
         workers: document.getElementById('vs-workers').value,
-        ddBt: document.getElementById('vs-dd-bt')?.value || '',
-        ddCr: document.getElementById('vs-dd-cr')?.value || '',
+        daiDienBaoTri: reps.bt,
+        daiDienChuRung: reps.cr,
+        daiDienKiemLam: reps.kl,
+        ddBt: formatRepsString(reps.bt),
+        ddCr: formatRepsString(reps.cr),
+        ddKl: formatRepsString(reps.kl),
         len: document.getElementById('vs-sum-len').textContent,
         area: document.getElementById('vs-sum-area').textContent,
         cacDoanVeSinh: cacDoan,
@@ -1766,27 +2248,10 @@
       rec.createdBy = currentUser ? currentUser.username : 'khach';
       rec.createdAt = new Date().toISOString();
 
-      showToast('⏳ Đang lưu dữ liệu lên Google Sheets...');
-
-      // Gọi trực tiếp backend Google Apps Script
-      if (typeof google !== 'undefined' && google.script && google.script.run) {
-        google.script.run
-          .withSuccessHandler(res => {
-            saveToLocal(rec);
-            showToast('✅ Đã lưu trực tiếp vào Google Sheets thành công!');
-            updateDashboardKPI();
-          })
-          .withFailureHandler(err => {
-            saveToLocal(rec);
-            showToast('⚠️ Lưu cục bộ: ' + (err.message || err));
-            updateDashboardKPI();
-          })
-          .handleSaveRecordClient({ formType: rec.type, record: rec, username: rec.createdBy });
-      } else {
-        saveToLocal(rec);
-        showToast('💾 Đã lưu vào bộ nhớ máy!');
-        updateDashboardKPI();
-      }
+      showToast('⏳ Đang lưu dữ liệu...');
+      saveToLocal(rec);
+      showToast('✅ Đã lưu vào bộ nhớ máy!');
+      updateDashboardKPI();
     }
 
     function saveToLocal(rec) {
@@ -1824,14 +2289,18 @@
           area += parseFloat(i.area) || 0;
         }
       });
-      document.getElementById('kpi-bt').textContent = bt;
-      document.getElementById('kpi-vs').textContent = vs;
-      document.getElementById('kpi-len').textContent = len.toLocaleString();
-      document.getElementById('kpi-area').textContent = (area / 10000).toFixed(3);
+      const elBt = document.getElementById('kpi-bt');
+      const elVs = document.getElementById('kpi-vs');
+      const elLen = document.getElementById('kpi-len');
+      const elArea = document.getElementById('kpi-area');
+      if (elBt) elBt.textContent = bt;
+      if (elVs) elVs.textContent = vs;
+      if (elLen) elLen.textContent = len.toLocaleString();
+      if (elArea) elArea.textContent = (area / 10000).toFixed(3);
     }
 
     // ==========================================================================
-    // XUẤT PDF & IN ẤN CHUẨN THỂ THỨC VĂN BẢN (Nghị định 30/2020 & FILE MẪU WORD)
+    // XUẤT PDF & IN ẤN CHUẨN THỂ THỨC VĂN BẢN
     // ==========================================================================
     let currentPreviewRecord = null;
     let currentPreviewType = null;
@@ -1849,6 +2318,21 @@
       return `BienBan_${ts}`;
     }
 
+    function renderRepresentativeLines(reps, fallbackStr) {
+      if (Array.isArray(reps) && reps.length > 0) {
+        return reps.map(r => {
+          if (typeof r === 'object') {
+            return `<div style="margin-left: 0.4cm;">- Ông/bà: <b>${r.name || '...'}</b> ${r.position ? ' - Chức vụ: ' + r.position : ''}</div>`;
+          }
+          return `<div style="margin-left: 0.4cm;">- Ông/bà: ${r}</div>`;
+        }).join('');
+      }
+      if (typeof fallbackStr === 'string' && fallbackStr.trim()) {
+        return fallbackStr.split(';').map(item => `<div style="margin-left: 0.4cm;">- Ông/bà: ${item.trim()}</div>`).join('');
+      }
+      return '<div style="margin-left: 0.4cm;">...........................................................................................</div>';
+    }
+
     function renderBaoTriHTML(r) {
       const ngayParts = (r.date || '').split('-');
       const ngayStr = ngayParts.length === 3 ? ngayParts[2] : '.....';
@@ -1856,9 +2340,37 @@
       const namStr = ngayParts.length === 3 ? ngayParts[0] : '2026';
       const gioStr = r.time || '.....';
 
-      const ddBt = r.ddBt ? r.ddBt.split(';') : ['...................................................'];
-      const ddCr = r.ddCr ? r.ddCr.split(';') : ['...................................................'];
-      const ddKl = r.ddKl ? r.ddKl.split(';') : ['...................................................'];
+      const thietBiHongRows = (r.thietBiHong && r.thietBiHong.length > 0) ? r.thietBiHong.map((t, idx) => `
+        <tr>
+          <td style="text-align: center; border: 1px solid #000; padding: 2px 4px; font-size: 11pt;">${idx + 1}</td>
+          <td style="border: 1px solid #000; padding: 2px 6px; font-size: 11pt;">${t.name}</td>
+          <td style="border: 1px solid #000; padding: 2px 6px; text-align: center; font-size: 11pt;">${t.quantity} ${t.unit || 'Cái'}</td>
+          <td style="border: 1px solid #000; padding: 2px 6px; font-size: 11pt;">${t.status || 'Hư hỏng'}</td>
+        </tr>
+      `).join('') : `
+        <tr>
+          <td style="text-align: center; border: 1px solid #000; padding: 2px 4px; font-size: 11pt;">1</td>
+          <td style="border: 1px solid #000; padding: 2px 6px; font-size: 11pt;">Dây dẫn xung điện và phụ tùng liên quan</td>
+          <td style="border: 1px solid #000; padding: 2px 6px; text-align: center; font-size: 11pt;">01 Hệ thống</td>
+          <td style="border: 1px solid #000; padding: 2px 6px; font-size: 11pt;">Đã ghi nhận kiểm tra hiện trường</td>
+        </tr>
+      `;
+
+      const thietBiThayTheRows = (r.thietBiThayThe && r.thietBiThayThe.length > 0) ? r.thietBiThayThe.map((t, idx) => `
+        <tr>
+          <td style="text-align: center; border: 1px solid #000; padding: 2px 4px; font-size: 11pt;">${idx + 1}</td>
+          <td style="border: 1px solid #000; padding: 2px 6px; font-size: 11pt;">${t.name}</td>
+          <td style="border: 1px solid #000; padding: 2px 6px; text-align: center; font-size: 11pt;">${t.quantity} ${t.unit || 'Cái'}</td>
+          <td style="border: 1px solid #000; padding: 2px 6px; font-size: 11pt;">${t.note || 'Đã thay mới'}</td>
+        </tr>
+      `).join('') : `
+        <tr>
+          <td style="text-align: center; border: 1px solid #000; padding: 2px 4px; font-size: 11pt;">1</td>
+          <td style="border: 1px solid #000; padding: 2px 6px; font-size: 11pt;">Vật tư phụ tùng thay thế tiêu chuẩn</td>
+          <td style="border: 1px solid #000; padding: 2px 6px; text-align: center; font-size: 11pt;">01 Bộ</td>
+          <td style="border: 1px solid #000; padding: 2px 6px; font-size: 11pt;">Đã thay mới, hoạt động tốt</td>
+        </tr>
+      `;
 
       const photosHTML = (r.photos && r.photos.length > 0) ? `
         <div class="print-page-break" style="page-break-before: always; break-before: page; margin-top: 20px; padding-top: 10px;">
@@ -1869,7 +2381,7 @@
             ${r.photos.map((p, i) => `
               <div style="text-align: center; border: 1px solid #777; padding: 5px; background: #fff; border-radius: 3px;">
                 <img src="${p}" style="max-width: 100%; height: 210px; object-fit: contain; display: block; margin: 0 auto;" />
-                <div style="font-size: 10.5pt; font-style: italic; margin-top: 4px; color: #000;">Hình ${i+1}: Ảnh ghi nhận hiện trường bảo trì</div>
+                <div style="font-size: 10.5pt; font-style: italic; margin-top: 4px; color: #000;">Hình ${i+1}: Ảnh ghi nhận hiện trường</div>
               </div>
             `).join('')}
           </div>
@@ -1877,9 +2389,9 @@
       ` : '';
 
       return `
-        <div class="a4-document-content" style="font-family: 'Times New Roman', Times, serif; font-size: 12pt; line-height: 1.28; color: #000000; background: #ffffff; text-align: justify;">
+        <div class="a4-document-content" style="font-family: 'Times New Roman', Times, serif; font-size: 12pt; line-height: 1.25; color: #000000; background: #ffffff; text-align: justify;">
           <div class="a4-page-main" style="page-break-inside: avoid; break-inside: avoid;">
-            <table style="width: 100%; border-collapse: collapse; margin-bottom: 8px;">
+            <table style="width: 100%; border-collapse: collapse; margin-bottom: 6px;">
               <tr>
                 <td style="width: 44%; text-align: center; vertical-align: top; padding: 0;">
                   <div style="font-weight: bold; font-size: 11pt; text-transform: uppercase;">CHI CỤC KIỂM LÂM ĐỒNG NAI</div>
@@ -1897,66 +2409,85 @@
               </tr>
             </table>
 
-            <div style="text-align: center; margin: 8px 0 8px 0;">
-              <div style="font-weight: bold; font-size: 14pt; text-transform: uppercase;">BIÊN BẢN</div>
-              <div style="font-weight: bold; font-size: 12pt; margin-top: 2px; line-height: 1.3;">
+            <div style="text-align: center; margin: 6px 0 6px 0;">
+              <div style="font-weight: bold; font-size: 13.5pt; text-transform: uppercase;">BIÊN BẢN</div>
+              <div style="font-weight: bold; font-size: 11.5pt; margin-top: 2px; line-height: 1.25;">
                 Xác minh hiện trạng, ghi nhận sự cố của tuyến hàng rào điện thuộc<br/>
                 Dự án khẩn cấp bảo tồn Voi tỉnh Đồng Nai trên địa bàn quản lý của ${r.loc || r.tuyen || '…………………………………………….'}
               </div>
             </div>
 
-            <div style="text-align: justify; margin-bottom: 5px; font-style: italic; text-indent: 1cm; font-size: 11.5pt;">
-              Thực hiện nội dung Quyết định số 704/QĐ-SNNMT ngày 30/6/2026 của Sở Nông nghiệp và Môi trường về việc Phê duyệt điều chỉnh, bổ sung Điều 1 Quyết định số 595/QĐ-SNNMT ngày 30/3/2026 về việc phê duyệt kế hoạch và dự toán kinh phí nhiệm vụ “quản lý, bảo vệ và vận hành các công trình xây dựng để bảo tồn Voi châu Á tại Đồng Nai năm 2026" của Chi cục Kiểm lâm;
+            <div style="text-align: justify; margin-bottom: 4px; font-style: italic; text-indent: 0.8cm; font-size: 11pt;">
+              Thực hiện Quyết định số 704/QĐ-SNNMT ngày 30/6/2026 & Quyết định số 595/QĐ-SNNMT ngày 30/3/2026 của Sở Nông nghiệp và Môi trường về việc phê duyệt kế hoạch và dự toán nhiệm vụ “quản lý, bảo vệ và vận hành các công trình xây dựng để bảo tồn Voi châu Á tại Đồng Nai năm 2026" của Chi cục Kiểm lâm;
             </div>
 
-            <div style="margin-bottom: 5px; text-indent: 1cm;">
+            <div style="margin-bottom: 4px; text-indent: 0.8cm;">
               Hôm nay, vào lúc <b>${gioStr}</b>, ngày <b>${ngayStr}</b> tháng <b>${thangStr}</b> năm <b>${namStr}</b>, tại: <b>${r.tuyen || r.loc || '...........................................................................'}</b>, chúng tôi gồm:
             </div>
 
-            <div style="font-weight: bold; margin-top: 4px;">I. Thành phần tham dự</div>
-            <div style="margin-left: 0.4cm; margin-bottom: 4px;">
+            <div style="font-weight: bold; margin-top: 3px;">I. Thành phần tham dự</div>
+            <div style="margin-left: 0.3cm; margin-bottom: 3px;">
               <div style="font-weight: bold;">1. Đại diện đơn vị bảo trì:</div>
-              ${ddBt.map(item => `<div style="margin-left: 0.4cm;">Ông/bà: ${item.trim()}</div>`).join('')}
+              ${renderRepresentativeLines(r.daiDienBaoTri, r.ddBt)}
               <div style="font-weight: bold; margin-top: 2px;">2. Đại diện đơn vị chủ rừng:</div>
-              ${ddCr.map(item => `<div style="margin-left: 0.4cm;">Ông/bà: ${item.trim()}</div>`).join('')}
+              ${renderRepresentativeLines(r.daiDienChuRung, r.ddCr)}
               <div style="font-weight: bold; margin-top: 2px;">3. Đại diện Cơ quan kiểm lâm sở tại:</div>
-              ${ddKl.map(item => `<div style="margin-left: 0.4cm;">Ông/bà: ${item.trim()}</div>`).join('')}
+              ${renderRepresentativeLines(r.daiDienKiemLam, r.ddKl)}
             </div>
 
-            <div style="font-weight: bold; margin-top: 5px;">II. Nội dung xác minh, ghi nhận:</div>
-            <div style="margin-left: 0.4cm; margin-bottom: 4px;">
-              <div>1. <b>Về sự cố xảy ra trên tuyến hàng rào:</b> ${r.suCo || '...................................................................................................................................................'}</div>
-              <div>2. <b>Về nguyên nhân:</b> ${r.reason || '...................................................................................................................................................'}</div>
-              <div style="margin-top: 2px;">3. <b>Về thiết bị hư hỏng:</b> Đã kiểm tra và lập danh mục thiết bị xử lý thay thế.</div>
+            <div style="font-weight: bold; margin-top: 4px;">II. Nội dung xác minh, ghi nhận sự cố:</div>
+            <div style="margin-left: 0.3cm; margin-bottom: 4px;">
+              <div>1. <b>Sự cố xảy ra:</b> ${r.suCo || '...................................................................................................................................................'}</div>
+              <div>2. <b>Nguyên nhân:</b> ${r.reason || '...................................................................................................................................................'}</div>
+              
+              <div style="margin-top: 3px; font-weight: bold;">3. Danh mục thiết bị hư hỏng:</div>
+              <table style="width: 100%; border-collapse: collapse; margin-top: 2px; margin-bottom: 3px; font-size: 10.5pt;">
+                <thead>
+                  <tr style="background: #f2f2f2;">
+                    <th style="border: 1px solid #000; padding: 2px; width: 35px; text-align: center;">STT</th>
+                    <th style="border: 1px solid #000; padding: 2px; text-align: center;">Tên thiết bị / Quy cách</th>
+                    <th style="border: 1px solid #000; padding: 2px; width: 85px; text-align: center;">Số lượng</th>
+                    <th style="border: 1px solid #000; padding: 2px; text-align: center;">Tình trạng hư hỏng</th>
+                  </tr>
+                </thead>
+                <tbody>${thietBiHongRows}</tbody>
+              </table>
+
+              <div style="margin-top: 3px; font-weight: bold;">4. Vật tư / Thiết bị thay thế, khắc phục:</div>
+              <table style="width: 100%; border-collapse: collapse; margin-top: 2px; margin-bottom: 3px; font-size: 10.5pt;">
+                <thead>
+                  <tr style="background: #f2f2f2;">
+                    <th style="border: 1px solid #000; padding: 2px; width: 35px; text-align: center;">STT</th>
+                    <th style="border: 1px solid #000; padding: 2px; text-align: center;">Tên vật tư thay thế</th>
+                    <th style="border: 1px solid #000; padding: 2px; width: 85px; text-align: center;">Số lượng</th>
+                    <th style="border: 1px solid #000; padding: 2px; text-align: center;">Ghi chú / Tình trạng</th>
+                  </tr>
+                </thead>
+                <tbody>${thietBiThayTheRows}</tbody>
+              </table>
             </div>
 
-            <div style="font-weight: bold; margin-top: 5px;">III. Kết luận</div>
-            <div style="margin-left: 0.4cm;">
-              <div style="text-indent: 0.6cm;">Qua kết quả xác minh, ghi nhận sự cố nêu trên, các thành phần tham dự cùng thống nhất kết luận, nội dung sau:</div>
-              <div>- <b>Về kết quả thay thế/khắc phục sự cố:</b> Đã tiến hành xử lý hoàn tất, hệ thống xung điện hoạt động bình thường.</div>
-              <div>- <b>Về tình trạng hoạt động sau khắc phục:</b> Đạt yêu cầu kỹ thuật ngăn voi, điện áp duy trì ổn định.</div>
+            <div style="font-weight: bold; margin-top: 4px;">III. Kết luận</div>
+            <div style="margin-left: 0.3cm;">
+              <div style="text-indent: 0.6cm;">Các thành phần tham dự cùng thống nhất nghiệm thu kết quả xử lý sự cố. Hệ thống điện xung hoạt động ổn định, đủ điện áp kỹ thuật ngăn Voi./.</div>
             </div>
 
-            <div style="margin-top: 6px; font-style: italic; text-indent: 1cm; font-size: 11.5pt;">
-              Biên bản kết thúc vào lúc ..... cùng ngày và được thông qua, thống nhất. Biên bản được lập thành 04 bản, Đơn vị bảo trì giữ 01 bản, đơn vị chủ rừng 01 bản, Cơ quan kiểm lâm sở tại giữ 01 bản và lưu hồ sơ thanh quyết toán 01 bản./.
-            </div>
-
-            <table style="width: 100%; border-collapse: collapse; margin-top: 12px; text-align: center; page-break-inside: avoid;">
+            <table style="width: 100%; border-collapse: collapse; margin-top: 8px; text-align: center; page-break-inside: avoid;">
               <tr>
-                <td style="width: 33.3%; font-weight: bold; vertical-align: top; font-size: 11.5pt;">
+                <td style="width: 33.3%; font-weight: bold; vertical-align: top; font-size: 11pt;">
                   ĐD. ĐƠN VỊ BẢO TRÌ<br/>TUYẾN HÀNG RÀO ĐIỆN<br/>
-                  <span style="font-size: 10.5pt; font-weight: normal; font-style: italic;">(Ký, ghi rõ họ tên)</span>
-                  <div style="height: 48px;"></div>
+                  <span style="font-size: 10pt; font-weight: normal; font-style: italic;">(Ký, ghi rõ họ tên)</span>
+                  <div style="height: 44px;"></div>
                 </td>
-                <td style="width: 33.3%; font-weight: bold; vertical-align: top; font-size: 11.5pt;">
+                <td style="width: 33.3%; font-weight: bold; vertical-align: top; font-size: 11pt;">
                   ĐD. ĐƠN VỊ CHỦ RỪNG<br/><br/>
-                  <span style="font-size: 10.5pt; font-weight: normal; font-style: italic;">(Ký, ghi rõ họ tên)</span>
-                  <div style="height: 48px;"></div>
+                  <span style="font-size: 10pt; font-weight: normal; font-style: italic;">(Ký, ghi rõ họ tên)</span>
+                  <div style="height: 44px;"></div>
                 </td>
-                <td style="width: 33.4%; font-weight: bold; vertical-align: top; font-size: 11.5pt;">
+                <td style="width: 33.4%; font-weight: bold; vertical-align: top; font-size: 11pt;">
                   ĐD. CƠ QUAN KIỂM LÂM SỞ TẠI<br/><br/>
-                  <span style="font-size: 10.5pt; font-weight: normal; font-style: italic;">(Ký, ghi rõ họ tên)</span>
-                  <div style="height: 48px;"></div>
+                  <span style="font-size: 10pt; font-weight: normal; font-style: italic;">(Ký, ghi rõ họ tên)</span>
+                  <div style="height: 44px;"></div>
                 </td>
               </tr>
             </table>
@@ -1974,19 +2505,19 @@
 
       const doanRows = (r.cacDoanVeSinh && r.cacDoanVeSinh.length > 0) ? r.cacDoanVeSinh.map((d, idx) => `
         <tr>
-          <td style="text-align: center; border: 1px solid #000; padding: 3px 4px; font-size: 11pt;">${idx + 1}</td>
-          <td style="border: 1px solid #000; padding: 3px 6px; text-align: center; font-size: 11pt;">Từ trụ: <b>${d.from || '...'}</b> đến trụ: <b>${d.to || '...'}</b></td>
-          <td style="border: 1px solid #000; padding: 3px 6px; text-align: right; font-size: 11pt;">${d.length || '0'} m</td>
-          <td style="border: 1px solid #000; padding: 3px 6px; text-align: right; font-size: 11pt;">${d.width || '3.0'} m</td>
-          <td style="border: 1px solid #000; padding: 3px 6px; text-align: right; font-weight: bold; font-size: 11pt;">${d.area || '0'} m²</td>
+          <td style="text-align: center; border: 1px solid #000; padding: 2px 4px; font-size: 10.5pt;">${idx + 1}</td>
+          <td style="border: 1px solid #000; padding: 2px 6px; text-align: center; font-size: 10.5pt;">Từ trụ: <b>${d.from || '...'}</b> đến trụ: <b>${d.to || '...'}</b></td>
+          <td style="border: 1px solid #000; padding: 2px 6px; text-align: right; font-size: 10.5pt;">${d.length || '0'} m</td>
+          <td style="border: 1px solid #000; padding: 2px 6px; text-align: right; font-size: 10.5pt;">${d.width || '3.0'} m</td>
+          <td style="border: 1px solid #000; padding: 2px 6px; text-align: right; font-weight: bold; font-size: 10.5pt;">${d.area || '0'} m²</td>
         </tr>
       `).join('') : `
         <tr>
-          <td style="text-align: center; border: 1px solid #000; padding: 3px 4px; font-size: 11pt;">1</td>
-          <td style="border: 1px solid #000; padding: 3px 6px; text-align: center; font-size: 11pt;">Toàn phân đoạn thực bì tuyến rào</td>
-          <td style="border: 1px solid #000; padding: 3px 6px; text-align: right; font-size: 11pt;">${r.len || '0'} m</td>
-          <td style="border: 1px solid #000; padding: 3px 6px; text-align: right; font-size: 11pt;">3.0 m</td>
-          <td style="border: 1px solid #000; padding: 3px 6px; text-align: right; font-weight: bold; font-size: 11pt;">${r.area || '0'} m²</td>
+          <td style="text-align: center; border: 1px solid #000; padding: 2px 4px; font-size: 10.5pt;">1</td>
+          <td style="border: 1px solid #000; padding: 2px 6px; text-align: center; font-size: 10.5pt;">Toàn phân đoạn thực bì tuyến rào</td>
+          <td style="border: 1px solid #000; padding: 2px 6px; text-align: right; font-size: 10.5pt;">${r.len || '0'} m</td>
+          <td style="border: 1px solid #000; padding: 2px 6px; text-align: right; font-size: 10.5pt;">3.0 m</td>
+          <td style="border: 1px solid #000; padding: 2px 6px; text-align: right; font-weight: bold; font-size: 10.5pt;">${r.area || '0'} m²</td>
         </tr>
       `;
 
@@ -1999,7 +2530,7 @@
             ${r.photos.map((p, i) => `
               <div style="text-align: center; border: 1px solid #777; padding: 5px; background: #fff; border-radius: 3px;">
                 <img src="${p}" style="max-width: 100%; height: 210px; object-fit: contain; display: block; margin: 0 auto;" />
-                <div style="font-size: 10.5pt; font-style: italic; margin-top: 4px; color: #000;">Hình ${i+1}: Ảnh kiểm tra sau phát dọn thực bì</div>
+                <div style="font-size: 10.5pt; font-style: italic; margin-top: 4px; color: #000;">Hình ${i+1}: Ảnh kiểm tra sau phát dọn</div>
               </div>
             `).join('')}
           </div>
@@ -2007,9 +2538,9 @@
       ` : '';
 
       return `
-        <div class="a4-document-content" style="font-family: 'Times New Roman', Times, serif; font-size: 12pt; line-height: 1.28; color: #000000; background: #ffffff; text-align: justify;">
+        <div class="a4-document-content" style="font-family: 'Times New Roman', Times, serif; font-size: 12pt; line-height: 1.25; color: #000000; background: #ffffff; text-align: justify;">
           <div class="a4-page-main" style="page-break-inside: avoid; break-inside: avoid;">
-            <table style="width: 100%; border-collapse: collapse; margin-bottom: 8px;">
+            <table style="width: 100%; border-collapse: collapse; margin-bottom: 6px;">
               <tr>
                 <td style="width: 44%; text-align: center; vertical-align: top; padding: 0;">
                   <div style="font-weight: bold; font-size: 11pt; text-transform: uppercase;">CHI CỤC KIỂM LÂM ĐỒNG NAI</div>
@@ -2027,43 +2558,47 @@
               </tr>
             </table>
 
-            <div style="text-align: center; margin: 8px 0 8px 0;">
-              <div style="font-weight: bold; font-size: 14pt; text-transform: uppercase;">BIÊN BẢN</div>
-              <div style="font-weight: bold; font-size: 12pt; margin-top: 2px; line-height: 1.3;">
+            <div style="text-align: center; margin: 6px 0 6px 0;">
+              <div style="font-weight: bold; font-size: 13.5pt; text-transform: uppercase;">BIÊN BẢN</div>
+              <div style="font-weight: bold; font-size: 11.5pt; margin-top: 2px; line-height: 1.25;">
                 Ghi nhận kết quả thực hiện công việc tuyến hàng rào điện thuộc<br/>
                 Dự án khẩn cấp bảo tồn Voi tỉnh Đồng Nai trên địa bàn quản lý của ${r.loc || r.tuyen || '…………………………………………….'}
               </div>
             </div>
 
-            <div style="text-align: justify; margin-bottom: 5px; font-style: italic; text-indent: 1cm; font-size: 11.5pt;">
-              Thực hiện nội dung Quyết định số 704/QĐ-SNNMT ngày 30/6/2026 của Sở Nông nghiệp và Môi trường về việc Phê duyệt điều chỉnh, bổ sung Điều 1 Quyết định số 595/QĐ-SNNMT ngày 30/3/2026 về việc phê duyệt kế hoạch và dự toán kinh phí nhiệm vụ “quản lý, bảo vệ và vận hành các công trình xây dựng để bảo tồn Voi châu Á tại Đồng Nai năm 2026" của Chi cục Kiểm lâm;
+            <div style="text-align: justify; margin-bottom: 4px; font-style: italic; text-indent: 0.8cm; font-size: 11pt;">
+              Thực hiện Quyết định số 704/QĐ-SNNMT ngày 30/6/2026 & Quyết định số 595/QĐ-SNNMT ngày 30/3/2026 của Sở Nông nghiệp và Môi trường về việc phê duyệt kế hoạch và dự toán nhiệm vụ “quản lý, bảo vệ và vận hành các công trình xây dựng để bảo tồn Voi châu Á tại Đồng Nai năm 2026" của Chi cục Kiểm lâm;
             </div>
 
-            <div style="margin-bottom: 5px; text-indent: 1cm;">
+            <div style="margin-bottom: 4px; text-indent: 0.8cm;">
               Hôm nay, ngày <b>${ngayStr}</b> tháng <b>${thangStr}</b> năm <b>${namStr}</b>, tại: <b>${r.loc || r.tuyen || '...........................................................................'}</b>, chúng tôi gồm:
             </div>
 
-            <div style="font-weight: bold; margin-top: 4px;">I. Thành phần tham dự</div>
-            <div style="margin-left: 0.4cm; margin-bottom: 4px;">
-              <div>1. <b>Đại diện đơn vị bảo trì:</b> ${r.ddBt || '...................................................'}</div>
-              <div>2. <b>Các cá nhân thực hiện phát dọn:</b> ${r.workers || '...........................................................................................'}</div>
-              <div>3. <b>Đại diện đơn vị chủ rừng / Kiểm lâm:</b> ${r.ddCr || '...................................................'}</div>
+            <div style="font-weight: bold; margin-top: 3px;">I. Thành phần tham dự</div>
+            <div style="margin-left: 0.3cm; margin-bottom: 3px;">
+              <div style="font-weight: bold;">1. Đại diện đơn vị bảo trì:</div>
+              ${renderRepresentativeLines(r.daiDienBaoTri, r.ddBt)}
+              <div style="font-weight: bold; margin-top: 2px;">2. Đại diện đơn vị chủ rừng:</div>
+              ${renderRepresentativeLines(r.daiDienChuRung, r.ddCr)}
+              <div style="font-weight: bold; margin-top: 2px;">3. Đại diện Cơ quan kiểm lâm sở tại:</div>
+              ${renderRepresentativeLines(r.daiDienKiemLam, r.ddKl)}
+              <div style="margin-top: 2px;">4. <b>Các cá nhân thực hiện phát dọn:</b> ${r.workers || 'Đội công nhân phát dọn thực bì'}</div>
             </div>
 
-            <div style="font-weight: bold; margin-top: 5px;">II. Nội dung ghi nhận kết quả vệ sinh:</div>
-            <div style="margin-left: 0.4cm; margin-bottom: 4px;">
+            <div style="font-weight: bold; margin-top: 4px;">II. Nội dung ghi nhận kết quả vệ sinh:</div>
+            <div style="margin-left: 0.3cm; margin-bottom: 4px;">
               <div>- <b>Tuyến hàng rào được vệ sinh:</b> <b>${r.tuyen || '...................................................'}</b></div>
               <div>- <b>Tổng chiều dài thực hiện:</b> <b>${r.len || '0'} m</b> | <b>Tổng diện tích phát dọn:</b> <b>${r.area || '0'} m²</b> <i>(${((parseFloat(r.area) || 0) / 10000).toFixed(4)} ha)</i></div>
               
-              <div style="margin-top: 4px; font-weight: bold;">Chi tiết từng phân đoạn phát dọn:</div>
-              <table style="width: 100%; border-collapse: collapse; margin-top: 3px; margin-bottom: 4px; font-size: 11pt;">
+              <div style="margin-top: 3px; font-weight: bold;">Chi tiết từng phân đoạn phát dọn:</div>
+              <table style="width: 100%; border-collapse: collapse; margin-top: 2px; margin-bottom: 3px; font-size: 10.5pt;">
                 <thead>
                   <tr style="background: #f2f2f2;">
-                    <th style="border: 1px solid #000; padding: 3px; width: 40px; text-align: center;">STT</th>
-                    <th style="border: 1px solid #000; padding: 3px; text-align: center;">Phân đoạn trụ</th>
-                    <th style="border: 1px solid #000; padding: 3px; width: 85px; text-align: center;">Chiều dài</th>
-                    <th style="border: 1px solid #000; padding: 3px; width: 85px; text-align: center;">Bề rộng</th>
-                    <th style="border: 1px solid #000; padding: 3px; width: 95px; text-align: center;">Diện tích</th>
+                    <th style="border: 1px solid #000; padding: 2px; width: 35px; text-align: center;">STT</th>
+                    <th style="border: 1px solid #000; padding: 2px; text-align: center;">Phân đoạn trụ</th>
+                    <th style="border: 1px solid #000; padding: 2px; width: 80px; text-align: center;">Chiều dài</th>
+                    <th style="border: 1px solid #000; padding: 2px; width: 80px; text-align: center;">Bề rộng</th>
+                    <th style="border: 1px solid #000; padding: 2px; width: 90px; text-align: center;">Diện tích</th>
                   </tr>
                 </thead>
                 <tbody>${doanRows}</tbody>
@@ -2071,31 +2606,27 @@
               <div>- <b>Đánh giá chất lượng vệ sinh:</b> Đã phát dọn sạch thực bì dưới hành lang dây điện, không còn cành cây chạm vào dây rào, thông thoáng và đảm bảo an toàn phóng điện ngăn Voi.</div>
             </div>
 
-            <div style="font-weight: bold; margin-top: 5px;">III. Kết luận</div>
-            <div style="margin-left: 0.4cm;">
-              <div style="text-indent: 0.6cm;">Qua ghi nhận, các thành phần tham dự cùng thống nhất kết luận nghiệm thu khối lượng vệ sinh thực bì theo kế hoạch.</div>
+            <div style="font-weight: bold; margin-top: 4px;">III. Kết luận</div>
+            <div style="margin-left: 0.3cm;">
+              <div style="text-indent: 0.6cm;">Các thành phần tham dự cùng thống nhất nghiệm thu khối lượng vệ sinh thực bì theo kế hoạch./.</div>
             </div>
 
-            <div style="margin-top: 6px; font-style: italic; text-indent: 1cm; font-size: 11.5pt;">
-              Biên bản kết thúc cùng ngày và được thông qua, thống nhất. Biên bản được lập thành 03 bản, Đơn vị vệ sinh giữ 01 bản, đơn vị chủ rừng 01 bản và lưu hồ sơ thanh quyết toán 01 bản./.
-            </div>
-
-            <table style="width: 100%; border-collapse: collapse; margin-top: 12px; text-align: center; page-break-inside: avoid;">
+            <table style="width: 100%; border-collapse: collapse; margin-top: 8px; text-align: center; page-break-inside: avoid;">
               <tr>
-                <td style="width: 33.3%; font-weight: bold; vertical-align: top; font-size: 11.5pt;">
+                <td style="width: 33.3%; font-weight: bold; vertical-align: top; font-size: 11pt;">
                   ĐD. ĐƠN VỊ VỆ SINH<br/>TUYẾN HÀNG RÀO ĐIỆN<br/>
-                  <span style="font-size: 10.5pt; font-weight: normal; font-style: italic;">(Ký, ghi rõ họ tên)</span>
-                  <div style="height: 48px;"></div>
+                  <span style="font-size: 10pt; font-weight: normal; font-style: italic;">(Ký, ghi rõ họ tên)</span>
+                  <div style="height: 44px;"></div>
                 </td>
-                <td style="width: 33.3%; font-weight: bold; vertical-align: top; font-size: 11.5pt;">
+                <td style="width: 33.3%; font-weight: bold; vertical-align: top; font-size: 11pt;">
                   ĐD. ĐƠN VỊ CHỦ RỪNG<br/><br/>
-                  <span style="font-size: 10.5pt; font-weight: normal; font-style: italic;">(Ký, ghi rõ họ tên)</span>
-                  <div style="height: 48px;"></div>
+                  <span style="font-size: 10pt; font-weight: normal; font-style: italic;">(Ký, ghi rõ họ tên)</span>
+                  <div style="height: 44px;"></div>
                 </td>
-                <td style="width: 33.4%; font-weight: bold; vertical-align: top; font-size: 11.5pt;">
-                  CÁC CÁ NHÂN THỰC HIỆN VỆ SINH<br/>TUYẾN HÀNG RÀO ĐIỆN<br/>
-                  <span style="font-size: 10.5pt; font-weight: normal; font-style: italic;">(Ký, ghi rõ họ tên)</span>
-                  <div style="height: 48px;"></div>
+                <td style="width: 33.4%; font-weight: bold; vertical-align: top; font-size: 11pt;">
+                  ĐD. CƠ QUAN KIỂM LÂM SỞ TẠI<br/><br/>
+                  <span style="font-size: 10pt; font-weight: normal; font-style: italic;">(Ký, ghi rõ họ tên)</span>
+                  <div style="height: 44px;"></div>
                 </td>
               </tr>
             </table>
@@ -2112,15 +2643,15 @@
       const namStr = ngayParts.length === 3 ? ngayParts[0] : '2026';
 
       return `
-        <div class="a4-document-content" style="font-family: 'Times New Roman', Times, serif; font-size: 12pt; line-height: 1.28; color: #000000; background: #ffffff; text-align: justify;">
+        <div class="a4-document-content" style="font-family: 'Times New Roman', Times, serif; font-size: 12pt; line-height: 1.25; color: #000000; background: #ffffff; text-align: justify;">
           <div class="a4-page-main" style="page-break-inside: avoid; break-inside: avoid;">
-            <div style="text-align: center; margin-bottom: 10px; border-bottom: 2px solid #000; padding-bottom: 6px;">
-              <div style="font-weight: bold; font-size: 14pt; text-transform: uppercase;">NHẬT KÝ THI CÔNG XÂY DỰNG CÔNG TRÌNH</div>
-              <div style="font-size: 11.5pt; font-weight: bold; margin-top: 2px;">HẠNG MỤC: QUẢN LÝ BẢO VỆ VÀ VẬN HÀNH HÀNG RÀO ĐIỆN BẢO TỒN VOI</div>
-              <div style="font-style: italic; font-size: 11pt;">Địa điểm: Tỉnh Đồng Nai</div>
+            <div style="text-align: center; margin-bottom: 8px; border-bottom: 2px solid #000; padding-bottom: 4px;">
+              <div style="font-weight: bold; font-size: 13.5pt; text-transform: uppercase;">NHẬT KÝ THI CÔNG XÂY DỰNG CÔNG TRÌNH</div>
+              <div style="font-size: 11pt; font-weight: bold; margin-top: 2px;">HẠNG MỤC: QUẢN LÝ BẢO VỆ VÀ VẬN HÀNH HÀNG RÀO ĐIỆN BẢO TỒN VOI</div>
+              <div style="font-style: italic; font-size: 10.5pt;">Địa điểm: Tỉnh Đồng Nai</div>
             </div>
 
-            <table style="width: 100%; border-collapse: collapse; margin-bottom: 8px; font-size: 11.5pt;">
+            <table style="width: 100%; border-collapse: collapse; margin-bottom: 6px; font-size: 11pt;">
               <tr>
                 <td style="width: 25%; font-weight: bold;">Chủ đầu tư:</td>
                 <td>Chi cục Kiểm lâm Tỉnh Đồng Nai</td>
@@ -2135,31 +2666,31 @@
               </tr>
             </table>
 
-            <div style="background: #f2f2f2; padding: 4px 8px; font-weight: bold; border: 1px solid #333; margin-bottom: 8px; font-size: 11.5pt;">
+            <div style="background: #f2f2f2; padding: 3px 6px; font-weight: bold; border: 1px solid #333; margin-bottom: 6px; font-size: 11pt;">
               NGÀY: ${ngayStr} THÁNG ${thangStr} NĂM ${namStr} | THỜI TIẾT: ${r.weather || 'Nắng ráo'}
             </div>
 
-            <div style="font-weight: bold; font-size: 11.5pt;">1. CÔNG VIỆC THỰC HIỆN TRONG NGÀY:</div>
-            <div style="margin-left: 0.4cm; margin-bottom: 6px; border: 1px solid #666; padding: 6px; min-height: 70px; font-size: 11.5pt; background: #fafafa;">
+            <div style="font-weight: bold; font-size: 11pt;">1. CÔNG VIỆC THỰC HIỆN TRONG NGÀY:</div>
+            <div style="margin-left: 0.3cm; margin-bottom: 6px; border: 1px solid #666; padding: 5px; min-height: 65px; font-size: 11pt; background: #fafafa;">
               ${(r.work || '').replace(/\n/g, '<br/>') || 'Tiến hành kiểm tra dọc tuyến, phát dọn thực bì hành lang dây điện và kiểm tra các vị trí xung yếu ngăn Voi.'}
             </div>
 
-            <div style="font-weight: bold; font-size: 11.5pt;">2. NHẬN XÉT ĐÁNH GIÁ CỦA GIÁM SÁT / CHỦ ĐẦU TƯ:</div>
-            <div style="margin-left: 0.4cm; margin-bottom: 6px; border: 1px solid #666; padding: 6px; min-height: 50px; font-size: 11.5pt; background: #fafafa;">
+            <div style="font-weight: bold; font-size: 11pt;">2. NHẬN XÉT ĐÁNH GIÁ CỦA GIÁM SÁT / CHỦ ĐẦU TƯ:</div>
+            <div style="margin-left: 0.3cm; margin-bottom: 6px; border: 1px solid #666; padding: 5px; min-height: 45px; font-size: 11pt; background: #fafafa;">
               ${(r.eval || '').replace(/\n/g, '<br/>') || 'Công tác thi công đảm bảo tiến độ và chất lượng theo yêu cầu của Chủ đầu tư.'}
             </div>
 
-            <table style="width: 100%; border-collapse: collapse; margin-top: 18px; text-align: center; page-break-inside: avoid;">
+            <table style="width: 100%; border-collapse: collapse; margin-top: 12px; text-align: center; page-break-inside: avoid;">
               <tr>
-                <td style="width: 50%; font-weight: bold; vertical-align: top; font-size: 11.5pt;">
+                <td style="width: 50%; font-weight: bold; vertical-align: top; font-size: 11pt;">
                   CÁN BỘ PHỤ TRÁCH THI CÔNG<br/>
-                  <span style="font-size: 10.5pt; font-weight: normal; font-style: italic;">(Ký, ghi rõ họ tên)</span>
-                  <div style="height: 48px;"></div>
+                  <span style="font-size: 10pt; font-weight: normal; font-style: italic;">(Ký, ghi rõ họ tên)</span>
+                  <div style="height: 44px;"></div>
                 </td>
-                <td style="width: 50%; font-weight: bold; vertical-align: top; font-size: 11.5pt;">
+                <td style="width: 50%; font-weight: bold; vertical-align: top; font-size: 11pt;">
                   CÁN BỘ GIÁM SÁT / CHỦ ĐẦU TƯ<br/>
-                  <span style="font-size: 10.5pt; font-weight: normal; font-style: italic;">(Ký, ghi rõ họ tên)</span>
-                  <div style="height: 48px;"></div>
+                  <span style="font-size: 10pt; font-weight: normal; font-style: italic;">(Ký, ghi rõ họ tên)</span>
+                  <div style="height: 44px;"></div>
                 </td>
               </tr>
             </table>
@@ -2168,37 +2699,41 @@
       `;
     }
 
-    function openPreviewModal(type, record) {
-      currentPreviewType = type;
-      currentPreviewRecord = record;
-
-      let html = '';
-      let title = 'Xem Trước Bản In A4';
-      if (type === 'baotri') {
-        html = renderBaoTriHTML(record);
-        title = 'Xem Trước: Biên Bản Bảo Trì Sự Cố (A4)';
-      } else if (type === 'vesinh') {
-        html = renderVeSinhHTML(record);
-        title = 'Xem Trước: Biên Bản Vệ Sinh Phát Dọn (A4)';
-      } else if (type === 'nhatky') {
-        html = renderNhatKyHTML(record);
-        title = 'Xem Trước: Nhật Ký Thi Công (A4)';
-      }
-
-      document.getElementById('pdf-preview-title').textContent = title;
-      document.getElementById('pdf-preview-sheet').innerHTML = html;
-      document.getElementById('pdf-preview-modal').classList.add('active');
-    }
-
     function printCurrent(type) {
       let rec = {};
       if (type === 'baotri') {
+        const reps = collectRepresentatives('bt');
+        const thietBiHong = [];
+        document.querySelectorAll('#bt-thietbi-hong-tbody tr').forEach(r => {
+          const name = r.querySelector('.tb-hong-name')?.value.trim() || '';
+          if (name) {
+            thietBiHong.push({
+              name: name,
+              quantity: r.querySelector('.tb-hong-qty')?.value || '1',
+              unit: r.querySelector('.tb-hong-unit')?.value || 'Cái',
+              status: r.querySelector('.tb-hong-status')?.value || ''
+            });
+          }
+        });
+        const thietBiThayThe = [];
+        document.querySelectorAll('#bt-thietbi-thaythe-tbody tr').forEach(r => {
+          const name = r.querySelector('.tb-thay-name')?.value.trim() || '';
+          if (name) {
+            thietBiThayThe.push({
+              name: name,
+              quantity: r.querySelector('.tb-thay-qty')?.value || '1',
+              unit: r.querySelector('.tb-thay-unit')?.value || 'Cái',
+              note: r.querySelector('.tb-thay-note')?.value || ''
+            });
+          }
+        });
+
         rec = {
           date: document.getElementById('bt-date').value,
           time: document.getElementById('bt-time').value,
           tuyen: document.getElementById('bt-tuyen').value,
           loc: document.getElementById('bt-location').value,
-          suCo: document.getElementById('bt-su-co').value || document.getElementById('bt-su-co-sel').value,
+          suCo: document.getElementById('bt-su-co').value,
           reason: document.getElementById('bt-reason').value,
           ddBt: document.getElementById('bt-dd-bt').value,
           ddCr: document.getElementById('bt-dd-cr').value,

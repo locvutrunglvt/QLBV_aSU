@@ -25,13 +25,97 @@ const App = {
     this.populateMasterDropdowns();
 
     // 3. Hiển thị Tab mặc định & Dashboard
+    ValidationStore.refreshDatalists();
     this.switchTab('dashboard');
     this.refreshDashboardMetrics();
+
+    // Thêm mặc định 1 dòng phân đoạn và thiết bị
+    if (!document.getElementById('bt-thietbi-hong-tbody')?.children.length) this.addBaoTriRow('bt-thietbi-hong-tbody', 'hong');
+    if (!document.getElementById('bt-thietbi-thaythe-tbody')?.children.length) this.addBaoTriRow('bt-thietbi-thaythe-tbody', 'thaythe');
+    if (!document.getElementById('vs-doan-tbody')?.children.length) this.addVeSinhDoanRow();
 
     // 4. Kiểm tra xem có cần hiển thị modal login không
     if (!user) {
       this.showModal('login-modal');
     }
+  },
+
+  /**
+   * Quản lý Danh mục Gợi ý & Pin (Validation Store Modal)
+   */
+  openValModal() {
+    this.renderValTagList();
+    this.showModal('val-modal');
+  },
+
+  renderValTagList() {
+    const cat = document.getElementById('val-cat-select')?.value || 'tuyen';
+    const container = document.getElementById('val-tags-container');
+    if (!container) return;
+
+    const items = ValidationStore.get(cat);
+    if (items.length === 0) {
+      container.innerHTML = '<span style="color:var(--text-muted); font-size:0.8rem;">Chưa có mục gợi ý nào. Hãy nhập ở trên hoặc khi bạn điền form hệ thống sẽ tự học!</span>';
+      return;
+    }
+
+    container.innerHTML = items.map(item => `
+      <span class="val-tag-item">
+        <span>${item}</span>
+        <span class="val-tag-del" onclick="App.deleteValTag('${item}')" title="Xóa">✕</span>
+      </span>
+    `).join('');
+  },
+
+  addValItemFromModal() {
+    const cat = document.getElementById('val-cat-select')?.value || 'tuyen';
+    const inp = document.getElementById('val-new-input');
+    const val = inp?.value.trim();
+    if (!val) return;
+    ValidationStore.learn(cat, val);
+    if (inp) inp.value = '';
+    this.renderValTagList();
+    this.showToast(`✅ Đã thêm [${val}] vào danh mục gợi ý!`, 'success');
+  },
+
+  deleteValTag(val) {
+    const cat = document.getElementById('val-cat-select')?.value || 'tuyen';
+    ValidationStore.remove(cat, val);
+    this.renderValTagList();
+    this.showToast(`Đã xóa [${val}]`, 'info');
+  },
+
+  clearCurrentCategoryVal() {
+    const cat = document.getElementById('val-cat-select')?.value || 'tuyen';
+    if (!confirm('Bạn có chắc chắn muốn xóa toàn bộ mục gợi ý của nhóm này?')) return;
+    ValidationStore.clear(cat);
+    this.renderValTagList();
+    this.showToast('Đã xóa sạch danh mục nhóm này!', 'info');
+  },
+
+  /**
+   * Thu thập đại diện 3 Đơn vị (3 người mỗi đơn vị)
+   */
+  collectRepresentatives(prefix) {
+    const getUnitReps = (unitKey) => {
+      const reps = [];
+      for (let i = 1; i <= 3; i++) {
+        const name = document.getElementById(`${prefix}-dd-${unitKey}-name-${i}`)?.value.trim() || '';
+        const pos = document.getElementById(`${prefix}-dd-${unitKey}-pos-${i}`)?.value.trim() || '';
+        if (name) {
+          reps.push({ name: name, position: pos });
+          ValidationStore.learn('hoten', name);
+          if (pos) ValidationStore.learn('chucvu', pos);
+        }
+      }
+      return reps;
+    };
+
+    return {
+      bt: getUnitReps('bt'),
+      cr: getUnitReps('cr'),
+      kl: getUnitReps('kl')
+    };
   },
 
   /**
@@ -555,36 +639,59 @@ const App = {
   },
 
   collectBaoTriData() {
+    const tuyen = document.getElementById('bt-tuyen-input')?.value.trim() || '';
+    const suCo = document.getElementById('bt-su-co-input')?.value.trim() || '';
+    const reason = document.getElementById('bt-nguyen-nhan')?.value.trim() || '';
+
+    if (tuyen) ValidationStore.learn('tuyen', tuyen);
+    if (suCo) ValidationStore.learn('suCo', suCo);
+    if (reason) ValidationStore.learn('nguyenNhan', reason);
+
+    const reps = this.collectRepresentatives('bt');
+
     const thietBiHong = [];
     document.querySelectorAll('#bt-thietbi-hong-tbody tr').forEach(r => {
-      thietBiHong.push({
-        name: r.querySelector('.tb-name')?.value || '',
-        quantity: r.querySelector('.tb-qty')?.value || '1',
-        unit: r.querySelector('.tb-unit')?.value || 'Cái',
-        status: r.querySelector('.tb-status')?.value || ''
-      });
+      const name = r.querySelector('.tb-name')?.value.trim() || '';
+      if (name) {
+        thietBiHong.push({
+          name: name,
+          quantity: r.querySelector('.tb-qty')?.value || '1',
+          unit: r.querySelector('.tb-unit')?.value || 'Cái',
+          status: r.querySelector('.tb-status')?.value || ''
+        });
+        ValidationStore.learn('thietBi', name);
+      }
     });
 
     const thietBiThayThe = [];
     document.querySelectorAll('#bt-thietbi-thaythe-tbody tr').forEach(r => {
-      thietBiThayThe.push({
-        name: r.querySelector('.tb-name')?.value || '',
-        quantity: r.querySelector('.tb-qty')?.value || '1',
-        unit: r.querySelector('.tb-unit')?.value || 'Cái',
-        note: r.querySelector('.tb-note')?.value || ''
-      });
+      const name = r.querySelector('.tb-name')?.value.trim() || '';
+      if (name) {
+        thietBiThayThe.push({
+          name: name,
+          quantity: r.querySelector('.tb-qty')?.value || '1',
+          unit: r.querySelector('.tb-unit')?.value || 'Cái',
+          note: r.querySelector('.tb-note')?.value || ''
+        });
+        ValidationStore.learn('thietBi', name);
+      }
     });
+
+    const formatRepsStr = (arr) => arr.map(r => r.position ? `${r.name} (${r.position})` : r.name).join('; ');
 
     return {
       ngayLap: document.getElementById('bt-ngay-lap')?.value,
       gioLap: document.getElementById('bt-gio-lap')?.value,
       diaDiem: document.getElementById('bt-dia-diem')?.value,
-      tuyenHrd: document.getElementById('bt-tuyen-select')?.value,
-      daiDienBaoTri: [document.getElementById('bt-dd-baotri')?.value].filter(Boolean),
-      daiDienChuRung: [document.getElementById('bt-dd-churung')?.value].filter(Boolean),
-      daiDienKiemLam: [document.getElementById('bt-dd-kiemlam')?.value].filter(Boolean),
-      suCo: document.getElementById('bt-su-co-input')?.value || document.getElementById('bt-su-co-select')?.value,
-      nguyenNhan: document.getElementById('bt-nguyen-nhan')?.value,
+      tuyenHrd: tuyen,
+      daiDienBaoTri: reps.bt,
+      daiDienChuRung: reps.cr,
+      daiDienKiemLam: reps.kl,
+      ddBt: formatRepsStr(reps.bt),
+      ddCr: formatRepsStr(reps.cr),
+      ddKl: formatRepsStr(reps.kl),
+      suCo: suCo,
+      nguyenNhan: reason,
       thietBiHong: thietBiHong,
       thietBiThayThe: thietBiThayThe,
       ketQuaKhacPhuc: document.getElementById('bt-ket-qua')?.value,
@@ -594,24 +701,36 @@ const App = {
   },
 
   collectVeSinhData() {
+    const tuyen = document.getElementById('vs-tuyen-input')?.value.trim() || '';
+    if (tuyen) ValidationStore.learn('tuyen', tuyen);
+
+    const reps = this.collectRepresentatives('vs');
+
     const doanList = [];
     document.querySelectorAll('#vs-doan-tbody tr').forEach(r => {
-      doanList.push({
-        from: r.querySelector('.vs-from')?.value || '',
-        to: r.querySelector('.vs-to')?.value || '',
-        length: r.querySelector('.vs-len')?.value || '0',
-        width: r.querySelector('.vs-wid')?.value || '0',
-        area: r.querySelector('.vs-area')?.value || '0'
-      });
+      const from = r.querySelector('.vs-from')?.value || '';
+      const to = r.querySelector('.vs-to')?.value || '';
+      const l = r.querySelector('.vs-len')?.value || '0';
+      const w = r.querySelector('.vs-wid')?.value || '3.0';
+      const a = (parseFloat(l) * parseFloat(w)).toFixed(1);
+      if (from || to || l !== '0') {
+        doanList.push({ from: from, to: to, length: l, width: w, area: a });
+      }
     });
+
+    const formatRepsStr = (arr) => arr.map(r => r.position ? `${r.name} (${r.position})` : r.name).join('; ');
 
     return {
       ngayLap: document.getElementById('vs-ngay-lap')?.value,
       gioLap: document.getElementById('vs-gio-lap')?.value,
       diaDiem: document.getElementById('vs-dia-diem')?.value,
-      tuyenHrd: document.getElementById('vs-tuyen-select')?.value,
-      daiDienBaoTri: [document.getElementById('vs-dd-baotri')?.value].filter(Boolean),
-      daiDienChuRung: [document.getElementById('vs-dd-churung')?.value].filter(Boolean),
+      tuyenHrd: tuyen,
+      daiDienBaoTri: reps.bt,
+      daiDienChuRung: reps.cr,
+      daiDienKiemLam: reps.kl,
+      ddBt: formatRepsStr(reps.bt),
+      ddCr: formatRepsStr(reps.cr),
+      ddKl: formatRepsStr(reps.kl),
       dsNhanCong: [document.getElementById('vs-nhan-cong')?.value].filter(Boolean),
       cacDoanVeSinh: doanList,
       tongChieuDai: document.getElementById('vs-tong-chieu-dai')?.value || '0',
