@@ -37,6 +37,58 @@
 
 ---
 
+---
+
+## 🖥️ CÁCH 3: TRIỂN KHAI BẰNG VERCEL (NHANH NHẤT, TỰ ĐỘNG CẬP NHẬT)
+
+> Vercel phục vụ trực tiếp thư mục gốc của repo. Cấu hình đã có sẵn trong [`vercel.json`](vercel.json).
+
+1. Truy cập [vercel.com/new](https://vercel.com/new) và đăng nhập bằng tài khoản GitHub.
+2. Chọn **Import** repository `QLBV_aSU`.
+3. Giữ nguyên toàn bộ thiết lập mặc định:
+   - **Framework Preset**: `Other`
+   - **Root Directory**: `./`
+   - **Build Command / Output Directory**: để trống
+4. Bấm **Deploy**. Sau khoảng 30 giây sẽ có link dạng `https://qlbv-a-su.vercel.app`.
+
+Từ lần sau, **mỗi lần `git push` lên nhánh `main` Vercel sẽ tự động deploy lại**.
+
+Nếu muốn deploy bằng dòng lệnh:
+
+```bash
+npm i -g vercel
+vercel login          # xác thực 1 lần qua trình duyệt
+vercel --prod
+```
+
+---
+
+## 🔧 BUILD LẠI BẢN CHO GOOGLE APPS SCRIPT
+
+Ứng dụng có **hai bản dùng chung một mã nguồn**:
+
+| Bản | File | Dùng khi |
+|-----|------|----------|
+| Web / PWA | `index.html` + `css/` + `js/` | Vercel, GitHub Pages |
+| Google Apps Script | `backend/Index.html` | Chạy thẳng trên Google Sheets |
+
+`backend/Index.html` **được sinh tự động**, không sửa tay. Sau khi thay đổi giao diện hoặc mã nguồn, chạy:
+
+```bash
+node build_backend.js
+```
+
+Lệnh này gộp `index.html` + `css/style.css` + toàn bộ `js/*.js` thành một file duy nhất cho Apps Script. Trước đây hai bản được chép tay nên luôn bị lệch nhau — sửa bên này nhưng bên kia vẫn hiện bản cũ.
+
+---
+
+## 🔐 GHI CHÚ VỀ ĐĂNG NHẬP
+
+- Mặc định phiên đăng nhập **chỉ tồn tại trong tab đang mở**. Đóng ứng dụng rồi mở lại là phải đăng nhập lại.
+- Tick **"Ghi nhớ đăng nhập"** thì phiên mới được lưu trên máy, tự hết hạn sau 8 tiếng.
+- Chưa đăng nhập thì không màn hình nào trong ứng dụng mở được.
+- Tài khoản có trạng thái **Đang khóa** sẽ không đăng nhập được.
+
 ## 👥 THÔNG TIN TÀI KHOẢN & PHÂN QUYỀN ĐĂNG NHẬP
 
 | Tài khoản | Mật khẩu mặc định | Vai trò (Role) | Quyền hạn |

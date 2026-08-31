@@ -11,10 +11,18 @@ const App = {
     nhatky: []
   },
 
-  async init() {
-    // 1. Khởi tạo dịch vụ
+  /**
+   * Trả về markup icon vector SVG lấy từ sprite <symbol> khai báo trong index.html.
+   * Dùng thay cho emoji ở mọi chuỗi HTML sinh động.
+   */
+  icon(name, cls = 'ico') {
+    return `<svg class="${cls}" aria-hidden="true"><use href="#i-${name}"></use></svg>`;
+  },
+
+  init() {
+    // 1. Khởi tạo dịch vụ - KHÔNG chờ mạng để app mở được ngay lập tức
     CameraService.initGeolocation();
-    await MasterData.load();
+    MasterData.load();
     const user = Auth.init();
 
     // 2. Khởi tạo UI State
@@ -26,17 +34,57 @@ const App = {
 
     // 3. Hiển thị Tab mặc định & Dashboard
     ValidationStore.refreshDatalists();
-    this.switchTab('dashboard');
-    this.refreshDashboardMetrics();
+    if (Auth.isLoggedIn()) {
+      this.switchTab('dashboard');
+      this.refreshDashboardMetrics();
+    }
 
     // Thêm mặc định 1 dòng phân đoạn và thiết bị
     if (!document.getElementById('bt-thietbi-hong-tbody')?.children.length) this.addBaoTriRow('bt-thietbi-hong-tbody', 'hong');
     if (!document.getElementById('bt-thietbi-thaythe-tbody')?.children.length) this.addBaoTriRow('bt-thietbi-thaythe-tbody', 'thaythe');
     if (!document.getElementById('vs-doan-tbody')?.children.length) this.addVeSinhDoanRow();
 
-    // 4. Kiểm tra xem có cần hiển thị modal login không
-    if (!user) {
-      this.showModal('login-modal');
+    // 4. Chốt chặn: chưa đăng nhập thì chỉ có màn hình đăng nhập
+    if (!Auth.isLoggedIn()) {
+      this.lockToLoginScreen();
+    }
+
+    // 5. Tự động đăng xuất khi hết hạn phiên (kiểm tra mỗi phút)
+    setInterval(() => this.enforceSession(), 60 * 1000);
+    document.addEventListener('visibilitychange', () => {
+      if (!document.hidden) this.enforceSession();
+    });
+
+    // 6. Làm mới danh mục dùng chung từ Google Sheets ở nền (không chặn giao diện)
+    MasterData.refreshFromServer().then(updated => {
+      if (updated) {
+        this.populateMasterDropdowns();
+        ValidationStore.refreshDatalists();
+      }
+    });
+  },
+
+  /**
+   * Ẩn toàn bộ nội dung ứng dụng và bật màn hình đăng nhập (không thể đóng).
+   */
+  lockToLoginScreen() {
+    document.body.classList.add('is-logged-out');
+    document.querySelectorAll('.modal-overlay').forEach(m => {
+      if (m.id !== 'login-modal') m.classList.remove('active');
+    });
+    this.showModal('login-modal');
+    document.getElementById('login-username')?.focus();
+  },
+
+  /**
+   * Phiên hết hạn giữa chừng -> đá về màn hình đăng nhập.
+   */
+  enforceSession() {
+    if (!Auth.isLoggedIn()) return;
+    if (!Auth.init()) {
+      this.showToast('Phiên làm việc đã hết hạn. Vui lòng đăng nhập lại.', 'warning');
+      this.updateUserUI(null);
+      this.lockToLoginScreen();
     }
   },
 
@@ -64,7 +112,7 @@ const App = {
     const cats = ValidationStore.getAllCategories();
     const currentCatObj = cats.find(c => c.id === cat);
     if (infoCard && currentCatObj) {
-      infoCard.innerHTML = `🔗 <b>Hạng mục dùng chung:</b> ${currentCatObj.desc}`;
+      infoCard.innerHTML = `${this.icon('link')} <b>Hạng mục dùng chung:</b> ${currentCatObj.desc}`;
     }
 
     const items = ValidationStore.get(cat);
@@ -86,10 +134,10 @@ const App = {
       return `
         <span class="val-tag-item ${isPinned ? 'is-pinned' : ''}">
           <span class="val-tag-pin" onclick="App.togglePinValTag('${item.replace(/'/g, "\\'")}')" title="${isPinned ? 'Bỏ ghim' : 'Ghim lên đầu gợi ý'}">
-            ${isPinned ? '📌' : '📍'}
+            ${this.icon('pin')}
           </span>
           <span>${item}</span>
-          <span class="val-tag-del" onclick="App.deleteValTag('${item.replace(/'/g, "\\'")}')" title="Xóa mục này">✕</span>
+          <span class="val-tag-del" onclick="App.deleteValTag('${item.replace(/'/g, "\\'")}')" title="Xóa mục này"><svg class="ico" aria-hidden="true"><use href="#i-x"></use></svg></span>
         </span>
       `;
     }).join('');
@@ -103,7 +151,7 @@ const App = {
     ValidationStore.learn(cat, val);
     if (inp) inp.value = '';
     this.renderValTagList();
-    this.showToast(`✅ Đã thêm [${val}] vào danh mục gợi ý!`, 'success');
+    this.showToast(`Đã thêm [${val}] vào danh mục gợi ý!`, 'success');
   },
 
   togglePinValTag(val) {
@@ -111,7 +159,7 @@ const App = {
     ValidationStore.togglePin(cat, val);
     this.renderValTagList();
     const isPinned = ValidationStore.isPinned(cat, val);
-    this.showToast(isPinned ? `📌 Đã ghim [${val}] lên đầu danh sách gợi ý!` : `Đã bỏ ghim [${val}]`, 'info');
+    this.showToast(isPinned ? `Đã ghim [${val}] lên đầu danh sách gợi ý!` : `Đã bỏ ghim [${val}]`, 'info');
   },
 
   deleteValTag(val) {
@@ -133,7 +181,7 @@ const App = {
     if (!confirm('Khôi phục toàn bộ tham số & danh mục về thiết lập chuẩn ban đầu?')) return;
     ValidationStore.resetAllToDefaults();
     this.renderValTagList();
-    this.showToast('🔄 Đã khôi phục toàn bộ danh mục tham số chuẩn!', 'success');
+    this.showToast('Đã khôi phục toàn bộ danh mục tham số chuẩn!', 'success');
   },
 
   exportValidationConfig() {
@@ -149,7 +197,7 @@ const App = {
     a.download = filename;
     a.click();
     URL.revokeObjectURL(a.href);
-    this.showToast('📤 Đã xuất file cấu hình tham số JSON!', 'success');
+    this.showToast('Đã xuất file cấu hình tham số JSON!', 'success');
   },
 
   importValidationConfig(event) {
@@ -201,10 +249,11 @@ const App = {
     const topNavbar = document.querySelector('header.top-navbar');
 
     if (user) {
+      document.body.classList.remove('is-logged-out');
       if (userBadge) {
         userBadge.innerHTML = `
           <span class="status-dot" style="background: var(--success)"></span>
-          <span><b>${user.fullName || user.username}</b></span>
+          <span class="user-badge-name">${user.fullName || user.username}</span>
           <span class="role-tag role-${user.role ? user.role.toLowerCase() : 'worker'}">${user.role || 'Worker'}</span>
         `;
       }
@@ -213,6 +262,7 @@ const App = {
       if (topNavbar) topNavbar.style.display = 'flex';
       this.hideModal('login-modal');
     } else {
+      document.body.classList.add('is-logged-out');
       if (userBadge) {
         userBadge.innerHTML = `
           <span class="status-dot" style="background: var(--text-light)"></span>
@@ -221,10 +271,14 @@ const App = {
       }
       if (mainContainer) mainContainer.style.display = 'none';
       if (bottomNav) bottomNav.style.display = 'none';
+      if (topNavbar) topNavbar.style.display = 'none';
       this.showModal('login-modal');
     }
 
     // Hiển thị tab Quản lý nhân sự nếu là Admin
+    document.querySelectorAll('[data-admin-only]').forEach(el => {
+      el.style.display = (user && user.role === 'Admin') ? '' : 'none';
+    });
     const navUsers = document.getElementById('app-nav-users');
     if (navUsers) {
       navUsers.style.display = (user && user.role === 'Admin') ? 'flex' : 'none';
@@ -239,10 +293,20 @@ const App = {
    * Chuyển đổi giữa các Tab
    */
   switchTab(tabId) {
+    // Chốt chặn phân quyền: chưa đăng nhập thì không mở được bất kỳ màn hình nào
+    if (!Auth.isLoggedIn()) {
+      this.lockToLoginScreen();
+      return;
+    }
+    if (tabId === 'users' && !Auth.isAdmin()) {
+      this.showToast('Chỉ Quản trị viên mới truy cập được mục Quản lý nhân sự.', 'warning');
+      return;
+    }
+
     this.activeTab = tabId;
-    
-    // Cập nhật class active cho nút tab
-    document.querySelectorAll('.nav-tab-btn').forEach(btn => {
+
+    // Cập nhật class active cho nút tab (thanh trên + thanh dưới của điện thoại)
+    document.querySelectorAll('.nav-tab-btn, .bottom-nav-item').forEach(btn => {
       btn.classList.toggle('active', btn.dataset.tab === tabId);
     });
 
@@ -331,18 +395,29 @@ const App = {
         e.preventDefault();
         const u = document.getElementById('login-username').value.trim();
         const p = document.getElementById('login-password').value;
+        const remember = !!document.getElementById('login-remember')?.checked;
         const btn = loginForm.querySelector('button[type="submit"]');
+        const label = btn.querySelector('.btn-label') || btn;
+
+        if (!u || !p) {
+          this.showToast('Vui lòng nhập đầy đủ tên đăng nhập và mật khẩu!', 'error');
+          return;
+        }
+
         btn.disabled = true;
-        btn.textContent = 'Đang đăng nhập...';
+        label.textContent = 'Đang đăng nhập...';
 
-        const res = await Auth.login(u, p);
+        const res = await Auth.login(u, p, remember);
         btn.disabled = false;
-        btn.textContent = 'Đăng nhập';
+        label.textContent = 'Đăng Nhập';
 
-        if (res.success) {
-          this.showToast('Đăng nhập thành công!', 'success');
+        if (res.success && Auth.isLoggedIn()) {
+          document.getElementById('login-password').value = '';
+          this.showToast(`Xin chào ${res.user.fullName || res.user.username}!`, 'success');
           this.updateUserUI(res.user);
           this.hideModal('login-modal');
+          this.switchTab('dashboard');
+          this.refreshDashboardMetrics();
         } else {
           this.showToast(res.message || 'Đăng nhập thất bại', 'error');
         }
@@ -361,13 +436,13 @@ const App = {
         if (found) {
           found.passwordHash = '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92'; // 123456
           this.saveLocalUsersList(users);
-          this.showToast('✅ Đã đặt lại mật khẩu về mặc định: 123456. Vui lòng đăng nhập!', 'success');
+          this.showToast('Đã đặt lại mật khẩu về mặc định: 123456. Vui lòng đăng nhập!', 'success');
           this.hideModal('forgot-modal');
           document.getElementById('login-username').value = found.username;
           document.getElementById('login-password').value = '123456';
           this.showModal('login-modal');
         } else {
-          this.showToast('❌ Không tìm thấy tài khoản hoặc số điện thoại này!', 'error');
+          this.showToast('Không tìm thấy tài khoản hoặc số điện thoại này!', 'error');
         }
       });
     }
@@ -389,7 +464,7 @@ const App = {
 
         if (mode === 'add') {
           if (users.find(u => u.username.toLowerCase() === username.toLowerCase())) {
-            this.showToast('❌ Tên đăng nhập này đã tồn tại!', 'error');
+            this.showToast('Tên đăng nhập này đã tồn tại!', 'error');
             return;
           }
           users.push({
@@ -402,7 +477,7 @@ const App = {
             phone: phone,
             status: status
           });
-          this.showToast('✅ Đã thêm nhân sự thành công! (Mật khẩu mặc định: 123456)', 'success');
+          this.showToast('Đã thêm nhân sự thành công! (Mật khẩu mặc định: 123456)', 'success');
         } else {
           const u = users.find(u => u.username.toLowerCase() === username.toLowerCase());
           if (u) {
@@ -411,7 +486,7 @@ const App = {
             u.role = role;
             u.status = status;
             u.organization = org;
-            this.showToast('✅ Đã cập nhật thông tin nhân sự!', 'success');
+            this.showToast('Đã cập nhật thông tin nhân sự!', 'success');
           }
         }
 
@@ -485,10 +560,10 @@ const App = {
     document.getElementById('btn-sync-offline')?.addEventListener('click', async () => {
       const btn = document.getElementById('btn-sync-offline');
       btn.disabled = true;
-      btn.textContent = 'Đang đồng bộ...';
+      btn.innerHTML = `${this.icon('refresh')} Đang đồng bộ...`;
       const res = await StorageService.syncAllPending();
       btn.disabled = false;
-      btn.textContent = '🔄 Đồng bộ ngay';
+      btn.innerHTML = `${this.icon('refresh')} Đồng bộ ngay`;
       this.showToast(res.message, res.success ? 'success' : 'warning');
       this.refreshDashboardMetrics();
     });
@@ -497,9 +572,39 @@ const App = {
     document.querySelectorAll('.modal-close-btn').forEach(btn => {
       btn.addEventListener('click', () => {
         const modal = btn.closest('.modal-overlay');
-        if (modal) modal.classList.remove('active');
+        if (modal && modal.id !== 'login-modal') this.hideModal(modal.id);
       });
     });
+
+    // 12. Bấm ra nền tối / phím Esc để đóng modal (trừ màn hình đăng nhập)
+    document.querySelectorAll('.modal-overlay').forEach(overlay => {
+      if (overlay.id === 'login-modal') return;
+      overlay.addEventListener('mousedown', (e) => {
+        if (e.target === overlay) this.hideModal(overlay.id);
+      });
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key !== 'Escape') return;
+      const open = [...document.querySelectorAll('.modal-overlay.active')].filter(m => m.id !== 'login-modal');
+      if (open.length) this.hideModal(open[open.length - 1].id);
+    });
+
+    // 13. Thanh điều hướng dưới đáy (điện thoại)
+    document.querySelectorAll('.bottom-nav-item').forEach(btn => {
+      btn.addEventListener('click', () => this.switchTab(btn.dataset.tab));
+    });
+
+    // 14. Nút hiện/ẩn mật khẩu ở màn hình đăng nhập
+    const pwToggle = document.getElementById('login-pw-toggle');
+    if (pwToggle) {
+      pwToggle.addEventListener('click', () => {
+        const input = document.getElementById('login-password');
+        const showing = input.type === 'text';
+        input.type = showing ? 'password' : 'text';
+        pwToggle.innerHTML = this.icon(showing ? 'eye' : 'lock');
+        pwToggle.setAttribute('aria-label', showing ? 'Hiện mật khẩu' : 'Ẩn mật khẩu');
+      });
+    }
   },
 
   /**
@@ -560,7 +665,7 @@ const App = {
           <input type="text" class="form-control tb-status" placeholder="Tình trạng hư hỏng" />
         </td>
         <td style="text-align: center;">
-          <button type="button" class="btn btn-danger btn-sm" onclick="this.closest('tr').remove()">✕</button>
+          <button type="button" class="btn btn-danger btn-sm" onclick="this.closest('tr').remove()"><svg class="ico" aria-hidden="true"><use href="#i-x"></use></svg></button>
         </td>
       `;
     } else {
@@ -579,7 +684,7 @@ const App = {
           <input type="text" class="form-control tb-note" value="Đã thay mới, hoạt động tốt" />
         </td>
         <td style="text-align: center;">
-          <button type="button" class="btn btn-danger btn-sm" onclick="this.closest('tr').remove()">✕</button>
+          <button type="button" class="btn btn-danger btn-sm" onclick="this.closest('tr').remove()"><svg class="ico" aria-hidden="true"><use href="#i-x"></use></svg></button>
         </td>
       `;
     }
@@ -616,7 +721,7 @@ const App = {
         <input type="text" class="form-control vs-area" readonly style="width: 100px; font-weight: bold; background: var(--bg-subtle);" value="0" />
       </td>
       <td style="text-align: center;">
-        <button type="button" class="btn btn-danger btn-sm" onclick="this.closest('tr').remove(); App.calcVeSinhTotals();">✕</button>
+        <button type="button" class="btn btn-danger btn-sm" onclick="this.closest('tr').remove(); App.calcVeSinhTotals();"><svg class="ico" aria-hidden="true"><use href="#i-x"></use></svg></button>
       </td>
     `;
 
@@ -849,7 +954,7 @@ const App = {
         });
         const res = await response.json();
         if (res.success) {
-          this.showToast('✅ Đã lưu trực tiếp lên Google Sheets!', 'success');
+          this.showToast('Đã lưu trực tiếp lên Google Sheets!', 'success');
           StorageService.saveToLocalHistory({
             id: res.recordId,
             formType: formType,
@@ -868,7 +973,7 @@ const App = {
 
     // 2. Lưu Offline vào LocalStorage
     StorageService.saveOffline(formType, recordData, username);
-    this.showToast('💾 Đã lưu vào bộ nhớ máy (Offline)! Sẽ tự đồng bộ khi có mạng.', 'warning');
+    this.showToast('Đã lưu vào bộ nhớ máy (Offline)! Sẽ tự đồng bộ khi có mạng.', 'warning');
     this.refreshDashboardMetrics();
   },
 
@@ -894,12 +999,21 @@ const App = {
       } else if (item.formType === 'nhatky') countNK++;
     });
 
-    document.getElementById('metric-count-bt').textContent = countBT;
-    document.getElementById('metric-count-vs').textContent = countVS;
-    document.getElementById('metric-total-len').textContent = totalLen.toLocaleString('vi-VN');
-    document.getElementById('metric-total-area').textContent = (totalArea / 10000).toFixed(3);
-    document.getElementById('metric-count-nk').textContent = countNK;
-    document.getElementById('metric-pending-sync').textContent = pending.length;
+    const setText = (id, value) => {
+      const el = document.getElementById(id);
+      if (el) el.textContent = value;
+    };
+
+    setText('metric-count-bt', countBT);
+    setText('metric-count-vs', countVS);
+    setText('metric-total-len', totalLen.toLocaleString('vi-VN'));
+    setText('metric-total-area', (totalArea / 10000).toFixed(3));
+    setText('metric-count-nk', countNK);
+    setText('metric-pending-sync', pending.length);
+
+    // Chỉ hiện khối "chờ đồng bộ" khi thực sự còn bản ghi treo
+    const pendingBox = document.getElementById('sync-pending-box');
+    if (pendingBox) pendingBox.style.display = pending.length > 0 ? 'flex' : 'none';
   },
 
   /**
@@ -913,33 +1027,39 @@ const App = {
     if (history.length === 0) {
       container.innerHTML = `
         <div style="text-align: center; padding: 2rem; color: var(--text-muted);">
-          <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">📂</div>
+          <div style="font-size: 2.5rem; margin-bottom: 0.5rem;"><svg class="ico ico-xl" aria-hidden="true"><use href="#i-folder"></use></svg></div>
           <p>Chưa có bản ghi nào được lưu trong máy.</p>
         </div>
       `;
       return;
     }
 
+    const typeMeta = {
+      baotri: { name: 'Biên bản Bảo Trì', icon: 'wrench', grad: 'icon-grad-amber' },
+      vesinh: { name: 'Biên bản Vệ Sinh', icon: 'leaf', grad: 'icon-grad-emerald' },
+      nhatky: { name: 'Nhật Ký Thi Công', icon: 'clipboard', grad: 'icon-grad-teal' }
+    };
+
     container.innerHTML = history.map((item, idx) => {
-      const typeNames = { baotri: 'Biên bản Bảo Trì', vesinh: 'Biên bản Vệ Sinh', nhatky: 'Nhật Ký Thi Công' };
+      const meta = typeMeta[item.formType] || { name: 'Biên bản', icon: 'file', grad: 'icon-grad-blue' };
       const dateStr = item.record?.ngayLap || item.record?.ngayGhi || item.timestamp?.substring(0, 10);
-      const title = typeNames[item.formType] || 'Biên bản';
       const detail = item.record?.tuyenHrd || item.record?.hangMuc || item.record?.suCo || '';
 
       return `
-        <div class="card-panel" style="margin-bottom: 0.75rem; padding: 1rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem;">
-          <div>
-            <div style="font-weight: bold; color: var(--primary); font-size: 1.05rem;">${title}</div>
-            <div style="font-size: 0.85rem; color: var(--text-muted); margin-top: 2px;">
-              📅 Ngày: <b>${dateStr}</b> | 👤 Người lập: ${item.username} | 📍 ${detail}
+        <div class="history-item">
+          <div class="icon-squircle icon-squircle-sm ${meta.grad}">${this.icon(meta.icon)}</div>
+          <div class="history-item-body">
+            <div class="history-item-title">${meta.name}</div>
+            <div class="history-item-meta">
+              <span>${this.icon('calendar')} <b>${dateStr}</b></span>
+              <span>${this.icon('user')} ${item.username}</span>
+              ${detail ? `<span>${this.icon('map-pin')} ${detail}</span>` : ''}
+              ${item.record?.photos?.length ? `<span>${this.icon('camera')} ${item.record.photos.length} ảnh</span>` : ''}
             </div>
-            ${item.record?.photos?.length ? `<div style="font-size: 0.8rem; color: var(--info); margin-top: 3px;">📸 ${item.record.photos.length} ảnh hiện trường đính kèm</div>` : ''}
           </div>
-          <div style="display: flex; gap: 0.5rem;">
-            <button class="btn btn-secondary btn-sm" onclick="PDFService.openPreviewModal('${item.formType}', StorageService.getLocalHistory()[${idx}].record)">
-              📄 Xem & Xuất A4 PDF
-            </button>
-          </div>
+          <button class="btn btn-secondary btn-sm history-item-btn" onclick="PDFService.openPreviewModal('${item.formType}', StorageService.getLocalHistory()[${idx}].record)">
+            ${this.icon('file')} <span>Xem &amp; Xuất PDF</span>
+          </button>
         </div>
       `;
     }).join('');
@@ -974,36 +1094,40 @@ const App = {
     if (!tbody) return;
     const users = this.getLocalUsersList();
 
-    tbody.innerHTML = users.map((u, idx) => `
+    const roleIcon = { admin: 'crown', supervisor: 'eye', worker: 'wrench' };
+
+    tbody.innerHTML = users.map((u, idx) => {
+      const roleKey = (u.role || 'Worker').toLowerCase();
+      const isActive = u.status !== 'Inactive';
+      return `
       <tr>
-        <td style="font-weight: 600;">${u.fullName}</td>
-        <td>
+        <td data-label="Họ và tên" style="font-weight: 600;">${u.fullName}</td>
+        <td data-label="Tài khoản">
           <code>${u.username}</code>
           ${u.phone ? `<br/><span style="font-size:0.75rem; color:var(--text-muted);">${u.phone}</span>` : ''}
         </td>
-        <td>
-          <span class="role-tag role-${u.role ? u.role.toLowerCase() : 'worker'}">${u.role}</span>
+        <td data-label="Vai trò">
+          <span class="role-tag role-${roleKey}">${this.icon(roleIcon[roleKey] || 'user')} ${u.role}</span>
         </td>
-        <td style="font-size:0.85rem; color:var(--text-muted);">${u.organization || '-'}</td>
-        <td style="text-align:center;">
-          <span style="font-size:0.8rem; font-weight:700; color:${u.status === 'Active' ? 'var(--success)' : 'var(--danger)'};">
-            ${u.status === 'Active' ? '🟢 Hoạt động' : '🔴 Đã khóa'}
-          </span>
+        <td data-label="Đơn vị" style="font-size:0.85rem; color:var(--text-muted);">${u.organization || '-'}</td>
+        <td data-label="Trạng thái" style="text-align:center;">
+          <span class="status-pill ${isActive ? 'is-on' : 'is-off'}">${isActive ? 'Hoạt động' : 'Đã khóa'}</span>
         </td>
-        <td style="text-align:center;">
-          <div style="display:flex; gap:4px; justify-content:center;">
-            <button type="button" class="btn btn-secondary btn-sm" onclick="App.resetUserPassword('${u.username}')" title="Reset về 123456">🔑 Reset</button>
-            <button type="button" class="btn btn-secondary btn-sm" onclick="App.toggleUserStatus('${u.username}')">${u.status === 'Active' ? '🔒 Khóa' : '🔓 Mở'}</button>
-            <button type="button" class="btn btn-secondary btn-sm" onclick="App.openEditUserModal(${idx})">✏️ Sửa</button>
-            ${u.username.toLowerCase() !== 'admin' ? `<button type="button" class="btn btn-danger btn-sm" onclick="App.deleteUserAccount('${u.username}')">🗑️</button>` : ''}
+        <td data-label="Thao tác" style="text-align:center;">
+          <div class="table-actions">
+            <button type="button" class="btn btn-secondary btn-sm" onclick="App.resetUserPassword('${u.username}')" title="Reset mật khẩu về 123456">${this.icon('key')} <span>Reset</span></button>
+            <button type="button" class="btn btn-secondary btn-sm" onclick="App.toggleUserStatus('${u.username}')" title="${isActive ? 'Khóa tài khoản' : 'Mở khóa tài khoản'}">${this.icon(isActive ? 'lock' : 'unlock')} <span>${isActive ? 'Khóa' : 'Mở'}</span></button>
+            <button type="button" class="btn btn-secondary btn-sm" onclick="App.openEditUserModal(${idx})" title="Sửa thông tin">${this.icon('edit')} <span>Sửa</span></button>
+            ${u.username.toLowerCase() !== 'admin' ? `<button type="button" class="btn btn-danger btn-sm" onclick="App.deleteUserAccount('${u.username}')" title="Xóa tài khoản">${this.icon('trash')}</button>` : ''}
           </div>
         </td>
       </tr>
-    `).join('');
+    `;
+    }).join('');
   },
 
   openAddUserModal() {
-    document.getElementById('app-user-modal-title').textContent = '➕ Thêm Nhân Sự Mới';
+    document.getElementById('app-user-modal-title').textContent = 'Thêm Nhân Sự Mới';
     document.getElementById('app-usr-mode').value = 'add';
     document.getElementById('app-usr-username').disabled = false;
     document.getElementById('app-user-form').reset();
@@ -1015,7 +1139,7 @@ const App = {
     const u = users[idx];
     if (!u) return;
 
-    document.getElementById('app-user-modal-title').textContent = '✏️ Sửa Thông Tin Nhân Sự';
+    document.getElementById('app-user-modal-title').textContent = 'Sửa Thông Tin Nhân Sự';
     document.getElementById('app-usr-mode').value = 'edit';
     document.getElementById('app-usr-username').value = u.username;
     document.getElementById('app-usr-username').disabled = true;
@@ -1034,7 +1158,7 @@ const App = {
     if (u) {
       u.passwordHash = '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92'; // 123456
       this.saveLocalUsersList(users);
-      this.showToast(`🔑 Đã reset mật khẩu cho [${username}] về mặc định: 123456`, 'success');
+      this.showToast(`Đã reset mật khẩu cho [${username}] về mặc định: 123456`, 'success');
     }
   },
 
@@ -1060,13 +1184,25 @@ const App = {
   /**
    * Helper hiển thị & ẩn Modal
    */
+  // Các modal được phép mở khi CHƯA đăng nhập
+  PUBLIC_MODALS: ['login-modal', 'forgot-modal', 'theme-picker-modal'],
+
   showModal(modalId) {
+    if (!Auth.isLoggedIn() && !this.PUBLIC_MODALS.includes(modalId)) {
+      this.lockToLoginScreen();
+      return;
+    }
     const modal = document.getElementById(modalId);
-    if (modal) modal.classList.add('active');
+    if (!modal) return;
+    modal.classList.add('active');
+    document.body.classList.add('modal-open');
   },
   hideModal(modalId) {
     const modal = document.getElementById(modalId);
     if (modal) modal.classList.remove('active');
+    if (!document.querySelector('.modal-overlay.active')) {
+      document.body.classList.remove('modal-open');
+    }
   },
 
   /**
@@ -1081,10 +1217,11 @@ const App = {
       document.body.appendChild(container);
     }
 
+    const iconByType = { success: 'check', error: 'x-circle', warning: 'alert', info: 'info' };
     const toast = document.createElement('div');
     toast.className = `toast toast-${type}`;
     toast.innerHTML = `
-      <span>${type === 'success' ? '✅' : type === 'error' ? '❌' : type === 'warning' ? '⚠️' : 'ℹ️'}</span>
+      ${this.icon(iconByType[type] || 'info', 'ico ico-lg toast-icon')}
       <div>${message}</div>
     `;
     container.appendChild(toast);
@@ -1097,11 +1234,11 @@ const App = {
 
   /**
    * Quản lý 05 Bộ Giao Diện Lâm Nghiệp Chuyên Nghiệp (5 UI Themes)
-   * 1. emerald  - 🌿 Rừng Nguyên Sinh (Emerald Eco Pro)
-   * 2. pine     - 🌲 Rừng Thông Cát Tiên (Nordic Pine & Sage)
-   * 3. earth    - 🍂 Đất Rừng Miền Đông (Earth Wood & Safari)
-   * 4. mist     - 🌊 Thác Mai - Sương Mù (Mist Glass & Ocean Jade)
-   * 5. midnight - 🌙 Tuần Tra Đêm (Midnight Ranger / High-Contrast Dark)
+   * 1. emerald  - Rừng Nguyên Sinh (Emerald Eco Pro)
+   * 2. pine     - Rừng Thông Cát Tiên (Nordic Pine & Sage)
+   * 3. earth    - Đất Rừng Miền Đông (Earth Wood & Safari)
+   * 4. mist     - Thác Mai - Sương Mù (Mist Glass & Ocean Jade)
+   * 5. midnight - Tuần Tra Đêm (Midnight Ranger / High-Contrast Dark)
    */
   setupTheme() {
     const savedThemeStyle = localStorage.getItem('qlbv_theme_style') || 'emerald';
@@ -1145,15 +1282,15 @@ const App = {
     });
 
     const themeNamesMap = {
-      emerald: '🌿 Rừng Nguyên Sinh (Emerald Eco Pro)',
-      pine: '🌲 Rừng Thông Cát Tiên (Nordic Pine & Sage)',
-      earth: '🍂 Đất Rừng Miền Đông (Earth Wood & Safari)',
-      mist: '🌊 Thác Mai - Sương Mù (Mist Glass & Ocean Jade)',
-      midnight: '🌙 Tuần Tra Đêm (Midnight Ranger)'
+      emerald: 'Rừng Nguyên Sinh (Emerald Eco Pro)',
+      pine: 'Rừng Thông Cát Tiên (Nordic Pine & Sage)',
+      earth: 'Đất Rừng Miền Đông (Earth Wood & Safari)',
+      mist: 'Thác Mai - Sương Mù (Mist Glass & Ocean Jade)',
+      midnight: 'Tuần Tra Đêm (Midnight Ranger)'
     };
 
     if (showToastMsg) {
-      this.showToast(`🎨 Đã áp dụng giao diện: ${themeNamesMap[themeName]}`, 'success');
+      this.showToast(`Đã áp dụng giao diện: ${themeNamesMap[themeName]}`, 'success');
       this.hideModal('theme-picker-modal');
     }
   },

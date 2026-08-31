@@ -74,7 +74,7 @@ const CameraService = {
             gpsStr = `GPS: ${this.currentLocation.lat}, ${this.currentLocation.lng} (±${this.currentLocation.acc}m)`;
           }
 
-          const line1 = `📍 QLBV ĐỒNG NAI | ${timeStr}`;
+          const line1 = `QLBV ĐỒNG NAI | ${timeStr}`;
           const line2 = `${gpsStr} ${extraNote ? ' | ' + extraNote : ''}`;
 
           const fontSize = Math.max(14, Math.round(width * 0.022));
@@ -118,7 +118,7 @@ const CameraService = {
       item.className = 'photo-preview-item';
       item.innerHTML = `
         <img src="${photoBase64}" alt="Ảnh ${idx + 1}" />
-        <button type="button" class="photo-remove-btn" title="Xóa ảnh" data-index="${idx}">✕</button>
+        <button type="button" class="photo-remove-btn" title="Xóa ảnh" data-index="${idx}"><svg class="ico" aria-hidden="true"><use href="#i-x"></use></svg></button>
       `;
       const btn = item.querySelector('.photo-remove-btn');
       btn.addEventListener('click', (e) => {

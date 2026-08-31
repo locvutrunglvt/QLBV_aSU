@@ -7,49 +7,6 @@ const PDFService = {
 
   currentRecord: null,
   currentFormType: null,
-
-  /**
-   * Render HTML Mẫu Biên bản Bảo Trì (Chuẩn theo file BB ghi nhan bao tri HRD.doc)
-   */
-  renderBaoTriHTML(record) {
-    const ngayParts = (record.ngayLap || '').split('-');
-    const ngayStr = ngayParts.length === 3 ? ngayParts[2] : '.....';
-    const thangStr = ngayParts.length === 3 ? ngayParts[1] : '.....';
-    const namStr = ngayParts.length === 3 ? ngayParts[0] : '2026';
-    const gioStr = record.gioLap || '.....';
-
-    const thietBiHongRows = (record.thietBiHong && record.thietBiHong.length > 0) ? record.thietBiHong.map((item, idx) => `
-      <tr>
-        <td style="text-align: center; border: 1px solid #000; padding: 5px 4px; font-size: 12pt;">${idx + 1}</td>
-        <td style="border: 1px solid #000; padding: 5px 8px; font-size: 12pt;">${item.name || ''}</td>
-        <td style="text-align: center; border: 1px solid #000; padding: 5px 4px; font-size: 12pt;">${item.quantity || ''} ${item.unit || ''}</td>
-        <td style="border: 1px solid #000; padding: 5px 8px; font-size: 12pt;">${item.status || ''}</td>
-      </tr>
-    `).join('') : `
-      <tr>
-        <td style="text-align: center; border: 1px solid #000; padding: 5px 4px; font-size: 12pt;">1</td>
-        <td style="border: 1px solid #000; padding: 5px 8px; font-size: 12pt;">...........................................................................</td>
-        <td style="text-align: center; border: 1px solid #000; padding: 5px 4px; font-size: 12pt;">......</td>
-        <td style="border: 1px solid #000; padding: 5px 8px; font-size: 12pt;">...................................................</td>
-      </tr>
-    `;
-
-    const thietBiThayTheRows = (record.thietBiThayThe && record.thietBiThayThe.length > 0) ? record.thietBiThayThe.map((item, idx) => `
-      <tr>
-        <td style="text-align: center; border: 1px solid #000; padding: 5px 4px; font-size: 12pt;">${idx + 1}</td>
-        <td style="border: 1px solid #000; padding: 5px 8px; font-size: 12pt;">${item.name || ''}</td>
-        <td style="text-align: center; border: 1px solid #000; padding: 5px 4px; font-size: 12pt;">${item.quantity || ''} ${item.unit || ''}</td>
-        <td style="border: 1px solid #000; padding: 5px 8px; font-size: 12pt;">${item.note || 'Đã thay mới, hoạt động bình thường'}</td>
-      </tr>
-    `).join('') : `
-      <tr>
-        <td style="text-align: center; border: 1px solid #000; padding: 5px 4px; font-size: 12pt;">1</td>
-        <td style="border: 1px solid #000; padding: 5px 8px; font-size: 12pt;">...........................................................................</td>
-        <td style="text-align: center; border: 1px solid #000; padding: 5px 4px; font-size: 12pt;">......</td>
-        <td style="border: 1px solid #000; padding: 5px 8px; font-size: 12pt;">...................................................</td>
-      </tr>
-    `;
-
   renderRepresentativeLines(reps, fallbackStr) {
     if (Array.isArray(reps) && reps.length > 0) {
       return reps.map(r => {
@@ -389,56 +346,6 @@ const PDFService = {
       </div>
     `;
   },
-            <thead>
-              <tr style="background: #f2f2f2;">
-                <th style="border: 1px solid #000; padding: 5px; width: 45px; text-align: center;">STT</th>
-                <th style="border: 1px solid #000; padding: 5px; text-align: center;">Phân đoạn trụ</th>
-                <th style="border: 1px solid #000; padding: 5px; width: 90px; text-align: center;">Chiều dài</th>
-                <th style="border: 1px solid #000; padding: 5px; width: 100px; text-align: center;">Bề rộng</th>
-                <th style="border: 1px solid #000; padding: 5px; width: 110px; text-align: center;">Diện tích</th>
-              </tr>
-            </thead>
-            <tbody>${doanRows}</tbody>
-          </table>
-          <div>2. <b>Tình trạng phát dọn/vệ sinh:</b> ${record.danhGia || 'Đã phát dọn sạch thực bì dưới hành lang dây điện, không còn cành cây chạm vào dây rào, thông thoáng và đảm bảo an toàn phóng điện ngăn Voi.'}</div>
-        </div>
-
-        <!-- III. Kết luận -->
-        <div style="font-weight: bold; margin-top: 8px;">III. Kết luận</div>
-        <div style="margin-left: 0.5cm;">
-          <div style="text-indent: 0.75cm;">Qua ghi nhận, các thành phần tham dự cùng thống nhất kết luận, nội dung sau: Đạt yêu cầu nghiệm thu khối lượng vệ sinh thực bì theo kế hoạch.</div>
-        </div>
-
-        <div style="margin-top: 10px; font-style: italic; text-indent: 1.25cm;">
-          Biên bản kết thúc vào lúc ..... giờ....... phút, cùng ngày và được thông qua, thống nhất. Biên bản được lập thành 03 bản, Đơn vị vệ sinh tuyến hàng rào điện giữ 01 bản, đơn vị chủ rừng 01 bản và lưu hồ sơ thanh quyết toán 01 bản./.
-        </div>
-
-        <!-- Chữ ký 3 bên -->
-        <table style="width: 100%; border-collapse: collapse; margin-top: 20px; text-align: center;">
-          <tr>
-            <td style="width: 33.3%; font-weight: bold; vertical-align: top; font-size: 12pt;">
-              ĐD. ĐƠN VỊ VỆ SINH<br/>TUYẾN HÀNG RÀO ĐIỆN<br/>
-              <span style="font-size: 11pt; font-weight: normal; font-style: italic;">(Ký, ghi rõ họ tên)</span>
-              <div style="height: 75px;"></div>
-            </td>
-            <td style="width: 33.3%; font-weight: bold; vertical-align: top; font-size: 12pt;">
-              ĐD. ĐƠN VỊ CHỦ RỪNG<br/><br/>
-              <span style="font-size: 11pt; font-weight: normal; font-style: italic;">(Ký, ghi rõ họ tên)</span>
-              <div style="height: 75px;"></div>
-            </td>
-            <td style="width: 33.4%; font-weight: bold; vertical-align: top; font-size: 12pt;">
-              CÁC CÁ NHÂN THỰC HIỆN VỆ SINH<br/>TUYẾN HÀNG RÀO ĐIỆN<br/>
-              <span style="font-size: 11pt; font-weight: normal; font-style: italic;">(Ký, ghi rõ họ tên)</span>
-              <div style="height: 75px;"></div>
-            </td>
-          </tr>
-        </table>
-
-        <!-- Trang phụ lục ảnh nếu có -->
-        ${photosHTML}
-      </div>
-    `;
-  },
 
   /**
    * Render HTML Mẫu Nhật Ký Thi Công (Chuẩn theo file mau-nhat-ky-thi-cong 01.doc)
@@ -684,7 +591,7 @@ const PDFService = {
           renderContainer.parentNode.removeChild(renderContainer);
         }
         if (window.App && typeof window.App.showToast === 'function') {
-          window.App.showToast('✅ Đã xuất file PDF A4 thành công!');
+          window.App.showToast('Đã xuất file PDF A4 thành công!');
         }
       }).catch(err => {
         console.error('Lỗi tạo PDF:', err);

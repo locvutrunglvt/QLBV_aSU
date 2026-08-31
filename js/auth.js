@@ -3,6 +3,7 @@
  */
 const Auth = {
   currentUser: null,
+  rememberMe: false,
 
   /**
    * Tính mã băm SHA-256 từ chuỗi mật khẩu
@@ -15,47 +16,103 @@ const Auth = {
     return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
   },
 
+  SESSION_KEY: 'qlbv_session',
+
   /**
-   * Khởi tạo phiên làm việc từ LocalStorage
+   * Đọc phiên đang lưu. Mặc định phiên nằm trong sessionStorage (mất khi đóng
+   * trình duyệt); chỉ khi người dùng tick "Ghi nhớ đăng nhập" mới ghi xuống
+   * localStorage. Nhờ vậy mở lại app luôn phải đăng nhập lại.
    */
-  init() {
-    try {
-      const sessionData = localStorage.getItem('qlbv_session');
-      if (sessionData) {
-        const session = JSON.parse(sessionData);
-        const now = Date.now();
-        if (now - session.loginTime < QLBV_CONFIG.SESSION_TIMEOUT_MS) {
-          this.currentUser = session.user;
-          return this.currentUser;
-        } else {
-          this.logout();
-        }
-      }
-    } catch (e) {
-      this.logout();
+  readStoredSession() {
+    for (const store of [sessionStorage, localStorage]) {
+      try {
+        const raw = store.getItem(this.SESSION_KEY);
+        if (raw) return { raw: raw, store: store };
+      } catch (e) { /* trình duyệt chặn storage */ }
     }
     return null;
+  },
+
+  clearStoredSession() {
+    try { sessionStorage.removeItem(this.SESSION_KEY); } catch (e) { }
+    try { localStorage.removeItem(this.SESSION_KEY); } catch (e) { }
+  },
+
+  /**
+   * Khởi tạo phiên làm việc. Trả về user hợp lệ hoặc null.
+   * Mọi dữ liệu phiên không đủ tin cậy đều bị hủy để không "tự vào" app.
+   */
+  init() {
+    this.currentUser = null;
+    const found = this.readStoredSession();
+    if (!found) return null;
+
+    try {
+      const session = JSON.parse(found.raw);
+      const user = session && session.user;
+      const validShape = user && typeof user.username === 'string' && user.username.trim() !== '';
+      const validTime = typeof session.loginTime === 'number' && session.loginTime <= Date.now();
+      const notExpired = validTime && (Date.now() - session.loginTime) < QLBV_CONFIG.SESSION_TIMEOUT_MS;
+
+      if (!validShape || !notExpired) {
+        this.clearStoredSession();
+        return null;
+      }
+      this.currentUser = user;
+      return this.currentUser;
+    } catch (e) {
+      this.clearStoredSession();
+      return null;
+    }
+  },
+
+  isLoggedIn() {
+    return !!(this.currentUser && this.currentUser.username);
+  },
+
+  /**
+   * Gọi Backend có giới hạn thời gian chờ. Ngoài hiện trường sóng yếu, nếu quá
+   * hạn sẽ ném lỗi để hệ thống chuyển ngay sang chế độ Offline thay vì treo.
+   */
+  async postToBackend(payload, timeoutMs = 8000) {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), timeoutMs);
+    try {
+      const response = await fetch(QLBV_CONFIG.APPS_SCRIPT_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify(payload),
+        signal: controller.signal
+      });
+      return await response.json();
+    } finally {
+      clearTimeout(timer);
+    }
   },
 
   /**
    * Đăng nhập (Online via Google Apps Script hoặc Offline Demo)
    */
-  async login(username, password) {
+  async login(username, password, remember = false) {
+    username = (username || '').trim();
+    password = password || '';
+
+    // Chặn ngay từ đầu: không có tài khoản hoặc mật khẩu thì không bao giờ vào được
+    if (!username || !password) {
+      return { success: false, message: 'Vui lòng nhập đầy đủ tên đăng nhập và mật khẩu!' };
+    }
+
+    this.rememberMe = !!remember;
     const passHash = await this.hashPassword(password);
 
     // 1. Thử gửi API nếu đã cấu hình Backend Google Apps Script
     if (QLBV_CONFIG.APPS_SCRIPT_URL) {
       try {
-        const response = await fetch(QLBV_CONFIG.APPS_SCRIPT_URL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-          body: JSON.stringify({
-            action: 'login',
-            username: username,
-            passwordHash: passHash
-          })
+        const result = await this.postToBackend({
+          action: 'login',
+          username: username,
+          passwordHash: passHash
         });
-        const result = await response.json();
         if (result.success && result.user) {
           this.setSession(result.user);
           return { success: true, user: result.user };
@@ -102,6 +159,9 @@ const Auth = {
     const found = localUsers.find(u => u.username.toLowerCase() === username.toLowerCase());
 
     if (found) {
+      if (found.status === 'Inactive') {
+        return { success: false, message: "Tài khoản đang bị khóa. Liên hệ Quản trị viên!" };
+      }
       if (found.passwordHash === passHash) {
         this.setSession(found);
         return { success: true, user: found, isOffline: true };
@@ -125,18 +185,12 @@ const Auth = {
     // Gửi lên Backend nếu có
     if (QLBV_CONFIG.APPS_SCRIPT_URL) {
       try {
-        const response = await fetch(QLBV_CONFIG.APPS_SCRIPT_URL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-          body: JSON.stringify({
-            action: 'changePassword',
-            username: this.currentUser.username,
-            oldPasswordHash: oldHash,
-            newPasswordHash: newHash
-          })
+        return await this.postToBackend({
+          action: 'changePassword',
+          username: this.currentUser.username,
+          oldPasswordHash: oldHash,
+          newPasswordHash: newHash
         });
-        const result = await response.json();
-        return result;
       } catch (e) {
         console.warn("Lỗi gửi đổi mật khẩu lên server:", e);
       }
@@ -169,12 +223,19 @@ const Auth = {
       user: user,
       loginTime: Date.now()
     };
-    localStorage.setItem('qlbv_session', JSON.stringify(session));
+    this.clearStoredSession();
+    const store = this.rememberMe ? localStorage : sessionStorage;
+    try {
+      store.setItem(this.SESSION_KEY, JSON.stringify(session));
+    } catch (e) {
+      console.warn('Không lưu được phiên đăng nhập:', e);
+    }
   },
 
   logout() {
     this.currentUser = null;
-    localStorage.removeItem('qlbv_session');
+    this.rememberMe = false;
+    this.clearStoredSession();
     window.location.reload();
   },
 

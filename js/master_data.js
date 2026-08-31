@@ -52,28 +52,42 @@ const MasterData = {
   /**
    * Tải Master Data từ Google Sheets hoặc Cache
    */
-  async load() {
-    // 1. Kiểm tra cache trong localStorage
+  /**
+   * Nạp danh mục NGAY LẬP TỨC từ cache/mặc định trong máy.
+   * Không chờ mạng: ngoài hiện trường sóng yếu app vẫn mở được tức thì.
+   */
+  load() {
     const cached = localStorage.getItem('qlbv_master_data');
     if (cached) {
       try {
         this.data = { ...this.data, ...JSON.parse(cached) };
-      } catch (e) {}
+      } catch (e) { }
     }
+  },
 
-    // 2. Tải trực tuyến từ Apps Script nếu có mạng
-    if (QLBV_CONFIG.APPS_SCRIPT_URL) {
-      try {
-        const res = await fetch(`${QLBV_CONFIG.APPS_SCRIPT_URL}?action=getMasterData`);
-        const json = await res.json();
-        if (json.success && json.data) {
-          this.data = { ...this.data, ...json.data };
-          localStorage.setItem('qlbv_master_data', JSON.stringify(this.data));
-        }
-      } catch (err) {
-        console.warn("Không thể tải MasterData từ server, dùng cache/default:", err);
+  /**
+   * Làm mới danh mục từ Google Sheets ở nền (có giới hạn thời gian chờ).
+   * Trả về true nếu có dữ liệu mới để màn hình cập nhật lại dropdown.
+   */
+  async refreshFromServer(timeoutMs = 10000) {
+    if (!QLBV_CONFIG.APPS_SCRIPT_URL || !navigator.onLine) return false;
+
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), timeoutMs);
+    try {
+      const res = await fetch(`${QLBV_CONFIG.APPS_SCRIPT_URL}?action=getMasterData`, { signal: controller.signal });
+      const json = await res.json();
+      if (json.success && json.data) {
+        this.data = { ...this.data, ...json.data };
+        localStorage.setItem('qlbv_master_data', JSON.stringify(this.data));
+        return true;
       }
+    } catch (err) {
+      console.warn("Không thể tải MasterData từ server, dùng cache/mặc định:", err);
+    } finally {
+      clearTimeout(timer);
     }
+    return false;
   },
 
   /**
@@ -119,55 +133,55 @@ const ValidationStore = {
   categories: [
     {
       id: 'tuyen',
-      name: '📍 Tuyến Hàng Rào Điện',
+      name: 'Tuyến Hàng Rào Điện',
       desc: 'Dùng chung cho: Biên Bản Bảo Trì, Biên Bản Vệ Sinh, Nhật Ký Thi Công',
       sharedWith: ['bt-tuyen-input', 'vs-tuyen-input', 'nk-tuyen-input']
     },
     {
       id: 'hoten',
-      name: '👤 Họ Tên Nhân Sự / Đại Diện',
+      name: 'Họ Tên Nhân Sự / Đại Diện',
       desc: 'Dùng chung cho: Đơn vị Bảo trì, Đơn vị Chủ rừng, Cơ quan Kiểm lâm & Nhân công',
       sharedWith: ['bt-dd-bt-name', 'bt-dd-cr-name', 'bt-dd-kl-name', 'vs-dd-bt-name', 'vs-dd-cr-name', 'vs-dd-kl-name', 'vs-nhan-cong']
     },
     {
       id: 'chucvu',
-      name: '💼 Danh Sách Chức Vụ',
+      name: 'Danh Sách Chức Vụ',
       desc: 'Dùng chung cho: Chức vụ của tất cả các đơn vị tham gia',
       sharedWith: ['bt-dd-bt-pos', 'bt-dd-cr-pos', 'bt-dd-kl-pos', 'vs-dd-bt-pos', 'vs-dd-cr-pos', 'vs-dd-kl-pos']
     },
     {
       id: 'thietBi',
-      name: '🛠️ Thiết Bị & Phụ Tùng',
+      name: 'Thiết Bị & Phụ Tùng',
       desc: 'Dùng chung cho: Thiết bị hư hỏng & Vật tư thay thế khắc phục',
       sharedWith: ['bt-thietbi-hong', 'bt-thietbi-thaythe']
     },
     {
       id: 'suCo',
-      name: '⚡ Sự Cố Thường Gặp',
+      name: 'Sự Cố Thường Gặp',
       desc: 'Dùng cho: Xác minh hiện trạng sự cố hàng rào điện',
       sharedWith: ['bt-su-co-input']
     },
     {
       id: 'nguyenNhan',
-      name: '🔍 Nguyên Nhân Sự Cố',
+      name: 'Nguyên Nhân Sự Cố',
       desc: 'Dùng cho: Ghi nhận nguyên nhân sự cố kỹ thuật',
       sharedWith: ['bt-nguyen-nhan']
     },
     {
       id: 'dvt',
-      name: '📦 Đơn Vị Tính',
+      name: 'Đơn Vị Tính',
       desc: 'Dùng chung cho: Khối lượng vật tư, phụ tùng thay thế',
       sharedWith: ['tb-unit']
     },
     {
       id: 'diaDiem',
-      name: '🗺️ Vị Trí / Địa Điểm / Tiểu Khu',
+      name: 'Vị Trí / Địa Điểm / Tiểu Khu',
       desc: 'Dùng chung cho: Vị trí trụ, tiểu khu rừng, phân trường',
       sharedWith: ['bt-dia-diem', 'vs-dia-diem', 'nk-dia-diem']
     },
     {
       id: 'danhGia',
-      name: '📋 Đánh Giá & Kết Luận',
+      name: 'Đánh Giá & Kết Luận',
       desc: 'Dùng chung cho: Kết luận bảo trì, đánh giá vệ sinh thực bì',
       sharedWith: ['bt-ket-qua', 'bt-tinh-trang', 'vs-danh-gia']
     }
