@@ -39,7 +39,8 @@
       <symbol id="i-calendar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v4"/><path d="M16 2v4"/><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M3 10h18"/></symbol>
       <symbol id="i-camera" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3z"/><circle cx="12" cy="13" r="3"/></symbol>
       <symbol id="i-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></symbol>
-      <symbol id="i-clipboard" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/><path d="m9 14 2 2 4-4"/></symbol>
+      <symbol id="i-chevron-right" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></symbol>
+    <symbol id="i-clipboard" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/><path d="m9 14 2 2 4-4"/></symbol>
       <symbol id="i-crown" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11.562 3.266a.5.5 0 0 1 .876 0L15.39 8.87a1 1 0 0 0 1.516.294L21.183 5.5a.5.5 0 0 1 .798.519l-2.834 10.246a1 1 0 0 1-.956.734H5.81a1 1 0 0 1-.957-.734L2.02 6.02a.5.5 0 0 1 .798-.519l4.276 3.664a1 1 0 0 0 1.516-.294z"/><path d="M5 21h14"/></symbol>
       <symbol id="i-download" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/><path d="M12 15V3"/></symbol>
       <symbol id="i-droplet" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22a7 7 0 0 0 7-7c0-2-1-3.9-3-5.5s-3.5-4-4-6.5c-.5 2.5-2 4.9-4 6.5C6 11.1 5 13 5 15a7 7 0 0 0 7 7"/></symbol>
@@ -86,8 +87,8 @@
     <div class="header-brand-container" onclick="App.switchTab('dashboard')" style="cursor: pointer;">
       <img src="icons/icon-192.png" alt="Logo Bảo tồn Voi" class="header-brand-logo" style="border-radius: 50%; object-fit: cover;" />
       <div class="header-brand-text">
-        <h1>CHI CỤC KIỂM LÂM ĐỒNG NAI</h1>
-        <p>HỆ THỐNG QUẢN LÝ HÀNG RÀO ĐIỆN (QLBV)</p>
+        <h1>Chi cục Kiểm lâm Đồng Nai</h1>
+        <p>Quản lý hàng rào điện bảo tồn Voi</p>
       </div>
     </div>
 
@@ -102,7 +103,7 @@
       </div>
 
       <button type="button" id="theme-toggle-btn" class="theme-switcher-btn" title="Chọn 05 Phong Cách Giao Diện Lâm Nghiệp" aria-label="Đổi giao diện">
-        <svg class="ico" aria-hidden="true"><use href="#i-palette"></use></svg> <span class="btn-text">Giao Diện</span>
+        <svg class="ico" aria-hidden="true"><use href="#i-palette"></use></svg> <span class="btn-text">Giao diện</span>
       </button>
     </div>
   </header>
@@ -115,61 +116,61 @@
       <!-- 4 Thẻ KPI Metrics Hiện Đại -->
       <div class="metrics-grid">
         <div class="metric-box">
-          <div class="icon-squircle icon-grad-amber">
+          <div class="icon-chip tone-maint">
             <svg aria-hidden="true"><use href="#i-wrench"></use></svg>
           </div>
           <div>
-            <div class="metric-label">BIÊN BẢN BẢO TRÌ</div>
+            <div class="metric-label">Biên bản bảo trì</div>
             <div class="metric-value" id="metric-count-bt">0</div>
           </div>
         </div>
 
         <div class="metric-box">
-          <div class="icon-squircle icon-grad-emerald">
+          <div class="icon-chip tone-clean">
             <svg aria-hidden="true"><use href="#i-leaf"></use></svg>
           </div>
           <div>
-            <div class="metric-label">BIÊN BẢN VỆ SINH</div>
+            <div class="metric-label">Biên bản vệ sinh</div>
             <div class="metric-value" id="metric-count-vs">0</div>
           </div>
         </div>
 
         <div class="metric-box">
-          <div class="icon-squircle icon-grad-blue">
+          <div class="icon-chip tone-hist">
             <svg aria-hidden="true"><use href="#i-ruler"></use></svg>
           </div>
           <div>
-            <div class="metric-label">ĐÃ PHÁT DỌN</div>
+            <div class="metric-label">Đã phát dọn</div>
             <div class="metric-value"><span id="metric-total-len">0</span> <span class="unit">m</span></div>
           </div>
         </div>
 
         <div class="metric-box">
-          <div class="icon-squircle icon-grad-purple">
+          <div class="icon-chip tone-hist">
             <svg aria-hidden="true"><use href="#i-map"></use></svg>
           </div>
           <div>
-            <div class="metric-label">DIỆN TÍCH PHÁT DỌN</div>
+            <div class="metric-label">Diện tích phát dọn</div>
             <div class="metric-value"><span id="metric-total-area">0.000</span> <span class="unit">ha</span></div>
           </div>
         </div>
 
         <div class="metric-box">
-          <div class="icon-squircle icon-grad-teal">
+          <div class="icon-chip tone-log">
             <svg aria-hidden="true"><use href="#i-clipboard"></use></svg>
           </div>
           <div>
-            <div class="metric-label">NHẬT KÝ THI CÔNG</div>
+            <div class="metric-label">Nhật ký thi công</div>
             <div class="metric-value" id="metric-count-nk">0</div>
           </div>
         </div>
 
         <div class="metric-box">
-          <div class="icon-squircle icon-grad-rose">
+          <div class="icon-chip tone-cfg">
             <svg aria-hidden="true"><use href="#i-refresh"></use></svg>
           </div>
           <div>
-            <div class="metric-label">CHỜ ĐỒNG BỘ</div>
+            <div class="metric-label">Chờ đồng bộ</div>
             <div class="metric-value" id="metric-pending-sync">0</div>
           </div>
         </div>
@@ -188,75 +189,93 @@
 
       <!-- 6 MỤC TÍNH NĂNG CHÍNH: ICON VECTOR CHUYÊN NGHIỆP -->
       <div class="card-panel" style="padding:1.25rem 1rem;">
-        <div class="card-header" style="margin-bottom:0.85rem;">
-          <h2 style="display:flex; align-items:center; gap:0.5rem; font-size:1.05rem;">
-            <span style="display:inline-block; width:8px; height:18px; background:var(--primary); border-radius:4px;"></span>
-            Danh Mục Chức Năng
-          </h2>
+        <div class="section-head">
+          <span class="section-title">Danh mục chức năng</span>
         </div>
         
         <div class="quick-launcher-grid">
           <!-- 1. BB Bảo Trì -->
           <div class="launcher-tile" onclick="App.switchTab('form-baotri')">
-            <div class="icon-squircle icon-grad-amber">
+            <div class="icon-chip tone-maint">
               <svg aria-hidden="true"><use href="#i-wrench"></use></svg>
             </div>
-            <div class="launcher-title">Biên Bản Bảo Trì</div>
-            <div class="launcher-desc">Ghi nhận sự cố & phụ tùng thay</div>
+            <div class="launcher-body">
+              <div class="launcher-title">Biên bản bảo trì</div>
+              <div class="launcher-desc">Ghi nhận sự cố & phụ tùng thay</div>
+            </div>
+            <svg class="launcher-arrow" aria-hidden="true"><use href="#i-chevron-right"></use></svg>
           </div>
 
           <!-- 2. BB Vệ Sinh -->
           <div class="launcher-tile" onclick="App.switchTab('form-vesinh')">
-            <div class="icon-squircle icon-grad-emerald">
+            <div class="icon-chip tone-clean">
               <svg aria-hidden="true"><use href="#i-leaf"></use></svg>
             </div>
-            <div class="launcher-title">Biên Bản Vệ Sinh</div>
-            <div class="launcher-desc">Ghi nhận phát dọn thực bì</div>
+            <div class="launcher-body">
+              <div class="launcher-title">Biên bản vệ sinh</div>
+              <div class="launcher-desc">Ghi nhận phát dọn thực bì</div>
+            </div>
+            <svg class="launcher-arrow" aria-hidden="true"><use href="#i-chevron-right"></use></svg>
           </div>
 
-          <!-- 3. Nhật Ký Thi Công -->
+          <!-- 3. Nhật ký thi công -->
           <div class="launcher-tile" onclick="App.switchTab('form-nhatky')">
-            <div class="icon-squircle icon-grad-teal">
+            <div class="icon-chip tone-log">
               <svg aria-hidden="true"><use href="#i-clipboard"></use></svg>
             </div>
-            <div class="launcher-title">Nhật Ký Thi Công</div>
-            <div class="launcher-desc">Nhân lực, thiết bị trong ngày</div>
+            <div class="launcher-body">
+              <div class="launcher-title">Nhật ký thi công</div>
+              <div class="launcher-desc">Nhân lực, thiết bị trong ngày</div>
+            </div>
+            <svg class="launcher-arrow" aria-hidden="true"><use href="#i-chevron-right"></use></svg>
           </div>
 
-          <!-- 4. Lịch Sử Bản Ghi -->
+          <!-- 4. Lịch sử bản ghi -->
           <div class="launcher-tile" onclick="App.switchTab('history')">
-            <div class="icon-squircle icon-grad-rose">
+            <div class="icon-chip tone-hist">
               <svg aria-hidden="true"><use href="#i-folder"></use></svg>
             </div>
-            <div class="launcher-title">Lịch Sử Bản Ghi</div>
-            <div class="launcher-desc">Tra cứu, xem lại & xuất PDF</div>
+            <div class="launcher-body">
+              <div class="launcher-title">Lịch sử bản ghi</div>
+              <div class="launcher-desc">Tra cứu, xem lại & xuất PDF</div>
+            </div>
+            <svg class="launcher-arrow" aria-hidden="true"><use href="#i-chevron-right"></use></svg>
           </div>
 
-          <!-- 5. Quản Lý Nhân Sự -->
+          <!-- 5. Quản lý nhân sự -->
           <div class="launcher-tile" id="dash-tile-users" onclick="App.switchTab('users')">
-            <div class="icon-squircle icon-grad-purple">
+            <div class="icon-chip tone-user">
               <svg aria-hidden="true"><use href="#i-users"></use></svg>
             </div>
-            <div class="launcher-title">Quản Lý Nhân Sự</div>
-            <div class="launcher-desc">Phân quyền tài khoản (Admin)</div>
+            <div class="launcher-body">
+              <div class="launcher-title">Quản lý nhân sự</div>
+              <div class="launcher-desc">Phân quyền tài khoản (Admin)</div>
+            </div>
+            <svg class="launcher-arrow" aria-hidden="true"><use href="#i-chevron-right"></use></svg>
           </div>
 
           <!-- 6. Quản Lý Danh Mục Gợi Ý & Pin -->
           <div class="launcher-tile" onclick="App.openValModal()">
-            <div class="icon-squircle icon-grad-emerald">
+            <div class="icon-chip tone-cfg">
               <svg aria-hidden="true"><use href="#i-sliders"></use></svg>
             </div>
-            <div class="launcher-title">Danh Mục & Gợi Ý</div>
-            <div class="launcher-desc">Ghim & sửa danh mục tự động</div>
+            <div class="launcher-body">
+              <div class="launcher-title">Danh mục & gợi ý</div>
+              <div class="launcher-desc">Ghim & sửa danh mục tự động</div>
+            </div>
+            <svg class="launcher-arrow" aria-hidden="true"><use href="#i-chevron-right"></use></svg>
           </div>
 
           <!-- 7. Chọn Giao Diện Lâm Nghiệp -->
           <div class="launcher-tile" onclick="App.openThemePicker()">
-            <div class="icon-squircle icon-grad-blue">
+            <div class="icon-chip tone-cfg">
               <svg aria-hidden="true"><use href="#i-palette"></use></svg>
             </div>
-            <div class="launcher-title">Đổi Giao Diện</div>
-            <div class="launcher-desc">05 phong cách Lâm nghiệp</div>
+            <div class="launcher-body">
+              <div class="launcher-title">Đổi giao diện</div>
+              <div class="launcher-desc">05 phong cách Lâm nghiệp</div>
+            </div>
+            <svg class="launcher-arrow" aria-hidden="true"><use href="#i-chevron-right"></use></svg>
           </div>
         </div>
       </div>
@@ -267,8 +286,8 @@
       <form id="form-baotri-el">
         <div class="card-panel">
           <div class="card-header">
-            <h2><svg class="ico" aria-hidden="true"><use href="#i-wrench"></use></svg> Biên Bản Xác Minh Hiện Trạng & Ghi Nhận Bảo Trì HRD</h2>
-            <button type="button" class="btn btn-secondary btn-sm" onclick="App.switchTab('dashboard')"><svg class="ico" aria-hidden="true"><use href="#i-arrow-left"></use></svg> Về Trang Chủ</button>
+            <h2><svg class="ico" aria-hidden="true"><use href="#i-wrench"></use></svg> Biên bản xác minh hiện trạng & ghi nhận bảo trì HRD</h2>
+            <button type="button" class="btn btn-secondary btn-sm" onclick="App.switchTab('dashboard')"><svg class="ico" aria-hidden="true"><use href="#i-arrow-left"></use></svg> <span class="btn-text">Về trang chủ</span></button>
           </div>
 
           <!-- Thông tin thời gian & địa điểm -->
@@ -292,14 +311,14 @@
           </div>
 
           <!-- I. Thành phần tham gia (3 Đơn vị x 3 Đại diện: Họ tên + Chức vụ) -->
-          <div style="font-weight: 700; margin: 1.25rem 0 0.5rem 0; color: var(--primary); display:flex; justify-content:space-between; align-items:center;">
-            <span>I. THÀNH PHẦN THAM GIA (Họ tên & Chức vụ)</span>
-            <small style="color:var(--text-muted); font-weight:normal; font-size:0.8rem;">* Nhập đến 3 người mỗi đơn vị</small>
+          <div class="form-section">
+            <span>I. Thành phần tham gia</span>
+            <small class="form-section-note">* Nhập đến 3 người mỗi đơn vị</small>
           </div>
 
           <!-- 1. Đơn vị Bảo trì -->
           <div class="rep-card-group">
-            <div class="rep-card-header"><svg class="ico" aria-hidden="true"><use href="#i-wrench"></use></svg> 1. Đại diện Đơn vị Bảo trì</div>
+            <div class="rep-card-header"><svg class="ico" aria-hidden="true"><use href="#i-wrench"></use></svg> 1. Đại diện đơn vị bảo trì</div>
             <div class="rep-grid-3">
               <div class="rep-cell">
                 <span class="rep-label">Đại diện 1:</span>
@@ -321,7 +340,7 @@
 
           <!-- 2. Đơn vị Chủ rừng -->
           <div class="rep-card-group">
-            <div class="rep-card-header"><svg class="ico" aria-hidden="true"><use href="#i-tree"></use></svg> 2. Đại diện Đơn vị Chủ rừng</div>
+            <div class="rep-card-header"><svg class="ico" aria-hidden="true"><use href="#i-tree"></use></svg> 2. Đại diện đơn vị chủ rừng</div>
             <div class="rep-grid-3">
               <div class="rep-cell">
                 <span class="rep-label">Đại diện 1:</span>
@@ -343,7 +362,7 @@
 
           <!-- 3. Cơ quan Kiểm lâm -->
           <div class="rep-card-group">
-            <div class="rep-card-header"><svg class="ico" aria-hidden="true"><use href="#i-shield"></use></svg> 3. Đại diện Cơ quan Kiểm lâm sở tại</div>
+            <div class="rep-card-header"><svg class="ico" aria-hidden="true"><use href="#i-shield"></use></svg> 3. Đại diện cơ quan kiểm lâm sở tại</div>
             <div class="rep-grid-3">
               <div class="rep-cell">
                 <span class="rep-label">Đại diện 1:</span>
@@ -364,8 +383,8 @@
           </div>
 
           <!-- II. Nội dung xác minh sự cố -->
-          <div style="font-weight: 700; margin: 1.25rem 0 0.5rem 0; color: var(--primary);">
-            II. NỘI DUNG XÁC MINH SỰ CỐ
+          <div class="form-section">
+            II. Nội dung xác minh sự cố
           </div>
           <div class="form-grid">
             <div class="form-group full-width">
@@ -380,7 +399,7 @@
 
           <!-- Bảng Thiết bị hỏng -->
           <div style="display: flex; align-items: center; justify-content: space-between; margin: 1.25rem 0 0.5rem 0;">
-            <div style="font-weight: 700; color: var(--danger);">Danh mục Thiết bị Hư hỏng:</div>
+            <div class="field-group-label is-danger">Thiết bị hư hỏng</div>
             <button type="button" id="btn-add-bt-thietbi-hong" class="btn btn-secondary btn-sm">+ Thêm thiết bị</button>
           </div>
           <div class="dynamic-table-wrapper">
@@ -400,7 +419,7 @@
 
           <!-- Bảng Thiết bị thay thế -->
           <div style="display: flex; align-items: center; justify-content: space-between; margin: 1.25rem 0 0.5rem 0;">
-            <div style="font-weight: 700; color: var(--success);">Vật tư / Thiết bị Thay thế, Khắc phục:</div>
+            <div class="field-group-label is-success">Vật tư / thiết bị thay thế</div>
             <button type="button" id="btn-add-bt-thietbi-thaythe" class="btn btn-secondary btn-sm">+ Thêm vật tư</button>
           </div>
           <div class="dynamic-table-wrapper">
@@ -432,7 +451,7 @@
 
           <!-- Chụp ảnh hiện trường có Watermark -->
           <div style="margin-top: 1.5rem;">
-            <div style="font-weight: 700; margin-bottom: 0.5rem; color: var(--primary);"><svg class="ico" aria-hidden="true"><use href="#i-camera"></use></svg> Ảnh Chụp Hiện Trường (Tự động chèn Tọa độ GPS & Thời gian)</div>
+            <div class="field-group-label"><svg class="ico" aria-hidden="true"><use href="#i-camera"></use></svg> Ảnh hiện trường <span class="field-group-hint">tự động chèn tọa độ GPS &amp; thời gian</span></div>
             <label class="photo-uploader-box" for="bt-photo-input">
               <div style="font-size: 2rem;"><svg class="ico" aria-hidden="true"><use href="#i-camera"></use></svg></div>
               <div style="font-weight: 600; margin-top: 4px;">Bấm để Chụp ảnh hoặc Chọn từ Thư viện</div>
@@ -445,10 +464,10 @@
           <!-- Actions -->
           <div class="form-actions-bar">
             <button type="button" id="btn-print-baotri" class="btn btn-secondary">
-              <svg class="ico" aria-hidden="true"><use href="#i-printer"></use></svg> Xem trước & In PDF
+              <svg class="ico" aria-hidden="true"><use href="#i-printer"></use></svg> Xem trước<span class="btn-text"> & in PDF</span>
             </button>
             <button type="submit" class="btn btn-primary btn-lg">
-              <svg class="ico" aria-hidden="true"><use href="#i-save"></use></svg> Lưu Biên Bản
+              <svg class="ico" aria-hidden="true"><use href="#i-save"></use></svg> Lưu biên bản
             </button>
           </div>
         </div>
@@ -460,8 +479,8 @@
       <form id="form-vesinh-el">
         <div class="card-panel">
           <div class="card-header">
-            <h2><svg class="ico" aria-hidden="true"><use href="#i-leaf"></use></svg> Biên Bản Ghi Nhận Kết Quả Vệ Sinh, Phát Dọn Thực Bì HRD</h2>
-            <button type="button" class="btn btn-secondary btn-sm" onclick="App.switchTab('dashboard')"><svg class="ico" aria-hidden="true"><use href="#i-arrow-left"></use></svg> Về Trang Chủ</button>
+            <h2><svg class="ico" aria-hidden="true"><use href="#i-leaf"></use></svg> Biên bản ghi nhận kết quả vệ sinh, phát dọn thực bì HRD</h2>
+            <button type="button" class="btn btn-secondary btn-sm" onclick="App.switchTab('dashboard')"><svg class="ico" aria-hidden="true"><use href="#i-arrow-left"></use></svg> <span class="btn-text">Về trang chủ</span></button>
           </div>
 
           <!-- Thời gian & Địa điểm -->
@@ -485,13 +504,13 @@
           </div>
 
           <!-- Đại diện (3 Đơn vị x 3 Đại diện) & Nhân công -->
-          <div style="font-weight: 700; margin: 1.25rem 0 0.5rem 0; color: var(--primary);">
-            I. THÀNH PHẦN THAM GIA & NHÂN CÔNG
+          <div class="form-section">
+            I. Thành phần tham gia & nhân công
           </div>
 
           <!-- 1. Đơn vị Bảo trì -->
           <div class="rep-card-group">
-            <div class="rep-card-header"><svg class="ico" aria-hidden="true"><use href="#i-wrench"></use></svg> 1. Đại diện Đơn vị Bảo trì</div>
+            <div class="rep-card-header"><svg class="ico" aria-hidden="true"><use href="#i-wrench"></use></svg> 1. Đại diện đơn vị bảo trì</div>
             <div class="rep-grid-3">
               <div class="rep-cell">
                 <span class="rep-label">Đại diện 1:</span>
@@ -513,7 +532,7 @@
 
           <!-- 2. Đơn vị Chủ rừng -->
           <div class="rep-card-group">
-            <div class="rep-card-header"><svg class="ico" aria-hidden="true"><use href="#i-tree"></use></svg> 2. Đại diện Đơn vị Chủ rừng</div>
+            <div class="rep-card-header"><svg class="ico" aria-hidden="true"><use href="#i-tree"></use></svg> 2. Đại diện đơn vị chủ rừng</div>
             <div class="rep-grid-3">
               <div class="rep-cell">
                 <span class="rep-label">Đại diện 1:</span>
@@ -535,7 +554,7 @@
 
           <!-- 3. Cơ quan Kiểm lâm -->
           <div class="rep-card-group">
-            <div class="rep-card-header"><svg class="ico" aria-hidden="true"><use href="#i-shield"></use></svg> 3. Đại diện Cơ quan Kiểm lâm sở tại</div>
+            <div class="rep-card-header"><svg class="ico" aria-hidden="true"><use href="#i-shield"></use></svg> 3. Đại diện cơ quan kiểm lâm sở tại</div>
             <div class="rep-grid-3">
               <div class="rep-cell">
                 <span class="rep-label">Đại diện 1:</span>
@@ -565,7 +584,7 @@
 
           <!-- Chi tiết phân đoạn trụ -->
           <div style="display: flex; align-items: center; justify-content: space-between; margin: 1.25rem 0 0.5rem 0;">
-            <div style="font-weight: 700; color: var(--primary);">II. CHI TIẾT CÁC PHÂN ĐOẠN TRỤ ĐÃ PHÁT DỌN:</div>
+            <div class="form-section">II. Chi tiết các phân đoạn trụ đã phát dọn</div>
             <button type="button" id="btn-add-vs-doan" class="btn btn-secondary btn-sm">+ Thêm phân đoạn</button>
           </div>
           <div class="dynamic-table-wrapper">
@@ -602,7 +621,7 @@
 
           <!-- Chụp ảnh hiện trường có Watermark -->
           <div style="margin-top: 1.5rem;">
-            <div style="font-weight: 700; margin-bottom: 0.5rem; color: var(--primary);"><svg class="ico" aria-hidden="true"><use href="#i-camera"></use></svg> Ảnh Kiểm Tra Phát Dọn Thực Bì</div>
+            <div class="field-group-label"><svg class="ico" aria-hidden="true"><use href="#i-camera"></use></svg> Ảnh kiểm tra phát dọn thực bì</div>
             <label class="photo-uploader-box" for="vs-photo-input">
               <div style="font-size: 2rem;"><svg class="ico" aria-hidden="true"><use href="#i-camera"></use></svg></div>
               <div style="font-weight: 600; margin-top: 4px;">Chụp ảnh hoặc Chọn từ Thư viện</div>
@@ -614,10 +633,10 @@
           <!-- Actions -->
           <div class="form-actions-bar">
             <button type="button" id="btn-print-vesinh" class="btn btn-secondary">
-              <svg class="ico" aria-hidden="true"><use href="#i-printer"></use></svg> Xem trước & In PDF
+              <svg class="ico" aria-hidden="true"><use href="#i-printer"></use></svg> Xem trước<span class="btn-text"> & in PDF</span>
             </button>
             <button type="submit" class="btn btn-primary btn-lg">
-              <svg class="ico" aria-hidden="true"><use href="#i-save"></use></svg> Lưu Biên Bản Vệ Sinh
+              <svg class="ico" aria-hidden="true"><use href="#i-save"></use></svg> Lưu Biên bản vệ sinh
             </button>
           </div>
         </div>
@@ -629,8 +648,8 @@
       <form id="form-nhatky-el">
         <div class="card-panel">
           <div class="card-header">
-            <h2><svg class="ico" aria-hidden="true"><use href="#i-clipboard"></use></svg> Nhật Ký Thi Công & Quản Lý Vận Hành</h2>
-            <button type="button" class="btn btn-secondary btn-sm" onclick="App.switchTab('dashboard')"><svg class="ico" aria-hidden="true"><use href="#i-arrow-left"></use></svg> Về Trang Chủ</button>
+            <h2><svg class="ico" aria-hidden="true"><use href="#i-clipboard"></use></svg> Nhật ký thi công & Quản Lý Vận Hành</h2>
+            <button type="button" class="btn btn-secondary btn-sm" onclick="App.switchTab('dashboard')"><svg class="ico" aria-hidden="true"><use href="#i-arrow-left"></use></svg> <span class="btn-text">Về trang chủ</span></button>
           </div>
 
           <div class="form-grid">
@@ -686,7 +705,7 @@
 
           <!-- Chụp ảnh hiện trường có Watermark -->
           <div style="margin-top: 1.5rem;">
-            <div style="font-weight: 700; margin-bottom: 0.5rem; color: var(--primary);"><svg class="ico" aria-hidden="true"><use href="#i-camera"></use></svg> Ảnh Nhật Ký Công Trường</div>
+            <div class="field-group-label"><svg class="ico" aria-hidden="true"><use href="#i-camera"></use></svg> Ảnh nhật ký công trường</div>
             <label class="photo-uploader-box" for="nk-photo-input">
               <div style="font-size: 2rem;"><svg class="ico" aria-hidden="true"><use href="#i-camera"></use></svg></div>
               <div style="font-weight: 600; margin-top: 4px;">Chụp ảnh hoặc Chọn từ Thư viện</div>
@@ -698,10 +717,10 @@
           <!-- Actions -->
           <div class="form-actions-bar">
             <button type="button" id="btn-print-nhatky" class="btn btn-secondary">
-              <svg class="ico" aria-hidden="true"><use href="#i-printer"></use></svg> Xem trước & In PDF
+              <svg class="ico" aria-hidden="true"><use href="#i-printer"></use></svg> Xem trước<span class="btn-text"> & in PDF</span>
             </button>
             <button type="submit" class="btn btn-primary btn-lg">
-              <svg class="ico" aria-hidden="true"><use href="#i-save"></use></svg> Lưu Nhật Ký
+              <svg class="ico" aria-hidden="true"><use href="#i-save"></use></svg> Lưu nhật ký
             </button>
           </div>
         </div>
@@ -712,8 +731,8 @@
     <section id="view-history" class="tab-view" style="display: none;">
       <div class="card-panel">
         <div class="card-header">
-          <h2><svg class="ico" aria-hidden="true"><use href="#i-folder"></use></svg> Lịch Sử Các Bản Ghi Đã Lập</h2>
-          <button type="button" class="btn btn-secondary btn-sm" onclick="App.switchTab('dashboard')"><svg class="ico" aria-hidden="true"><use href="#i-arrow-left"></use></svg> Về Trang Chủ</button>
+          <h2><svg class="ico" aria-hidden="true"><use href="#i-folder"></use></svg> Lịch sử các bản ghi đã lập</h2>
+          <button type="button" class="btn btn-secondary btn-sm" onclick="App.switchTab('dashboard')"><svg class="ico" aria-hidden="true"><use href="#i-arrow-left"></use></svg> <span class="btn-text">Về trang chủ</span></button>
         </div>
         <div id="history-records-list"></div>
       </div>
@@ -723,8 +742,8 @@
     <section id="view-users" class="tab-view" style="display: none;">
       <div class="card-panel">
         <div class="card-header">
-          <h2><svg class="ico" aria-hidden="true"><use href="#i-users"></use></svg> Quản Lý Nhân Sự & Phân Quyền</h2>
-          <button type="button" class="btn btn-primary btn-sm" onclick="App.openAddUserModal()">+ Thêm Nhân Sự Mới</button>
+          <h2><svg class="ico" aria-hidden="true"><use href="#i-users"></use></svg> Quản lý nhân sự & Phân Quyền</h2>
+          <button type="button" class="btn btn-primary btn-sm" onclick="App.openAddUserModal()">+ Thêm nhân sự mới</button>
         </div>
         <div style="overflow-x:auto;">
           <table class="data-table">
@@ -749,27 +768,27 @@
   <!-- ================= THANH ĐIỀU HƯỚNG ĐÁY DÀNH CHO ĐIỆN THOẠI ================= -->
   <nav class="mobile-bottom-nav" style="display: none;" aria-label="Điều hướng chính">
     <button type="button" class="bottom-nav-item active" data-tab="dashboard">
-      <svg class="ico" aria-hidden="true"><use href="#i-home"></use></svg>
+      <span class="nav-pill"><svg class="ico" aria-hidden="true"><use href="#i-home"></use></svg></span>
       <span>Trang chủ</span>
     </button>
     <button type="button" class="bottom-nav-item" data-tab="form-baotri">
-      <svg class="ico" aria-hidden="true"><use href="#i-wrench"></use></svg>
+      <span class="nav-pill"><svg class="ico" aria-hidden="true"><use href="#i-wrench"></use></svg></span>
       <span>Bảo trì</span>
     </button>
     <button type="button" class="bottom-nav-item" data-tab="form-vesinh">
-      <svg class="ico" aria-hidden="true"><use href="#i-leaf"></use></svg>
+      <span class="nav-pill"><svg class="ico" aria-hidden="true"><use href="#i-leaf"></use></svg></span>
       <span>Vệ sinh</span>
     </button>
     <button type="button" class="bottom-nav-item" data-tab="form-nhatky">
-      <svg class="ico" aria-hidden="true"><use href="#i-clipboard"></use></svg>
+      <span class="nav-pill"><svg class="ico" aria-hidden="true"><use href="#i-clipboard"></use></svg></span>
       <span>Nhật ký</span>
     </button>
     <button type="button" class="bottom-nav-item" data-tab="history">
-      <svg class="ico" aria-hidden="true"><use href="#i-folder"></use></svg>
+      <span class="nav-pill"><svg class="ico" aria-hidden="true"><use href="#i-folder"></use></svg></span>
       <span>Lịch sử</span>
     </button>
     <button type="button" class="bottom-nav-item" id="app-nav-users" data-tab="users" style="display: none;">
-      <svg class="ico" aria-hidden="true"><use href="#i-users"></use></svg>
+      <span class="nav-pill"><svg class="ico" aria-hidden="true"><use href="#i-users"></use></svg></span>
       <span>Nhân sự</span>
     </button>
   </nav>
@@ -778,8 +797,8 @@
   <div id="login-modal" class="modal-overlay login-screen active">
     <div class="login-clean-card">
       <img src="icons/icon-512.png" alt="Logo Bảo tồn Voi" class="login-logo-img" />
-      <h2 class="login-agency-title">CHI CỤC KIỂM LÂM ĐỒNG NAI</h2>
-      <p class="login-sub-title">Hệ thống Quản lý &amp; Vận hành Hàng rào điện (QLBV)</p>
+      <h2 class="login-agency-title">Chi cục Kiểm lâm Đồng Nai</h2>
+      <p class="login-sub-title">Hệ thống quản lý &amp; vận hành hàng rào điện</p>
 
       <form id="login-form" class="login-form">
         <div class="form-group">
@@ -812,8 +831,7 @@
         </div>
 
         <button type="submit" class="btn btn-primary btn-block btn-lg">
-          <svg class="ico" aria-hidden="true"><use href="#i-logout"></use></svg>
-          <span class="btn-label">Đăng Nhập</span>
+          <span class="btn-label">Đăng nhập</span>
         </button>
       </form>
 
@@ -827,7 +845,7 @@
   <div id="forgot-modal" class="modal-overlay">
     <div class="modal-dialog">
       <div class="modal-header">
-        <h3><svg class="ico" aria-hidden="true"><use href="#i-help"></use></svg> Khôi Phục Mật Khẩu</h3>
+        <h3><svg class="ico" aria-hidden="true"><use href="#i-help"></use></svg> Khôi phục mật khẩu</h3>
         <button type="button" class="modal-close-btn" style="background:none; border:none; font-size:1.25rem; cursor:pointer;" onclick="App.hideModal('forgot-modal')"><svg class="ico" aria-hidden="true"><use href="#i-x"></use></svg></button>
       </div>
       <form id="app-forgot-form">
@@ -841,7 +859,7 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" onclick="App.hideModal('forgot-modal')">Hủy</button>
-          <button type="submit" class="btn btn-primary">Khôi Phục Mật Khẩu</button>
+          <button type="submit" class="btn btn-primary">Khôi phục mật khẩu</button>
         </div>
       </form>
     </div>
@@ -851,7 +869,7 @@
   <div id="app-user-modal" class="modal-overlay">
     <div class="modal-dialog">
       <div class="modal-header">
-        <h3 id="app-user-modal-title"><svg class="ico" aria-hidden="true"><use href="#i-plus"></use></svg> Thêm Nhân Sự Mới</h3>
+        <h3 id="app-user-modal-title"><svg class="ico" aria-hidden="true"><use href="#i-plus"></use></svg> Thêm nhân sự mới</h3>
         <button type="button" class="modal-close-btn" style="background:none; border:none; font-size:1.25rem; cursor:pointer;" onclick="App.hideModal('app-user-modal')"><svg class="ico" aria-hidden="true"><use href="#i-x"></use></svg></button>
       </div>
       <form id="app-user-form">
@@ -895,7 +913,7 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" onclick="App.hideModal('app-user-modal')">Hủy</button>
-          <button type="submit" class="btn btn-primary">Lưu Nhân Sự</button>
+          <button type="submit" class="btn btn-primary">Lưu nhân sự</button>
         </div>
       </form>
     </div>
@@ -905,12 +923,12 @@
   <div id="user-settings-modal" class="modal-overlay">
     <div class="modal-dialog">
       <div class="modal-header">
-        <h3><svg class="ico" aria-hidden="true"><use href="#i-settings"></use></svg> Cài Đặt Tài Khoản & Kết Nối</h3>
+        <h3><svg class="ico" aria-hidden="true"><use href="#i-settings"></use></svg> Cài đặt tài khoản & kết nối</h3>
         <button type="button" class="modal-close-btn" style="background: none; border: none; font-size: 1.25rem; cursor: pointer;"><svg class="ico" aria-hidden="true"><use href="#i-x"></use></svg></button>
       </div>
       <div class="modal-body">
-        <!-- Đổi Mật Khẩu -->
-        <h4 style="font-weight: 700; color: var(--primary); margin-bottom: 0.75rem;"><svg class="ico" aria-hidden="true"><use href="#i-key"></use></svg> Đổi Mật Khẩu</h4>
+        <!-- Đổi mật khẩu -->
+        <h4 class="modal-subhead"><svg class="ico" aria-hidden="true"><use href="#i-key"></use></svg> Đổi mật khẩu</h4>
         <form id="change-password-form" style="margin-bottom: 1.5rem;">
           <div class="form-group" style="margin-bottom: 0.75rem;">
             <label class="form-label required" for="old-password">Mật khẩu hiện tại</label>
@@ -924,13 +942,13 @@
             <label class="form-label required" for="confirm-password">Xác nhận mật khẩu mới</label>
             <input type="password" id="confirm-password" class="form-control" minlength="6" required />
           </div>
-          <button type="submit" class="btn btn-secondary btn-sm">Cập nhật Mật khẩu</button>
+          <button type="submit" class="btn btn-secondary btn-sm">Cập nhật mật khẩu</button>
         </form>
 
         <hr style="border: 0; border-top: 1px solid var(--border-color); margin: 1.25rem 0;" />
 
         <!-- Cấu hình Google Apps Script Backend URL -->
-        <h4 style="font-weight: 700; color: var(--primary); margin-bottom: 0.5rem;"><svg class="ico" aria-hidden="true"><use href="#i-globe"></use></svg> Cấu Hình Google Apps Script Web App</h4>
+        <h4 class="modal-subhead"><svg class="ico" aria-hidden="true"><use href="#i-globe"></use></svg> Cấu hình Google Apps Script Web App</h4>
         <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.5rem;">
           Dán URL Web App sau khi Deploy Apps Script để kết nối trực tiếp với Google Sheets:
         </p>
@@ -951,15 +969,13 @@
   <div id="val-modal" class="modal-overlay">
     <div class="modal-dialog" style="max-width: 620px;">
       <div class="modal-header">
-        <h3 style="font-weight:700; color:var(--primary); display:flex; align-items:center; gap:0.4rem;">
-          <svg class="ico" aria-hidden="true"><use href="#i-settings"></use></svg> Quản Lý Tham Số & Validation Dùng Chung
+        <h3>
+          <svg class="ico" aria-hidden="true"><use href="#i-settings"></use></svg> Quản lý tham số & validation dùng chung
         </h3>
         <button type="button" class="modal-close-btn" style="background:none; border:none; font-size:1.25rem; cursor:pointer;" onclick="App.hideModal('val-modal')"><svg class="ico" aria-hidden="true"><use href="#i-x"></use></svg></button>
       </div>
       <div class="modal-body">
-        <div style="font-size:0.83rem; color:var(--text-muted); margin-bottom:0.6rem; line-height:1.4;">
-          <svg class="ico" aria-hidden="true"><use href="#i-bulb"></use></svg> Mọi thông tin nhập khi lập biên bản sẽ <b>tự động học & ghim</b> để tái sử dụng trên tất cả các phân hệ. Bấm vào biểu tượng <svg class="ico" aria-hidden="true"><use href="#i-map-pin"></use></svg> để <b>ghim (<svg class="ico" aria-hidden="true"><use href="#i-pin"></use></svg>)</b> mục lên đầu danh sách gợi ý.
-        </div>
+        <p class="modal-lead">Thông tin nhập khi lập biên bản được tự động ghi nhớ để dùng lại. Bấm biểu tượng ghim để đưa mục lên đầu gợi ý.</p>
 
         <div class="form-group" style="margin-bottom:0.6rem;">
           <label class="form-label" style="font-weight:700;">Chọn nhóm tham số / Danh mục validation</label>
@@ -983,17 +999,17 @@
         <!-- Action Toolbar: Xuất / Nhập JSON & Reset -->
         <div class="val-actions-row">
           <button type="button" class="btn btn-secondary btn-sm" onclick="App.exportValidationConfig()" title="Tải file cấu hình JSON về máy">
-            <svg class="ico" aria-hidden="true"><use href="#i-upload"></use></svg> Xuất File JSON
+            <svg class="ico" aria-hidden="true"><use href="#i-upload"></use></svg> Xuất file JSON
           </button>
           <label class="btn btn-secondary btn-sm" style="margin:0; cursor:pointer;" title="Nhập file cấu hình JSON từ máy">
-            <svg class="ico" aria-hidden="true"><use href="#i-download"></use></svg> Nhập File JSON
+            <svg class="ico" aria-hidden="true"><use href="#i-download"></use></svg> Nhập file JSON
             <input type="file" accept=".json" onchange="App.importValidationConfig(event)" style="display:none;" />
           </label>
           <button type="button" class="btn btn-secondary btn-sm" onclick="App.resetValidationDefaults()" title="Khôi phục về danh mục chuẩn ban đầu">
-            <svg class="ico" aria-hidden="true"><use href="#i-refresh"></use></svg> Khôi Phục Chuẩn
+            <svg class="ico" aria-hidden="true"><use href="#i-refresh"></use></svg> Khôi phục chuẩn
           </button>
           <button type="button" class="btn btn-danger btn-sm" onclick="App.clearCurrentCategoryVal()" style="margin-left:auto;">
-            <svg class="ico" aria-hidden="true"><use href="#i-trash"></use></svg> Xóa Nhóm Này
+            <svg class="ico" aria-hidden="true"><use href="#i-trash"></use></svg> Xóa nhóm này
           </button>
         </div>
       </div>
@@ -1004,84 +1020,82 @@
   <div id="theme-picker-modal" class="modal-overlay">
     <div class="modal-dialog" style="max-width: 680px;">
       <div class="modal-header">
-        <h3 style="font-weight:700; color:var(--primary); display:flex; align-items:center; gap:0.4rem;">
-          <svg class="ico" aria-hidden="true"><use href="#i-palette"></use></svg> Tùy Chọn Giao Diện Lâm Nghiệp Hiện Đại
+        <h3>
+          <svg class="ico" aria-hidden="true"><use href="#i-palette"></use></svg> Chọn giao diện
         </h3>
         <button type="button" class="modal-close-btn" style="background:none; border:none; font-size:1.25rem; cursor:pointer;" onclick="App.hideModal('theme-picker-modal')"><svg class="ico" aria-hidden="true"><use href="#i-x"></use></svg></button>
       </div>
       <div class="modal-body">
-        <div style="font-size:0.85rem; color:var(--text-muted); margin-bottom:0.85rem; line-height:1.4;">
-          <svg class="ico" aria-hidden="true"><use href="#i-tree"></use></svg> Ứng dụng cung cấp <b>05 phong cách thiết kế độc quyền</b> chuẩn Lâm Nghiệp & Bảo tồn Động vật Hoang dã. Bấm chọn giao diện bạn muốn sử dụng:
-        </div>
+        <p class="modal-lead">Chọn phong cách hiển thị cho toàn bộ ứng dụng. Thay đổi có hiệu lực ngay.</p>
 
         <div class="theme-picker-grid">
           <!-- 1. Emerald Eco Pro -->
           <div class="theme-card-option" data-theme-target="emerald" onclick="App.setThemeStyle('emerald')">
             <div class="theme-card-header">
-              <span class="theme-card-title"><svg class="ico" aria-hidden="true"><use href="#i-leaf"></use></svg> Rừng Nguyên Sinh</span>
+              <span class="theme-card-title"><svg class="ico" aria-hidden="true"><use href="#i-leaf"></use></svg> Rừng nguyên sinh</span>
               <span class="theme-active-badge">Đang dùng</span>
             </div>
-            <div class="theme-card-desc">Phong cách Emerald Eco Pro hiện đại, bóng đổ mềm mại, tông xanh ngọc bích chuẩn ứng dụng quốc tế.</div>
+            <div class="theme-card-desc">Xanh lá tươi trên nền sáng trung tính. Lựa chọn mặc định, dễ đọc ngoài trời.</div>
             <div class="theme-color-palette">
               <span class="theme-swatch" style="background:#15803d;" title="Chính: #15803d"></span>
-              <span class="theme-swatch" style="background:#22c55e;" title="Phụ: #22c55e"></span>
-              <span class="theme-swatch" style="background:#f3f7f4; border-color:#cbd5e1;" title="Nền: #f3f7f4"></span>
+              <span class="theme-swatch" style="background:#16a34a;" title="Phụ: #22c55e"></span>
+              <span class="theme-swatch" style="background:#f4f6f4; border-color:var(--border-strong);" title="Nền: #f3f7f4"></span>
             </div>
           </div>
 
           <!-- 2. Nordic Pine & Sage -->
           <div class="theme-card-option" data-theme-target="pine" onclick="App.setThemeStyle('pine')">
             <div class="theme-card-header">
-              <span class="theme-card-title"><svg class="ico" aria-hidden="true"><use href="#i-tree"></use></svg> Rừng Thông Cát Tiên</span>
+              <span class="theme-card-title"><svg class="ico" aria-hidden="true"><use href="#i-tree"></use></svg> Rừng thông Cát Tiên</span>
               <span class="theme-active-badge">Đang dùng</span>
             </div>
-            <div class="theme-card-desc">Phong cách Pine & Sage Bắc Âu thanh lịch, đường nét tinh tế, viền mảnh dịu mắt khi làm việc lâu.</div>
+            <div class="theme-card-desc">Xanh thông trầm, sắc độ dịu. Phù hợp khi nhập liệu liên tục nhiều giờ.</div>
             <div class="theme-color-palette">
-              <span class="theme-swatch" style="background:#065f46;" title="Chính: #065f46"></span>
-              <span class="theme-swatch" style="background:#14b8a6;" title="Phụ: #14b8a6"></span>
-              <span class="theme-swatch" style="background:#f4fbf7; border-color:#cbd5e1;" title="Nền: #f4fbf7"></span>
+              <span class="theme-swatch" style="background:#0b6b4f;" title="Chính: #065f46"></span>
+              <span class="theme-swatch" style="background:#0d9488;" title="Phụ: #14b8a6"></span>
+              <span class="theme-swatch" style="background:#f5f7f6; border-color:var(--border-strong);" title="Nền: #f4fbf7"></span>
             </div>
           </div>
 
           <!-- 3. Earth Wood & Safari -->
           <div class="theme-card-option" data-theme-target="earth" onclick="App.setThemeStyle('earth')">
             <div class="theme-card-header">
-              <span class="theme-card-title"><svg class="ico" aria-hidden="true"><use href="#i-leaf"></use></svg> Đất Rừng Miền Đông</span>
+              <span class="theme-card-title"><svg class="ico" aria-hidden="true"><use href="#i-leaf"></use></svg> Đất rừng miền Đông</span>
               <span class="theme-active-badge">Đang dùng</span>
             </div>
-            <div class="theme-card-desc">Tông màu gỗ gụ, đất rừng ấm áp & safari kiểm lâm. Độ tương phản cao, chống chói ngoài ánh sáng mặt trời.</div>
+            <div class="theme-card-desc">Tông gỗ và đất ấm, tương phản cao, ít chói dưới nắng gắt.</div>
             <div class="theme-color-palette">
-              <span class="theme-swatch" style="background:#78350f;" title="Chính: #78350f"></span>
+              <span class="theme-swatch" style="background:#8a4b1c;" title="Chính: #78350f"></span>
               <span class="theme-swatch" style="background:#2d6a4f;" title="Phụ: #2d6a4f"></span>
-              <span class="theme-swatch" style="background:#faf7f2; border-color:#cbd5e1;" title="Nền: #faf7f2"></span>
+              <span class="theme-swatch" style="background:#f8f6f2; border-color:var(--border-strong);" title="Nền: #faf7f2"></span>
             </div>
           </div>
 
           <!-- 4. Mist Glass & Ocean Jade -->
           <div class="theme-card-option" data-theme-target="mist" onclick="App.setThemeStyle('mist')">
             <div class="theme-card-header">
-              <span class="theme-card-title"><svg class="ico" aria-hidden="true"><use href="#i-droplet"></use></svg> Thác Mai - Sương Mù</span>
+              <span class="theme-card-title"><svg class="ico" aria-hidden="true"><use href="#i-droplet"></use></svg> Thác Mai sương mù</span>
               <span class="theme-active-badge">Đang dùng</span>
             </div>
-            <div class="theme-card-desc">Hiệu ứng Kính Mờ (Glassmorphism), thẻ bán trong suốt sang trọng trên nền xanh sông Đồng Nai tươi mới.</div>
+            <div class="theme-card-desc">Xanh nước mát, bề mặt nhẹ. Cảm giác thoáng và sạch.</div>
             <div class="theme-color-palette">
               <span class="theme-swatch" style="background:#0f766e;" title="Chính: #0f766e"></span>
-              <span class="theme-swatch" style="background:#06b6d4;" title="Phụ: #06b6d4"></span>
-              <span class="theme-swatch" style="background:#f0fdfa; border-color:#cbd5e1;" title="Nền: #f0fdfa"></span>
+              <span class="theme-swatch" style="background:#0891b2;" title="Phụ: #06b6d4"></span>
+              <span class="theme-swatch" style="background:#f3f7f7; border-color:var(--border-strong);" title="Nền: #f0fdfa"></span>
             </div>
           </div>
 
           <!-- 5. Midnight Ranger -->
           <div class="theme-card-option" data-theme-target="midnight" onclick="App.setThemeStyle('midnight')">
             <div class="theme-card-header">
-              <span class="theme-card-title"><svg class="ico" aria-hidden="true"><use href="#i-moon"></use></svg> Tuần Tra Đêm</span>
+              <span class="theme-card-title"><svg class="ico" aria-hidden="true"><use href="#i-moon"></use></svg> Tuần tra đêm</span>
               <span class="theme-active-badge">Đang dùng</span>
             </div>
-            <div class="theme-card-desc">Giao diện tối chuyên dụng tuần tra đêm trong rừng, viền phát quang bảo vệ mắt và tiết kiệm pin điện thoại tối đa.</div>
+            <div class="theme-card-desc">Nền tối cho ca đêm, đỡ chói mắt và tiết kiệm pin.</div>
             <div class="theme-color-palette">
-              <span class="theme-swatch" style="background:#10b981;" title="Chính: #10b981"></span>
-              <span class="theme-swatch" style="background:#0e2419;" title="Thẻ: #0e2419"></span>
-              <span class="theme-swatch" style="background:#06130d; border-color:#334155;" title="Nền: #06130d"></span>
+              <span class="theme-swatch" style="background:#34d399;" title="Chính: #10b981"></span>
+              <span class="theme-swatch" style="background:#141a17;" title="Thẻ: #0e2419"></span>
+              <span class="theme-swatch" style="background:#0b0f0d; border-color:var(--border-strong);" title="Nền: #06130d"></span>
             </div>
           </div>
         </div>
@@ -1097,14 +1111,14 @@
     <div class="modal-dialog pdf-modal-dialog">
       <div class="modal-header" style="background: var(--bg-surface-elevated); padding: 0.85rem 1.25rem;">
         <h3 id="pdf-preview-title" style="display: flex; align-items: center; gap: 0.5rem; font-size: 1.05rem;">
-          <svg class="ico" aria-hidden="true"><use href="#i-file"></use></svg> Xem Trước Văn Bản Khổ A4
+          <svg class="ico" aria-hidden="true"><use href="#i-file"></use></svg> Xem trước văn bản khổ A4
         </h3>
         <div style="display: flex; align-items: center; gap: 0.5rem;">
           <button type="button" class="btn btn-primary btn-sm" onclick="PDFService.exportToPDF()" title="Tải file PDF về máy">
-            <svg class="ico" aria-hidden="true"><use href="#i-download"></use></svg> Xuất File PDF (A4)
+            <svg class="ico" aria-hidden="true"><use href="#i-download"></use></svg> Xuất file PDF (A4)
           </button>
           <button type="button" class="btn btn-secondary btn-sm" onclick="PDFService.printRecord()" title="Mở hộp thoại in trình duyệt">
-            <svg class="ico" aria-hidden="true"><use href="#i-printer"></use></svg> In Trình Duyệt
+            <svg class="ico" aria-hidden="true"><use href="#i-printer"></use></svg> In trình duyệt
           </button>
           <button type="button" class="btn btn-secondary btn-sm" onclick="PDFService.closePreviewModal()" style="padding: 0.35rem 0.65rem;" title="Đóng">
             <svg class="ico" aria-hidden="true"><use href="#i-x"></use></svg>
@@ -1122,7 +1136,7 @@
         </div>
         <div style="display: flex; gap: 0.5rem;">
           <button type="button" class="btn btn-primary" onclick="PDFService.exportToPDF()">
-            <svg class="ico" aria-hidden="true"><use href="#i-download"></use></svg> Tải Xuống PDF (A4)
+            <svg class="ico" aria-hidden="true"><use href="#i-download"></use></svg> Tải xuống PDF (A4)
           </button>
           <button type="button" class="btn btn-secondary" onclick="PDFService.closePreviewModal()">
             Đóng

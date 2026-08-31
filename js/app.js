@@ -251,10 +251,12 @@ const App = {
     if (user) {
       document.body.classList.remove('is-logged-out');
       if (userBadge) {
+        const roleKey = (user.role || 'Worker').toLowerCase();
+        const roleIcon = { admin: 'crown', supervisor: 'eye', worker: 'wrench' }[roleKey] || 'user';
         userBadge.innerHTML = `
-          <span class="status-dot" style="background: var(--success)"></span>
+          <span class="user-badge-avatar">${this.icon(roleIcon)}</span>
           <span class="user-badge-name">${user.fullName || user.username}</span>
-          <span class="role-tag role-${user.role ? user.role.toLowerCase() : 'worker'}">${user.role || 'Worker'}</span>
+          <span class="role-tag role-${roleKey}">${user.role || 'Worker'}</span>
         `;
       }
       if (mainContainer) mainContainer.style.display = 'block';
@@ -265,8 +267,8 @@ const App = {
       document.body.classList.add('is-logged-out');
       if (userBadge) {
         userBadge.innerHTML = `
-          <span class="status-dot" style="background: var(--text-light)"></span>
-          <span>Chưa đăng nhập</span>
+          <span class="user-badge-avatar">${this.icon('user')}</span>
+          <span class="user-badge-name">Chưa đăng nhập</span>
         `;
       }
       if (mainContainer) mainContainer.style.display = 'none';
@@ -1035,19 +1037,19 @@ const App = {
     }
 
     const typeMeta = {
-      baotri: { name: 'Biên bản Bảo Trì', icon: 'wrench', grad: 'icon-grad-amber' },
-      vesinh: { name: 'Biên bản Vệ Sinh', icon: 'leaf', grad: 'icon-grad-emerald' },
-      nhatky: { name: 'Nhật Ký Thi Công', icon: 'clipboard', grad: 'icon-grad-teal' }
+      baotri: { name: 'Biên bản Bảo Trì', icon: 'wrench', tone: 'tone-maint' },
+      vesinh: { name: 'Biên bản Vệ Sinh', icon: 'leaf', tone: 'tone-clean' },
+      nhatky: { name: 'Nhật Ký Thi Công', icon: 'clipboard', tone: 'tone-log' }
     };
 
     container.innerHTML = history.map((item, idx) => {
-      const meta = typeMeta[item.formType] || { name: 'Biên bản', icon: 'file', grad: 'icon-grad-blue' };
+      const meta = typeMeta[item.formType] || { name: 'Biên bản', icon: 'file', tone: 'tone-hist' };
       const dateStr = item.record?.ngayLap || item.record?.ngayGhi || item.timestamp?.substring(0, 10);
       const detail = item.record?.tuyenHrd || item.record?.hangMuc || item.record?.suCo || '';
 
       return `
         <div class="history-item">
-          <div class="icon-squircle icon-squircle-sm ${meta.grad}">${this.icon(meta.icon)}</div>
+          <div class="icon-chip icon-chip-sm ${meta.tone}">${this.icon(meta.icon)}</div>
           <div class="history-item-body">
             <div class="history-item-title">${meta.name}</div>
             <div class="history-item-meta">
@@ -1058,7 +1060,7 @@ const App = {
             </div>
           </div>
           <button class="btn btn-secondary btn-sm history-item-btn" onclick="PDFService.openPreviewModal('${item.formType}', StorageService.getLocalHistory()[${idx}].record)">
-            ${this.icon('file')} <span>Xem &amp; Xuất PDF</span>
+            ${this.icon('file')} <span>Xem &amp; xuất PDF</span>
           </button>
         </div>
       `;
@@ -1127,7 +1129,7 @@ const App = {
   },
 
   openAddUserModal() {
-    document.getElementById('app-user-modal-title').textContent = 'Thêm Nhân Sự Mới';
+    document.getElementById('app-user-modal-title').textContent = 'Thêm nhân sự mới';
     document.getElementById('app-usr-mode').value = 'add';
     document.getElementById('app-usr-username').disabled = false;
     document.getElementById('app-user-form').reset();
@@ -1139,7 +1141,7 @@ const App = {
     const u = users[idx];
     if (!u) return;
 
-    document.getElementById('app-user-modal-title').textContent = 'Sửa Thông Tin Nhân Sự';
+    document.getElementById('app-user-modal-title').textContent = 'Sửa thông tin nhân sự';
     document.getElementById('app-usr-mode').value = 'edit';
     document.getElementById('app-usr-username').value = u.username;
     document.getElementById('app-usr-username').disabled = true;
@@ -1234,11 +1236,11 @@ const App = {
 
   /**
    * Quản lý 05 Bộ Giao Diện Lâm Nghiệp Chuyên Nghiệp (5 UI Themes)
-   * 1. emerald  - Rừng Nguyên Sinh (Emerald Eco Pro)
-   * 2. pine     - Rừng Thông Cát Tiên (Nordic Pine & Sage)
-   * 3. earth    - Đất Rừng Miền Đông (Earth Wood & Safari)
-   * 4. mist     - Thác Mai - Sương Mù (Mist Glass & Ocean Jade)
-   * 5. midnight - Tuần Tra Đêm (Midnight Ranger / High-Contrast Dark)
+   * 1. emerald  - Rừng nguyên sinh
+   * 2. pine     - Rừng thông Cát Tiên
+   * 3. earth    - Đất rừng miền Đông
+   * 4. mist     - Thác Mai sương mù
+   * 5. midnight - Tuần tra đêm
    */
   setupTheme() {
     const savedThemeStyle = localStorage.getItem('qlbv_theme_style') || 'emerald';
@@ -1282,11 +1284,11 @@ const App = {
     });
 
     const themeNamesMap = {
-      emerald: 'Rừng Nguyên Sinh (Emerald Eco Pro)',
-      pine: 'Rừng Thông Cát Tiên (Nordic Pine & Sage)',
-      earth: 'Đất Rừng Miền Đông (Earth Wood & Safari)',
-      mist: 'Thác Mai - Sương Mù (Mist Glass & Ocean Jade)',
-      midnight: 'Tuần Tra Đêm (Midnight Ranger)'
+      emerald: 'Rừng nguyên sinh',
+      pine: 'Rừng thông Cát Tiên',
+      earth: 'Đất rừng miền Đông',
+      mist: 'Thác Mai sương mù',
+      midnight: 'Tuần tra đêm'
     };
 
     if (showToastMsg) {
