@@ -41,9 +41,16 @@ const App = {
   },
 
   /**
-   * Quản lý Danh mục Gợi ý & Pin (Validation Store Modal)
+   * TRUNG TÂM QUẢN LÝ THAM SỐ & VALIDATION DÙNG CHUNG (Validation Store Modal)
    */
   openValModal() {
+    const select = document.getElementById('val-cat-select');
+    if (select) {
+      const cats = ValidationStore.getAllCategories();
+      const currentVal = select.value || 'tuyen';
+      select.innerHTML = cats.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+      select.value = currentVal;
+    }
     this.renderValTagList();
     this.showModal('val-modal');
   },
@@ -51,20 +58,41 @@ const App = {
   renderValTagList() {
     const cat = document.getElementById('val-cat-select')?.value || 'tuyen';
     const container = document.getElementById('val-tags-container');
+    const infoCard = document.getElementById('val-info-desc');
     if (!container) return;
 
+    const cats = ValidationStore.getAllCategories();
+    const currentCatObj = cats.find(c => c.id === cat);
+    if (infoCard && currentCatObj) {
+      infoCard.innerHTML = `🔗 <b>Hạng mục dùng chung:</b> ${currentCatObj.desc}`;
+    }
+
     const items = ValidationStore.get(cat);
+    const pins = ValidationStore.getPinned(cat);
+
     if (items.length === 0) {
-      container.innerHTML = '<span style="color:var(--text-muted); font-size:0.8rem;">Chưa có mục gợi ý nào. Hãy nhập ở trên hoặc khi bạn điền form hệ thống sẽ tự học!</span>';
+      container.innerHTML = '<span style="color:var(--text-muted); font-size:0.82rem;">Chưa có mục nào trong danh mục này. Hãy gõ thêm bên dưới hoặc điền form để hệ thống tự động học!</span>';
       return;
     }
 
-    container.innerHTML = items.map(item => `
-      <span class="val-tag-item">
-        <span>${item}</span>
-        <span class="val-tag-del" onclick="App.deleteValTag('${item}')" title="Xóa">✕</span>
-      </span>
-    `).join('');
+    // Sắp xếp các mục: Pinned lên đầu
+    const sortedItems = [
+      ...pins.filter(p => items.includes(p)),
+      ...items.filter(i => !pins.includes(i))
+    ];
+
+    container.innerHTML = sortedItems.map(item => {
+      const isPinned = pins.includes(item);
+      return `
+        <span class="val-tag-item ${isPinned ? 'is-pinned' : ''}">
+          <span class="val-tag-pin" onclick="App.togglePinValTag('${item.replace(/'/g, "\\'")}')" title="${isPinned ? 'Bỏ ghim' : 'Ghim lên đầu gợi ý'}">
+            ${isPinned ? '📌' : '📍'}
+          </span>
+          <span>${item}</span>
+          <span class="val-tag-del" onclick="App.deleteValTag('${item.replace(/'/g, "\\'")}')" title="Xóa mục này">✕</span>
+        </span>
+      `;
+    }).join('');
   },
 
   addValItemFromModal() {
@@ -76,6 +104,14 @@ const App = {
     if (inp) inp.value = '';
     this.renderValTagList();
     this.showToast(`✅ Đã thêm [${val}] vào danh mục gợi ý!`, 'success');
+  },
+
+  togglePinValTag(val) {
+    const cat = document.getElementById('val-cat-select')?.value || 'tuyen';
+    ValidationStore.togglePin(cat, val);
+    this.renderValTagList();
+    const isPinned = ValidationStore.isPinned(cat, val);
+    this.showToast(isPinned ? `📌 Đã ghim [${val}] lên đầu danh sách gợi ý!` : `Đã bỏ ghim [${val}]`, 'info');
   },
 
   deleteValTag(val) {
@@ -91,6 +127,43 @@ const App = {
     ValidationStore.clear(cat);
     this.renderValTagList();
     this.showToast('Đã xóa sạch danh mục nhóm này!', 'info');
+  },
+
+  resetValidationDefaults() {
+    if (!confirm('Khôi phục toàn bộ tham số & danh mục về thiết lập chuẩn ban đầu?')) return;
+    ValidationStore.resetAllToDefaults();
+    this.renderValTagList();
+    this.showToast('🔄 Đã khôi phục toàn bộ danh mục tham số chuẩn!', 'success');
+  },
+
+  exportValidationConfig() {
+    const jsonStr = ValidationStore.exportConfigJson();
+    const blob = new Blob([jsonStr], { type: 'application/json;charset=utf-8' });
+    const now = new Date();
+    const pad = n => String(n).padStart(2, '0');
+    const ts = `${pad(now.getDate())}${pad(now.getMonth() + 1)}${now.getFullYear()}_${pad(now.getHours())}${pad(now.getMinutes())}${pad(now.getSeconds())}`;
+    const filename = `QLBV_ThamSo_Validation_${ts}.json`;
+
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = filename;
+    a.click();
+    URL.revokeObjectURL(a.href);
+    this.showToast('📤 Đã xuất file cấu hình tham số JSON!', 'success');
+  },
+
+  importValidationConfig(event) {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const res = ValidationStore.importConfigJson(e.target.result);
+      this.renderValTagList();
+      this.showToast(res.message, res.success ? 'success' : 'error');
+      event.target.value = '';
+    };
+    reader.readAsText(file);
   },
 
   /**

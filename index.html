@@ -791,40 +791,58 @@
     </div>
   </div>
 
-  <!-- ================= MODAL: QUẢN LÝ DANH MỤC GỢI Ý & PIN ================= -->
+  <!-- ================= MODAL: TRUNG TÂM QUẢN LÝ THAM SỐ & VALIDATION DÙNG CHUNG ================= -->
   <div id="val-modal" class="modal-overlay">
-    <div class="modal-dialog" style="max-width: 560px;">
+    <div class="modal-dialog" style="max-width: 620px;">
       <div class="modal-header">
         <h3 style="font-weight:700; color:var(--primary); display:flex; align-items:center; gap:0.4rem;">
-          📌 Quản Lý Danh Mục Gợi Ý & Pin
+          ⚙️ Quản Lý Tham Số & Validation Dùng Chung
         </h3>
         <button type="button" class="modal-close-btn" style="background:none; border:none; font-size:1.25rem; cursor:pointer;" onclick="App.hideModal('val-modal')">✕</button>
       </div>
       <div class="modal-body">
-        <div style="font-size:0.83rem; color:var(--text-muted); margin-bottom:0.75rem; line-height:1.4;">
-          💡 Mọi nội dung bạn nhập khi lập biên bản sẽ <b>tự động học và lưu</b> vào danh mục. Bạn có thể thêm, bớt mục tại đây:
+        <div style="font-size:0.83rem; color:var(--text-muted); margin-bottom:0.6rem; line-height:1.4;">
+          💡 Mọi thông tin nhập khi lập biên bản sẽ <b>tự động học & ghim</b> để tái sử dụng trên tất cả các phân hệ. Bấm vào biểu tượng 📍 để <b>ghim (📌)</b> mục lên đầu danh sách gợi ý.
         </div>
-        <div class="form-group" style="margin-bottom:0.75rem;">
-          <label class="form-label">Chọn nhóm danh mục</label>
-          <select id="val-cat-select" class="form-select" onchange="App.renderValTagList()">
-            <option value="tuyen">📍 Tuyến Hàng Rào Điện</option>
-            <option value="suCo">⚡ Sự Cố Thường Gặp</option>
-            <option value="nguyenNhan">🔍 Nguyên Nhân Sự Cố</option>
-            <option value="thietBi">🛠️ Thiết Bị & Phụ Tùng</option>
-            <option value="hoten">👤 Danh Sách Họ Tên Đại Diện</option>
-            <option value="chucvu">💼 Danh Sách Chức Vụ</option>
-          </select>
+
+        <div class="form-group" style="margin-bottom:0.6rem;">
+          <label class="form-label" style="font-weight:700;">Chọn nhóm tham số / Danh mục validation</label>
+          <select id="val-cat-select" class="form-select" onchange="App.renderValTagList()"></select>
         </div>
+
+        <!-- Card hiển thị các hạng mục form đang dùng chung danh mục này -->
+        <div id="val-info-desc" class="val-info-card"></div>
+
         <div style="display:flex; gap:0.4rem; margin-bottom:0.75rem;">
-          <input type="text" id="val-new-input" class="form-control" placeholder="Nhập mục mới..." />
+          <input type="text" id="val-new-input" class="form-control" placeholder="Nhập thêm mục gợi ý mới..." onkeydown="if(event.key==='Enter'){event.preventDefault();App.addValItemFromModal();}" />
           <button type="button" class="btn btn-primary btn-sm" onclick="App.addValItemFromModal()">+ Thêm</button>
         </div>
-        <div style="font-weight:600; font-size:0.85rem; margin-bottom:0.35rem;">Danh sách mục hiện có:</div>
+
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.35rem;">
+          <span style="font-weight:600; font-size:0.85rem;">Danh sách mục trong nhóm:</span>
+          <span style="font-size:0.78rem; color:var(--text-muted);">📌 = Đang ghim ưu tiên</span>
+        </div>
         <div id="val-tags-container" class="val-tag-list"></div>
+
+        <!-- Action Toolbar: Xuất / Nhập JSON & Reset -->
+        <div class="val-actions-row">
+          <button type="button" class="btn btn-secondary btn-sm" onclick="App.exportValidationConfig()" title="Tải file cấu hình JSON về máy">
+            📤 Xuất File JSON
+          </button>
+          <label class="btn btn-secondary btn-sm" style="margin:0; cursor:pointer;" title="Nhập file cấu hình JSON từ máy">
+            📥 Nhập File JSON
+            <input type="file" accept=".json" onchange="App.importValidationConfig(event)" style="display:none;" />
+          </label>
+          <button type="button" class="btn btn-secondary btn-sm" onclick="App.resetValidationDefaults()" title="Khôi phục về danh mục chuẩn ban đầu">
+            🔄 Khôi Phục Chuẩn
+          </button>
+          <button type="button" class="btn btn-danger btn-sm" onclick="App.clearCurrentCategoryVal()" style="margin-left:auto;">
+            🗑️ Xóa Nhóm Này
+          </button>
+        </div>
       </div>
-      <div class="modal-footer" style="display:flex; justify-content:space-between;">
-        <button type="button" class="btn btn-danger btn-sm" onclick="App.clearCurrentCategoryVal()">🗑️ Xóa sạch nhóm này</button>
-        <button type="button" class="btn btn-secondary btn-sm" onclick="App.hideModal('val-modal')">Đóng</button>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" onclick="App.hideModal('val-modal')">Đóng</button>
       </div>
     </div>
   </div>

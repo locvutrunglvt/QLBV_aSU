@@ -651,7 +651,7 @@ const PDFService = {
     renderContainer.style.left = '-9999px';
     renderContainer.style.top = '0';
     renderContainer.style.width = '794px';
-    renderContainer.style.padding = '25px 25px 25px 35px'; // Lề A4 chuẩn
+    renderContainer.style.padding = '20mm 20mm 20mm 20mm'; // Lề A4 chuẩn 2.0cm cả 4 phía
     renderContainer.style.background = '#ffffff';
     renderContainer.style.color = '#000000';
     renderContainer.style.boxSizing = 'border-box';
@@ -660,7 +660,7 @@ const PDFService = {
     document.body.appendChild(renderContainer);
 
     const opt = {
-      margin: [12, 10, 12, 12], // mm: Top, Right, Bottom, Left
+      margin: [20, 20, 20, 20], // mm: Top, Right, Bottom, Left (2.0cm chuẩn)
       filename: filename,
       image: { type: 'jpeg', quality: 0.98 },
       html2canvas: {

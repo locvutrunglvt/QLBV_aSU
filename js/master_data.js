@@ -113,21 +113,114 @@ const MasterData = {
 };
 
 /**
- * DYNAMIC VALIDATION & AUTO-LEARN STORE
+ * TRUNG TÂM QUẢN LÝ THAM SỐ & VALIDATION DÙNG CHUNG (SHARED PARAMETER & VALIDATION CENTER)
  */
 const ValidationStore = {
+  categories: [
+    {
+      id: 'tuyen',
+      name: '📍 Tuyến Hàng Rào Điện',
+      desc: 'Dùng chung cho: Biên Bản Bảo Trì, Biên Bản Vệ Sinh, Nhật Ký Thi Công',
+      sharedWith: ['bt-tuyen-input', 'vs-tuyen-input', 'nk-tuyen-input']
+    },
+    {
+      id: 'hoten',
+      name: '👤 Họ Tên Nhân Sự / Đại Diện',
+      desc: 'Dùng chung cho: Đơn vị Bảo trì, Đơn vị Chủ rừng, Cơ quan Kiểm lâm & Nhân công',
+      sharedWith: ['bt-dd-bt-name', 'bt-dd-cr-name', 'bt-dd-kl-name', 'vs-dd-bt-name', 'vs-dd-cr-name', 'vs-dd-kl-name', 'vs-nhan-cong']
+    },
+    {
+      id: 'chucvu',
+      name: '💼 Danh Sách Chức Vụ',
+      desc: 'Dùng chung cho: Chức vụ của tất cả các đơn vị tham gia',
+      sharedWith: ['bt-dd-bt-pos', 'bt-dd-cr-pos', 'bt-dd-kl-pos', 'vs-dd-bt-pos', 'vs-dd-cr-pos', 'vs-dd-kl-pos']
+    },
+    {
+      id: 'thietBi',
+      name: '🛠️ Thiết Bị & Phụ Tùng',
+      desc: 'Dùng chung cho: Thiết bị hư hỏng & Vật tư thay thế khắc phục',
+      sharedWith: ['bt-thietbi-hong', 'bt-thietbi-thaythe']
+    },
+    {
+      id: 'suCo',
+      name: '⚡ Sự Cố Thường Gặp',
+      desc: 'Dùng cho: Xác minh hiện trạng sự cố hàng rào điện',
+      sharedWith: ['bt-su-co-input']
+    },
+    {
+      id: 'nguyenNhan',
+      name: '🔍 Nguyên Nhân Sự Cố',
+      desc: 'Dùng cho: Ghi nhận nguyên nhân sự cố kỹ thuật',
+      sharedWith: ['bt-nguyen-nhan']
+    },
+    {
+      id: 'dvt',
+      name: '📦 Đơn Vị Tính',
+      desc: 'Dùng chung cho: Khối lượng vật tư, phụ tùng thay thế',
+      sharedWith: ['tb-unit']
+    },
+    {
+      id: 'diaDiem',
+      name: '🗺️ Vị Trí / Địa Điểm / Tiểu Khu',
+      desc: 'Dùng chung cho: Vị trí trụ, tiểu khu rừng, phân trường',
+      sharedWith: ['bt-dia-diem', 'vs-dia-diem', 'nk-dia-diem']
+    },
+    {
+      id: 'danhGia',
+      name: '📋 Đánh Giá & Kết Luận',
+      desc: 'Dùng chung cho: Kết luận bảo trì, đánh giá vệ sinh thực bì',
+      sharedWith: ['bt-ket-qua', 'bt-tinh-trang', 'vs-danh-gia']
+    }
+  ],
+
   defaults: {
     tuyen: [],
-    suCo: [],
-    nguyenNhan: [],
-    thietBi: [],
     hoten: [],
     chucvu: [
       "Đội trưởng", "Đội phó", "Kỹ thuật viên", "Công nhân bảo trì",
       "Trưởng trạm BVR", "Nhân viên BVR", "Cán bộ quản lý",
       "Kiểm lâm viên địa bàn", "Trạm trưởng KL", "Phó Trạm trưởng KL", "Cán bộ Thanh tra"
+    ],
+    thietBi: [
+      "Bộ phát xung điện (Energizer) 12V/220V",
+      "Bình ắc quy lưu điện 12V - 100Ah",
+      "Tấm pin năng lượng mặt trời Solar 100W",
+      "Sứ cách điện néo / Sứ đỡ dây",
+      "Dây cáp thép bọc kẽm 2.5mm",
+      "Bộ chống sét lan truyền",
+      "Trụ bê tông gia cố"
+    ],
+    suCo: [
+      "Đứt dây cáp xung điện do cây rừng ngã đè",
+      "Mất nguồn xung điện tại trạm phát xung",
+      "Sứ cách điện bị vỡ làm chạm chập tiếp địa",
+      "Bình ắc quy lưu điện bị chai / sụt áp",
+      "Trụ rào bị nghiêng do voi rừng húc / đất lún"
+    ],
+    nguyenNhan: [
+      "Cây rừng ngoài hành lang ngã đổ đè đứt dây cáp",
+      "Mưa bão sét đánh hỏng thiết bị chống sét",
+      "Voi rừng tác động làm biến dạng khung trụ rào",
+      "Thiết bị vận hành lâu ngày hết tuổi thọ tự nhiên"
+    ],
+    dvt: ["Cái", "Bộ", "Bình", "Tấm", "Mét", "Trụ", "Kg", "Hệ thống"],
+    diaDiem: [
+      "Tiểu khu 120 - RPH Tân Phú",
+      "Khu vực Trụ 45 đến Trụ 48",
+      "Khu vực Trạm xung số 2 - Vườn Quốc Gia Cát Tiên",
+      "Tuyến rào giáp ranh Định Quán - Vĩnh Cửu"
+    ],
+    danhGia: [
+      "Đã tiến hành nối dây cáp và kiểm tra thông mạch, hệ thống xung điện hoạt động bình thường.",
+      "Điện áp đo đạt 7.5kV, đảm bảo an toàn ngăn voi.",
+      "Đã phát dọn sạch thực bì dưới hành lang dây điện, đảm bảo thông thoáng và an toàn cách điện."
     ]
   },
+
+  getAllCategories() {
+    return this.categories;
+  },
+
   get(cat) {
     const stored = localStorage.getItem('qlbv_val_' + cat);
     if (stored) {
@@ -135,10 +228,24 @@ const ValidationStore = {
     }
     return this.defaults[cat] || [];
   },
+
+  getPinned(cat) {
+    const stored = localStorage.getItem('qlbv_val_pin_' + cat);
+    if (stored) {
+      try { return JSON.parse(stored); } catch (e) {}
+    }
+    return [];
+  },
+
   save(cat, list) {
     localStorage.setItem('qlbv_val_' + cat, JSON.stringify(list));
     this.refreshDatalists();
   },
+
+  savePinned(cat, list) {
+    localStorage.setItem('qlbv_val_pin_' + cat, JSON.stringify(list));
+  },
+
   learn(cat, val) {
     if (!val || typeof val !== 'string') return;
     const clean = val.trim();
@@ -149,14 +256,67 @@ const ValidationStore = {
       this.save(cat, list);
     }
   },
+
+  togglePin(cat, val) {
+    let pins = this.getPinned(cat);
+    if (pins.includes(val)) {
+      pins = pins.filter(x => x !== val);
+    } else {
+      pins.push(val);
+    }
+    this.savePinned(cat, pins);
+  },
+
+  isPinned(cat, val) {
+    return this.getPinned(cat).includes(val);
+  },
+
   remove(cat, val) {
     let list = this.get(cat).filter(x => x !== val);
     this.save(cat, list);
+    let pins = this.getPinned(cat).filter(x => x !== val);
+    this.savePinned(cat, pins);
   },
+
   clear(cat) {
     localStorage.removeItem('qlbv_val_' + cat);
+    localStorage.removeItem('qlbv_val_pin_' + cat);
     this.refreshDatalists();
   },
+
+  resetAllToDefaults() {
+    this.categories.forEach(c => {
+      localStorage.removeItem('qlbv_val_' + c.id);
+      localStorage.removeItem('qlbv_val_pin_' + c.id);
+    });
+    this.refreshDatalists();
+  },
+
+  exportConfigJson() {
+    const data = {};
+    this.categories.forEach(c => {
+      data[c.id] = {
+        items: this.get(c.id),
+        pinned: this.getPinned(c.id)
+      };
+    });
+    return JSON.stringify(data, null, 2);
+  },
+
+  importConfigJson(jsonStr) {
+    try {
+      const data = JSON.parse(jsonStr);
+      Object.keys(data).forEach(cat => {
+        if (data[cat].items) this.save(cat, data[cat].items);
+        if (data[cat].pinned) this.savePinned(cat, data[cat].pinned);
+      });
+      this.refreshDatalists();
+      return { success: true, message: 'Đã nhập cấu hình tham số thành công!' };
+    } catch (e) {
+      return { success: false, message: 'File cấu hình JSON không hợp lệ: ' + e.message };
+    }
+  },
+
   refreshDatalists() {
     const populateDL = (dlId, cat) => {
       let dl = document.getElementById(dlId);
@@ -166,13 +326,26 @@ const ValidationStore = {
         document.body.appendChild(dl);
       }
       const items = this.get(cat);
-      dl.innerHTML = items.map(item => `<option value="${item}">`).join('');
+      const pins = this.getPinned(cat);
+      
+      // Sắp xếp: Pinned trước, sau đó là các mục khác
+      const sorted = [
+        ...pins.filter(p => items.includes(p)),
+        ...items.filter(i => !pins.includes(i))
+      ];
+
+      dl.innerHTML = sorted.map(item => `<option value="${item}">`).join('');
     };
+
     populateDL('dl-tuyen', 'tuyen');
     populateDL('dl-su-co', 'suCo');
     populateDL('dl-nguyen-nhan', 'nguyenNhan');
     populateDL('dl-thietbi', 'thietBi');
     populateDL('dl-hoten', 'hoten');
     populateDL('dl-chucvu', 'chucvu');
+    populateDL('dl-dvt', 'dvt');
+    populateDL('dl-diadiem', 'diaDiem');
+    populateDL('dl-danhgia', 'danhGia');
   }
 };
+

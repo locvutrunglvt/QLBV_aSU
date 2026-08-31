@@ -747,7 +747,7 @@
     }
 
     .pdf-modal-dialog {
-      max-width: 860px !important;
+      max-width: 890px !important;
       width: 96% !important;
       max-height: 94vh !important;
       display: flex;
@@ -773,10 +773,16 @@
       color: #000000;
       width: 100%;
       max-width: 794px;
-      padding: 20px 20px 20px 25px;
+      min-height: 1123px;
+      padding: 20mm 20mm 20mm 20mm; /* Lề chuẩn 2cm, 2cm, 2cm, 2cm */
       box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
       box-sizing: border-box;
       font-family: 'Times New Roman', Times, serif;
+    }
+
+    @page {
+      size: A4 portrait;
+      margin: 20mm 20mm 20mm 20mm; /* Lề chuẩn 2.0cm cả 4 phía theo Nghị định 30/2020 */
     }
 
     @media print {
@@ -1468,45 +1474,54 @@
     </div>
   </div>
 
-  <!-- ================= MODAL: QUẢN LÝ DANH MỤC GỢI Ý & PIN (PIN & VALIDATION) ================= -->
+  <!-- ================= MODAL: TRUNG TÂM QUẢN LÝ THAM SỐ & VALIDATION DÙNG CHUNG ================= -->
   <div id="val-modal" class="modal-overlay">
-    <div class="modal-card" style="max-width: 580px; width: 95%;">
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+    <div class="modal-card" style="max-width: 620px; width: 95%;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.75rem;">
         <h3 style="font-weight:700; color:var(--primary); display:flex; align-items:center; gap:0.4rem;">
-          📌 Quản Lý Danh Mục & Gợi Ý Tự Động
+          ⚙️ Quản Lý Tham Số & Validation Dùng Chung
         </h3>
         <button type="button" class="btn btn-secondary btn-sm" onclick="closeModal('val-modal')">✕</button>
       </div>
 
-      <div style="font-size:0.83rem; color:var(--text-muted); margin-bottom:0.75rem; line-height:1.4;">
-        💡 <b>Cơ chế thông minh:</b> Mọi nội dung bạn nhập khi lập biên bản sẽ được <b>tự động lưu vào danh mục</b> này. Bạn có thể tự do thêm mới, xóa các mục bên dưới hoặc xóa sạch để nhập từ đầu:
+      <div style="font-size:0.83rem; color:var(--text-muted); margin-bottom:0.6rem; line-height:1.4;">
+        💡 Mọi thông tin nhập khi lập biên bản sẽ <b>tự động học & ghim</b> để tái sử dụng trên tất cả các phân hệ. Bấm 📍 để <b>ghim (📌)</b> mục lên đầu danh sách gợi ý.
       </div>
 
-      <div class="form-group" style="margin-bottom:0.75rem;">
-        <label class="form-label">Chọn nhóm danh mục để quản lý</label>
-        <select id="val-cat-select" class="form-select" onchange="renderValTagList()">
-          <option value="tuyen">📍 Tuyến Hàng Rào Điện</option>
-          <option value="suCo">⚡ Sự Cố Thường Gặp</option>
-          <option value="nguyenNhan">🔍 Nguyên Nhân Sự Cố</option>
-          <option value="thietBi">🛠️ Thiết Bị & Phụ Tùng</option>
-          <option value="hoten">👤 Danh Sách Họ Tên Đại Diện</option>
-          <option value="chucvu">💼 Danh Sách Chức Vụ</option>
-        </select>
+      <div class="form-group" style="margin-bottom:0.6rem;">
+        <label class="form-label" style="font-weight:700;">Chọn nhóm tham số / Danh mục validation</label>
+        <select id="val-cat-select" class="form-select" onchange="renderValTagList()"></select>
       </div>
+
+      <!-- Card hiển thị các hạng mục form đang dùng chung danh mục này -->
+      <div id="val-info-desc" class="val-info-card"></div>
 
       <div style="display:flex; gap:0.4rem; margin-bottom:0.75rem;">
-        <input type="text" id="val-new-input" class="form-control" placeholder="Nhập mục mới cần thêm vào danh mục..." />
+        <input type="text" id="val-new-input" class="form-control" placeholder="Nhập mục mới..." onkeydown="if(event.key==='Enter'){event.preventDefault();addValItemFromModal();}" />
         <button type="button" class="btn btn-primary btn-sm" onclick="addValItemFromModal()">+ Thêm</button>
       </div>
 
-      <div style="font-weight:600; font-size:0.85rem; margin-bottom:0.35rem; color:var(--text-main);">
-        Danh sách mục gợi ý hiện có (Bấm ✕ để xóa mục):
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.35rem;">
+        <span style="font-weight:600; font-size:0.85rem; color:var(--text-main);">Danh sách mục hiện có:</span>
+        <span style="font-size:0.78rem; color:var(--text-muted);">📌 = Đang ghim ưu tiên</span>
       </div>
       <div id="val-tags-container" class="val-tag-list"></div>
 
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-top:1rem; border-top:1px solid var(--border-color); padding-top:0.75rem;">
-        <button type="button" class="btn btn-danger btn-sm" onclick="clearCurrentCategoryVal()">🗑️ Xóa sạch nhóm này</button>
-        <button type="button" class="btn btn-secondary btn-sm" onclick="closeModal('val-modal')">Đóng</button>
+      <!-- Action Toolbar: Xuất / Nhập JSON & Reset -->
+      <div class="val-actions-row">
+        <button type="button" class="btn btn-secondary btn-sm" onclick="exportValidationConfig()" title="Tải file cấu hình JSON về máy">
+          📤 Xuất JSON
+        </button>
+        <label class="btn btn-secondary btn-sm" style="margin:0; cursor:pointer;" title="Nhập file cấu hình JSON từ máy">
+          📥 Nhập JSON
+          <input type="file" accept=".json" onchange="importValidationConfig(event)" style="display:none;" />
+        </label>
+        <button type="button" class="btn btn-secondary btn-sm" onclick="resetValidationDefaults()" title="Khôi phục về danh mục chuẩn ban đầu">
+          🔄 Khôi Phục
+        </button>
+        <button type="button" class="btn btn-danger btn-sm" onclick="clearCurrentCategoryVal()" style="margin-left:auto;">
+          🗑️ Xóa Nhóm Này
+        </button>
       </div>
     </div>
   </div>
@@ -1530,20 +1545,104 @@
 
   <!-- ================= ALL-IN-ONE JAVASCRIPT LOGIC ================= -->
   <script>
-    // ================= DYNAMIC VALIDATION & SUGGESTIONS (PIN & VALIDATION) =================
+    // ================= TRUNG TÂM QUẢN LÝ THAM SỐ & VALIDATION DÙNG CHUNG =================
     const ValStore = {
+      categories: [
+        {
+          id: 'tuyen',
+          name: '📍 Tuyến Hàng Rào Điện',
+          desc: 'Dùng chung cho: Biên Bản Bảo Trì, Biên Bản Vệ Sinh, Nhật Ký Thi Công'
+        },
+        {
+          id: 'hoten',
+          name: '👤 Họ Tên Nhân Sự / Đại Diện',
+          desc: 'Dùng chung cho: Đơn vị Bảo trì, Đơn vị Chủ rừng, Cơ quan Kiểm lâm & Nhân công'
+        },
+        {
+          id: 'chucvu',
+          name: '💼 Danh Sách Chức Vụ',
+          desc: 'Dùng chung cho: Chức vụ của tất cả các đơn vị tham gia'
+        },
+        {
+          id: 'thietBi',
+          name: '🛠️ Thiết Bị & Phụ Tùng',
+          desc: 'Dùng chung cho: Thiết bị hư hỏng & Vật tư thay thế khắc phục'
+        },
+        {
+          id: 'suCo',
+          name: '⚡ Sự Cố Thường Gặp',
+          desc: 'Dùng cho: Xác minh hiện trạng sự cố hàng rào điện'
+        },
+        {
+          id: 'nguyenNhan',
+          name: '🔍 Nguyên Nhân Sự Cố',
+          desc: 'Dùng cho: Ghi nhận nguyên nhân sự cố kỹ thuật'
+        },
+        {
+          id: 'dvt',
+          name: '📦 Đơn Vị Tính',
+          desc: 'Dùng chung cho: Khối lượng vật tư, phụ tùng thay thế'
+        },
+        {
+          id: 'diaDiem',
+          name: '🗺️ Vị Trí / Địa Điểm / Tiểu Khu',
+          desc: 'Dùng chung cho: Vị trí trụ, tiểu khu rừng, phân trường'
+        },
+        {
+          id: 'danhGia',
+          name: '📋 Đánh Giá & Kết Luận',
+          desc: 'Dùng chung cho: Kết luận bảo trì, đánh giá vệ sinh thực bì'
+        }
+      ],
+
       defaults: {
         tuyen: [],
-        suCo: [],
-        nguyenNhan: [],
-        thietBi: [],
         hoten: [],
         chucvu: [
           "Đội trưởng", "Đội phó", "Kỹ thuật viên", "Công nhân bảo trì",
           "Trưởng trạm BVR", "Nhân viên BVR", "Cán bộ quản lý",
           "Kiểm lâm viên địa bàn", "Trạm trưởng KL", "Phó Trạm trưởng KL", "Cán bộ Thanh tra"
+        ],
+        thietBi: [
+          "Bộ phát xung điện (Energizer) 12V/220V",
+          "Bình ắc quy lưu điện 12V - 100Ah",
+          "Tấm pin năng lượng mặt trời Solar 100W",
+          "Sứ cách điện néo / Sứ đỡ dây",
+          "Dây cáp thép bọc kẽm 2.5mm",
+          "Bộ chống sét lan truyền",
+          "Trụ bê tông gia cố"
+        ],
+        suCo: [
+          "Đứt dây cáp xung điện do cây rừng ngã đè",
+          "Mất nguồn xung điện tại trạm phát xung",
+          "Sứ cách điện bị vỡ làm chạm chập tiếp địa",
+          "Bình ắc quy lưu điện bị chai / sụt áp",
+          "Trụ rào bị nghiêng do voi rừng húc / đất lún"
+        ],
+        nguyenNhan: [
+          "Cây rừng ngoài hành lang ngã đổ đè đứt dây cáp",
+          "Mưa bão sét đánh hỏng thiết bị chống sét",
+          "Voi rừng tác động làm biến dạng khung trụ rào",
+          "Thiết bị vận hành lâu ngày hết tuổi thọ tự nhiên"
+        ],
+        dvt: ["Cái", "Bộ", "Bình", "Tấm", "Mét", "Trụ", "Kg", "Hệ thống"],
+        diaDiem: [
+          "Tiểu khu 120 - RPH Tân Phú",
+          "Khu vực Trụ 45 đến Trụ 48",
+          "Khu vực Trạm xung số 2 - Vườn Quốc Gia Cát Tiên",
+          "Tuyến rào giáp ranh Định Quán - Vĩnh Cửu"
+        ],
+        danhGia: [
+          "Đã tiến hành nối dây cáp và kiểm tra thông mạch, hệ thống xung điện hoạt động bình thường.",
+          "Điện áp đo đạt 7.5kV, đảm bảo an toàn ngăn voi.",
+          "Đã phát dọn sạch thực bì dưới hành lang dây điện, đảm bảo thông thoáng và an toàn cách điện."
         ]
       },
+
+      getAllCategories() {
+        return this.categories;
+      },
+
       get(cat) {
         const stored = localStorage.getItem('qlbv_val_' + cat);
         if (stored) {
@@ -1551,10 +1650,24 @@
         }
         return this.defaults[cat] || [];
       },
+
+      getPinned(cat) {
+        const stored = localStorage.getItem('qlbv_val_pin_' + cat);
+        if (stored) {
+          try { return JSON.parse(stored); } catch (e) {}
+        }
+        return [];
+      },
+
       save(cat, list) {
         localStorage.setItem('qlbv_val_' + cat, JSON.stringify(list));
         this.refreshDatalists();
       },
+
+      savePinned(cat, list) {
+        localStorage.setItem('qlbv_val_pin_' + cat, JSON.stringify(list));
+      },
+
       learn(cat, val) {
         if (!val || typeof val !== 'string') return;
         const clean = val.trim();
@@ -1565,20 +1678,78 @@
           this.save(cat, list);
         }
       },
+
+      togglePin(cat, val) {
+        let pins = this.getPinned(cat);
+        if (pins.includes(val)) {
+          pins = pins.filter(x => x !== val);
+        } else {
+          pins.push(val);
+        }
+        this.savePinned(cat, pins);
+      },
+
+      isPinned(cat, val) {
+        return this.getPinned(cat).includes(val);
+      },
+
       remove(cat, val) {
         let list = this.get(cat).filter(x => x !== val);
         this.save(cat, list);
+        let pins = this.getPinned(cat).filter(x => x !== val);
+        this.savePinned(cat, pins);
       },
+
       clear(cat) {
         localStorage.removeItem('qlbv_val_' + cat);
+        localStorage.removeItem('qlbv_val_pin_' + cat);
         this.refreshDatalists();
       },
+
+      resetAllToDefaults() {
+        this.categories.forEach(c => {
+          localStorage.removeItem('qlbv_val_' + c.id);
+          localStorage.removeItem('qlbv_val_pin_' + c.id);
+        });
+        this.refreshDatalists();
+      },
+
+      exportConfigJson() {
+        const data = {};
+        this.categories.forEach(c => {
+          data[c.id] = {
+            items: this.get(c.id),
+            pinned: this.getPinned(c.id)
+          };
+        });
+        return JSON.stringify(data, null, 2);
+      },
+
+      importConfigJson(jsonStr) {
+        try {
+          const data = JSON.parse(jsonStr);
+          Object.keys(data).forEach(cat => {
+            if (data[cat].items) this.save(cat, data[cat].items);
+            if (data[cat].pinned) this.savePinned(cat, data[cat].pinned);
+          });
+          this.refreshDatalists();
+          return { success: true, message: 'Đã nhập cấu hình tham số thành công!' };
+        } catch (e) {
+          return { success: false, message: 'File cấu hình JSON không hợp lệ: ' + e.message };
+        }
+      },
+
       refreshDatalists() {
         const populateDL = (dlId, cat) => {
           const dl = document.getElementById(dlId);
           if (!dl) return;
           const items = this.get(cat);
-          dl.innerHTML = items.map(item => `<option value="${item}">`).join('');
+          const pins = this.getPinned(cat);
+          const sorted = [
+            ...pins.filter(p => items.includes(p)),
+            ...items.filter(i => !pins.includes(i))
+          ];
+          dl.innerHTML = sorted.map(item => `<option value="${item}">`).join('');
         };
         populateDL('dl-tuyen', 'tuyen');
         populateDL('dl-su-co', 'suCo');
@@ -1586,6 +1757,9 @@
         populateDL('dl-thietbi', 'thietBi');
         populateDL('dl-hoten', 'hoten');
         populateDL('dl-chucvu', 'chucvu');
+        populateDL('dl-dvt', 'dvt');
+        populateDL('dl-diadiem', 'diaDiem');
+        populateDL('dl-danhgia', 'danhGia');
       }
     };
 
@@ -1656,28 +1830,55 @@
       }
     }
 
-    // ================= QUẢN LÝ DANH MỤC GỢI Ý (PIN & VALIDATION MODAL) =================
+    // ================= QUẢN LÝ DANH MỤC GỢI Ý & PIN (VALIDATION MODAL) =================
     function openValModal() {
+      const select = document.getElementById('val-cat-select');
+      if (select) {
+        const cats = ValStore.getAllCategories();
+        const cur = select.value || 'tuyen';
+        select.innerHTML = cats.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+        select.value = cur;
+      }
       renderValTagList();
       document.getElementById('val-modal').classList.add('active');
     }
 
     function renderValTagList() {
-      const cat = document.getElementById('val-cat-select').value;
+      const cat = document.getElementById('val-cat-select').value || 'tuyen';
       const container = document.getElementById('val-tags-container');
+      const infoCard = document.getElementById('val-info-desc');
+      
+      const cats = ValStore.getAllCategories();
+      const currentCatObj = cats.find(c => c.id === cat);
+      if (infoCard && currentCatObj) {
+        infoCard.innerHTML = `🔗 <b>Hạng mục dùng chung:</b> ${currentCatObj.desc}`;
+      }
+
       const items = ValStore.get(cat);
+      const pins = ValStore.getPinned(cat);
 
       if (items.length === 0) {
-        container.innerHTML = '<span style="color:var(--text-muted); font-size:0.8rem;">Chưa có mục gợi ý nào trong nhóm này. Hãy nhập ở trên hoặc khi điền form hệ thống sẽ tự học!</span>';
+        container.innerHTML = '<span style="color:var(--text-muted); font-size:0.82rem;">Chưa có mục nào trong nhóm này. Hãy gõ thêm bên dưới hoặc điền form để hệ thống tự động học!</span>';
         return;
       }
 
-      container.innerHTML = items.map(item => `
-        <span class="val-tag-item">
-          <span>${item}</span>
-          <span class="val-tag-del" onclick="deleteValTag('${item}')" title="Xóa">✕</span>
-        </span>
-      `).join('');
+      const sortedItems = [
+        ...pins.filter(p => items.includes(p)),
+        ...items.filter(i => !pins.includes(i))
+      ];
+
+      container.innerHTML = sortedItems.map(item => {
+        const isPinned = pins.includes(item);
+        return `
+          <span class="val-tag-item ${isPinned ? 'is-pinned' : ''}">
+            <span class="val-tag-pin" onclick="togglePinValTag('${item.replace(/'/g, "\\'")}')" title="${isPinned ? 'Bỏ ghim' : 'Ghim lên đầu'}">
+              ${isPinned ? '📌' : '📍'}
+            </span>
+            <span>${item}</span>
+            <span class="val-tag-del" onclick="deleteValTag('${item.replace(/'/g, "\\'")}')" title="Xóa">✕</span>
+          </span>
+        `;
+      }).join('');
     }
 
     function addValItemFromModal() {
@@ -1689,6 +1890,14 @@
       inp.value = '';
       renderValTagList();
       showToast(`✅ Đã thêm [${val}] vào danh mục gợi ý!`);
+    }
+
+    function togglePinValTag(val) {
+      const cat = document.getElementById('val-cat-select').value;
+      ValStore.togglePin(cat, val);
+      renderValTagList();
+      const isPinned = ValStore.isPinned(cat, val);
+      showToast(isPinned ? `📌 Đã ghim [${val}] lên đầu danh sách gợi ý!` : `Đã bỏ ghim [${val}]`);
     }
 
     function deleteValTag(val) {
@@ -1704,6 +1913,43 @@
       ValStore.clear(cat);
       renderValTagList();
       showToast('Đã xóa sạch danh mục nhóm này!');
+    }
+
+    function resetValidationDefaults() {
+      if (!confirm('Khôi phục toàn bộ tham số & danh mục về thiết lập chuẩn ban đầu?')) return;
+      ValStore.resetAllToDefaults();
+      renderValTagList();
+      showToast('🔄 Đã khôi phục toàn bộ danh mục tham số chuẩn!');
+    }
+
+    function exportValidationConfig() {
+      const jsonStr = ValStore.exportConfigJson();
+      const blob = new Blob([jsonStr], { type: 'application/json;charset=utf-8' });
+      const now = new Date();
+      const pad = n => String(n).padStart(2, '0');
+      const ts = `${pad(now.getDate())}${pad(now.getMonth() + 1)}${now.getFullYear()}_${pad(now.getHours())}${pad(now.getMinutes())}${pad(now.getSeconds())}`;
+      const filename = `QLBV_ThamSo_Validation_${ts}.json`;
+
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = filename;
+      a.click();
+      URL.revokeObjectURL(a.href);
+      showToast('📤 Đã xuất file cấu hình tham số JSON!');
+    }
+
+    function importValidationConfig(event) {
+      const file = event.target.files?.[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const res = ValStore.importConfigJson(e.target.result);
+        renderValTagList();
+        showToast(res.message);
+        event.target.value = '';
+      };
+      reader.readAsText(file);
     }
 
     // ================= QUẢN LÝ THIẾT BỊ HƯ HỎNG & THAY THẾ =================
