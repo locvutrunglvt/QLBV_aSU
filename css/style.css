@@ -2127,17 +2127,31 @@ body.modal-open {
 }
 
 @media (max-width: 768px) {
-  .metrics-grid { grid-template-columns: repeat(2, 1fr); }
+  /* Khung chứa chính: căn lề vừa vặn màn hình điện thoại */
+  .app-container {
+    padding: 0.65rem 0.6rem calc(76px + env(safe-area-inset-bottom));
+  }
+
+  /* Thẻ KPI: 2 cột gọn gàng, chữ số rõ nét, không tràn viền */
+  .metrics-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.45rem;
+    margin-bottom: 0.65rem;
+  }
 
   .metric-box {
-    padding: 0.75rem 0.7rem;
-    gap: 0.6rem;
+    padding: 0.65rem 0.6rem;
+    gap: 0.5rem;
+    border-radius: 12px;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-color);
   }
 
   .metric-box .icon-chip {
     width: 36px;
     height: 36px;
-    border-radius: 11px;
+    border-radius: 10px;
+    flex-shrink: 0;
   }
 
   .metric-box .icon-chip .ico,
@@ -2146,12 +2160,113 @@ body.modal-open {
     height: 18px;
   }
 
-  .metric-box .metric-label { font-size: 0.7rem; }
-  .metric-box .metric-value { font-size: 1.2rem; }
+  .metric-box .metric-label {
+    font-size: 0.68rem;
+    font-weight: 600;
+    line-height: 1.2;
+    color: var(--text-muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 
-  /* Danh mục chức năng: 1 cột dạng danh sách trên điện thoại */
-  .quick-launcher-grid { grid-template-columns: 1fr; gap: 0.15rem; }
-  .launcher-tile { padding: 0.65rem 0.5rem; }
+  .metric-box .metric-value {
+    font-size: 1.2rem;
+    font-weight: 750;
+    line-height: 1.15;
+    margin-top: 1px;
+  }
+
+  .metric-box .metric-value .unit {
+    font-size: 0.72rem;
+    font-weight: 500;
+  }
+
+  /* Khung nhóm Danh mục Chức năng (Card Panel) */
+  .card-panel {
+    padding: 0.75rem 0.65rem;
+    border-radius: 14px;
+    margin-bottom: 0.65rem;
+  }
+
+  .section-head {
+    margin-bottom: 0.5rem;
+    padding-bottom: 0.35rem;
+  }
+
+  .section-title {
+    font-size: 0.85rem;
+    font-weight: 700;
+  }
+
+  /* Danh mục chức năng (Home Menu): Lưới 2 cột dạng Widget thẻ hiện đại, vừa vặn 1 màn hình */
+  .quick-launcher-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.45rem;
+  }
+
+  .launcher-tile {
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: space-between;
+    padding: 0.7rem 0.65rem;
+    border-radius: 12px;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-color);
+    gap: 0.45rem;
+    min-height: 92px;
+    box-shadow: var(--shadow-sm);
+    text-align: left;
+    transition: transform 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+  }
+
+  .launcher-tile:active {
+    transform: scale(0.97);
+    background: var(--bg-hover);
+    border-color: var(--primary);
+  }
+
+  .launcher-tile .icon-chip {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    flex-shrink: 0;
+  }
+
+  .launcher-tile .icon-chip .ico,
+  .launcher-tile .icon-chip svg {
+    width: 19px;
+    height: 19px;
+  }
+
+  .launcher-body {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .launcher-title {
+    font-size: 0.82rem;
+    font-weight: 650;
+    line-height: 1.2;
+    color: var(--text-main);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .launcher-desc {
+    font-size: 0.67rem;
+    color: var(--text-muted);
+    line-height: 1.25;
+    margin-top: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .launcher-arrow {
+    display: none;
+  }
 
   /* Nút trên thanh thao tác dính đáy: chữ 1-2 dòng, không vỡ 3 dòng */
   .form-actions-bar .btn {
@@ -2167,6 +2282,18 @@ body.modal-open {
 
   .user-badge { max-width: 112px; padding: 0.25rem 0.45rem; }
   .user-badge .role-tag { display: none; }
+}
+
+@media (max-width: 360px) {
+  .metrics-grid { gap: 0.35rem; }
+  .metric-box { padding: 0.55rem 0.45rem; gap: 0.35rem; }
+  .metric-box .metric-value { font-size: 1.05rem; }
+  .quick-launcher-grid { gap: 0.35rem; }
+  .launcher-tile { padding: 0.6rem 0.5rem; min-height: 86px; }
+  .launcher-title { font-size: 0.78rem; }
+  .launcher-desc { font-size: 0.64rem; }
+  .bottom-nav-item { font-size: 0.6rem; }
+  .header-brand-text h1 { font-size: 0.75rem; }
 }
 
 @media (max-width: 420px) {
