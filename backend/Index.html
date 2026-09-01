@@ -298,11 +298,16 @@
 }
 
 
-/* Reset & Base Styles */
-html, body {
-  touch-action: pan-x pan-y;
-  -webkit-text-size-adjust: 100%;
-  text-size-adjust: 100%;
+/* Reset & Base Styles - KHÓA HOÀN TOÀN TÍNH NĂNG ZOOM TRÊN MỌI MÀN HÌNH */
+html {
+  touch-action: manipulation !important;
+  -ms-touch-action: manipulation !important;
+  -webkit-text-size-adjust: 100% !important;
+  text-size-adjust: 100% !important;
+  overflow-x: hidden !important;
+  width: 100% !important;
+  max-width: 100vw !important;
+  height: 100%;
 }
 
 *, *::before, *::after {
@@ -310,9 +315,6 @@ html, body {
   margin: 0;
   padding: 0;
   -webkit-tap-highlight-color: transparent;
-}
-
-button, a, input, select, textarea, .launcher-tile, .metric-box, .btn, .theme-card-option, .modal-dialog {
   touch-action: manipulation;
 }
 
@@ -323,9 +325,21 @@ body {
   line-height: 1.5;
   font-size: 15px;
   min-height: 100vh;
+  min-height: -webkit-fill-available;
   display: flex;
   flex-direction: column;
   transition: background-color 0.3s ease, color 0.3s ease;
+  touch-action: manipulation !important;
+  overflow-x: hidden !important;
+  width: 100% !important;
+  max-width: 100vw !important;
+  position: relative;
+}
+
+/* Khóa cỡ chữ tối thiểu 16px để ngăn Safari/Chrome iOS tự động zoom khi chạm vào gõ */
+input, select, textarea, .form-control, .form-select, .form-textarea {
+  font-size: 16px !important;
+  touch-action: manipulation !important;
 }
 
 /* Header & Top Navbar */
@@ -1961,12 +1975,14 @@ body.modal-open {
     bottom: env(safe-area-inset-bottom);
     z-index: 50;
     background: var(--bg-card);
-    margin: 1.25rem -0.75rem -0.5rem;
-    padding: 0.7rem 0.75rem calc(0.7rem + env(safe-area-inset-bottom));
+    margin: 1rem 0 0;
+    padding: 0.75rem 0.5rem calc(0.75rem + env(safe-area-inset-bottom));
     border-top: 1px solid var(--border-color);
     box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.06);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
+    width: 100%;
+    border-radius: 12px;
   }
 
   .form-actions-bar .btn { flex: 1; }
@@ -3949,6 +3965,50 @@ body {
 
   <!-- JavaScript Scripts -->
   <script>
+// ================= KHÓA HOÀN TOÀN TÍNH NĂNG ZOOM TRÊN MỌI MÀN HÌNH =================
+(function lockAppZoom() {
+  // 1. Chặn cử chỉ thu phóng 2 ngón tay (Pinch to zoom)
+  document.addEventListener('touchstart', function (e) {
+    if (e.touches && e.touches.length > 1) {
+      e.preventDefault();
+    }
+  }, { passive: false });
+
+  // 2. Chặn nhấp đúp phóng to (Double tap to zoom)
+  let lastTouchEnd = 0;
+  document.addEventListener('touchend', function (e) {
+    const now = Date.now();
+    if (now - lastTouchEnd <= 300) {
+      const tag = e.target && e.target.tagName ? e.target.tagName.toLowerCase() : '';
+      if (tag !== 'input' && tag !== 'textarea') {
+        e.preventDefault();
+      }
+    }
+    lastTouchEnd = now;
+  }, { passive: false });
+
+  // 3. Chặn các cử chỉ gesture trên iOS Safari
+  ['gesturestart', 'gesturechange', 'gestureend'].forEach(function (evt) {
+    document.addEventListener(evt, function (e) {
+      e.preventDefault();
+    }, { passive: false });
+  });
+
+  // 4. Chặn Ctrl + Mousewheel / Trackpad zoom trên PC
+  document.addEventListener('wheel', function (e) {
+    if (e.ctrlKey) {
+      e.preventDefault();
+    }
+  }, { passive: false });
+
+  // 5. Chặn phím tắt zoom bàn phím
+  document.addEventListener('keydown', function (e) {
+    if (e.ctrlKey && (e.key === '+' || e.key === '-' || e.key === '=' || e.key === '0')) {
+      e.preventDefault();
+    }
+  });
+})();
+
 /* ===== js/config.js ===== */
 /**
  * CẤU HÌNH HỆ THỐNG QLBV (CONFIG)

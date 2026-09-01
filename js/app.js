@@ -3,6 +3,50 @@
  * Main Application Controller
  */
 
+// ================= KHÓA HOÀN TOÀN TÍNH NĂNG ZOOM TRÊN MỌI MÀN HÌNH =================
+(function lockAppZoom() {
+  // 1. Chặn cử chỉ thu phóng 2 ngón tay (Pinch to zoom)
+  document.addEventListener('touchstart', function (e) {
+    if (e.touches && e.touches.length > 1) {
+      e.preventDefault();
+    }
+  }, { passive: false });
+
+  // 2. Chặn nhấp đúp phóng to (Double tap to zoom)
+  let lastTouchEnd = 0;
+  document.addEventListener('touchend', function (e) {
+    const now = Date.now();
+    if (now - lastTouchEnd <= 300) {
+      const tag = e.target && e.target.tagName ? e.target.tagName.toLowerCase() : '';
+      if (tag !== 'input' && tag !== 'textarea') {
+        e.preventDefault();
+      }
+    }
+    lastTouchEnd = now;
+  }, { passive: false });
+
+  // 3. Chặn các cử chỉ gesture trên iOS Safari
+  ['gesturestart', 'gesturechange', 'gestureend'].forEach(function (evt) {
+    document.addEventListener(evt, function (e) {
+      e.preventDefault();
+    }, { passive: false });
+  });
+
+  // 4. Chặn Ctrl + Mousewheel / Trackpad zoom trên PC
+  document.addEventListener('wheel', function (e) {
+    if (e.ctrlKey) {
+      e.preventDefault();
+    }
+  }, { passive: false });
+
+  // 5. Chặn phím tắt zoom bàn phím
+  document.addEventListener('keydown', function (e) {
+    if (e.ctrlKey && (e.key === '+' || e.key === '-' || e.key === '=' || e.key === '0')) {
+      e.preventDefault();
+    }
+  });
+})();
+
 const App = {
   activeTab: 'dashboard',
   currentPhotos: {
