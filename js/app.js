@@ -55,6 +55,9 @@ const App = {
       if (!document.hidden) this.enforceSession();
     });
 
+    // Chặn cử chỉ zoom ngoài ý muốn trên Safari / iOS
+    document.addEventListener('gesturestart', (e) => e.preventDefault());
+
     // 6. Làm mới danh mục dùng chung từ Google Sheets ở nền (không chặn giao diện)
     MasterData.refreshFromServer().then(updated => {
       if (updated) {

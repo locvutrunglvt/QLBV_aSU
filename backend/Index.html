@@ -2,7 +2,7 @@
 <html lang="vi" data-theme="light">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
   <title>QLBV - Quản Lý Bảo Trì Tuyến Hàng Rào Điện</title>
   <meta name="description" content="Hệ thống số hóa biên bản bảo trì, vệ sinh và nhật ký thi công tuyến hàng rào điện bảo tồn Voi Đồng Nai" />
   
@@ -299,11 +299,21 @@
 
 
 /* Reset & Base Styles */
+html, body {
+  touch-action: pan-x pan-y;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
 *, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
   -webkit-tap-highlight-color: transparent;
+}
+
+button, a, input, select, textarea, .launcher-tile, .metric-box, .btn, .theme-card-option, .modal-dialog {
+  touch-action: manipulation;
 }
 
 body {
@@ -1870,10 +1880,13 @@ body.modal-open {
     padding: 0.7rem 0.85rem;
   }
 
-  .app-container { padding: 0.85rem 0.75rem 1rem; }
+  /* Đảm bảo không có khoảng đệm dư thừa khi đã bỏ bottom menu */
+  body { padding-bottom: env(safe-area-inset-bottom); }
 
-  /* Chừa chỗ cho thanh điều hướng đáy + vùng an toàn */
-  body { padding-bottom: calc(74px + env(safe-area-inset-bottom)); }
+  /* Bắt buộc font-size tối thiểu 16px cho ô nhập để ngăn Safari tự động phóng to (auto-zoom) */
+  input, select, textarea, .form-control {
+    font-size: 16px !important;
+  }
 
   /* Header 1 dòng gọn gàng: logo trái - nút phải */
   .top-navbar {
@@ -1942,10 +1955,10 @@ body.modal-open {
   .btn { min-height: 44px; }
   .btn-sm { min-height: 36px; padding: 0.45rem 0.7rem; }
 
-  /* Thanh nút Lưu / In dính đáy khung nhìn cho dễ thao tác */
+  /* Thanh nút Lưu / In dính đáy màn hình (sát đáy sạch sẽ vì đã bỏ menu dưới) */
   .form-actions-bar {
     position: sticky;
-    bottom: calc(74px + env(safe-area-inset-bottom));
+    bottom: env(safe-area-inset-bottom);
     z-index: 50;
     background: var(--bg-card);
     margin: 1.25rem -0.75rem -0.5rem;
@@ -2033,7 +2046,7 @@ body.modal-open {
   .toast-container {
     left: 12px;
     right: 12px;
-    bottom: calc(84px + env(safe-area-inset-bottom));
+    bottom: calc(16px + env(safe-area-inset-bottom));
   }
 
   .toast { min-width: 0; width: 100%; }
@@ -2041,26 +2054,14 @@ body.modal-open {
 
 @media (max-width: 380px) {
   .metrics-grid { gap: 0.5rem; }
-  .bottom-nav-item { font-size: 0.62rem; }
   .header-brand-text h1 { font-size: 0.75rem; }
 }
 
-/* Thanh điều hướng đáy: chỉ hiện trên điện thoại/máy tính bảng nhỏ */
-@media (min-width: 769px) {
-  .mobile-bottom-nav { display: none !important; }
-}
-
-.mobile-bottom-nav .ico {
-  width: 22px;
-  height: 22px;
-}
-
+/* Ẩn hoàn toàn menu điều hướng đáy theo yêu cầu người dùng */
+.mobile-bottom-nav,
 .bottom-nav-item {
-  min-height: 52px;
-  font-family: inherit;
+  display: none !important;
 }
-
-.bottom-nav-item.active .ico { stroke-width: 2.4; }
 
 /* Hiệu ứng bấm rõ ràng trên cảm ứng */
 @media (hover: none) {
@@ -6796,6 +6797,7 @@ const App = {
 
 // Khởi chạy App khi trang đã load xong
 document.addEventListener('DOMContentLoaded', () => {
+  document.addEventListener('gesturestart', (e) => e.preventDefault());
   App.init();
 });
 
