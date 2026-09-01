@@ -379,7 +379,7 @@ const App = {
   },
 
   /**
-   * Tự động điền ngày giờ hiện tại cho các Form
+   * Tự động điền ngày giờ hiện tại cho các Form & khởi tạo dòng bảng biểu mặc định
    */
   autoFillDefaults(tabId) {
     const now = new Date();
@@ -391,11 +391,26 @@ const App = {
       const timeEl = document.getElementById('bt-gio-lap');
       if (dateEl && !dateEl.value) dateEl.value = dateStr;
       if (timeEl && !timeEl.value) timeEl.value = timeStr;
+
+      // Khởi tạo dòng đầu tiên nếu bảng đang trống để người dùng nhập được ngay
+      const hongTbody = document.getElementById('bt-thietbi-hong-tbody');
+      if (hongTbody && hongTbody.children.length === 0) {
+        this.addBaoTriRow('bt-thietbi-hong-tbody', 'hong');
+      }
+      const thayTheTbody = document.getElementById('bt-thietbi-thaythe-tbody');
+      if (thayTheTbody && thayTheTbody.children.length === 0) {
+        this.addBaoTriRow('bt-thietbi-thaythe-tbody', 'thaythe');
+      }
     } else if (tabId === 'form-vesinh') {
       const dateEl = document.getElementById('vs-ngay-lap');
       const timeEl = document.getElementById('vs-gio-lap');
       if (dateEl && !dateEl.value) dateEl.value = dateStr;
       if (timeEl && !timeEl.value) timeEl.value = timeStr;
+
+      const doanTbody = document.getElementById('vs-doan-tbody');
+      if (doanTbody && doanTbody.children.length === 0) {
+        this.addVeSinhDoanRow();
+      }
     } else if (tabId === 'form-nhatky') {
       const dateEl = document.getElementById('nk-ngay-ghi');
       if (dateEl && !dateEl.value) dateEl.value = dateStr;
@@ -687,57 +702,95 @@ const App = {
   },
 
   /**
-   * Thêm dòng thiết bị cho Form Bảo Trì
+   * Thêm dòng thiết bị cho Form Bảo Trì (Hỗ trợ giao diện máy tính & card độc lập trên điện thoại)
    */
   addBaoTriRow(tbodyId, type) {
     const tbody = document.getElementById(tbodyId);
     if (!tbody) return;
 
     const row = document.createElement('tr');
+    row.className = 'dynamic-row-item';
     const idx = tbody.children.length + 1;
-
-    let optionsHTML = MasterData.data.thietBiList.map(t => `<option value="${t.name}">${t.name} (${t.extra})</option>`).join('');
 
     if (type === 'hong') {
       row.innerHTML = `
-        <td style="text-align: center;">${idx}</td>
-        <td>
-          <input type="text" class="form-control tb-name" list="thietbi-datalist" placeholder="Tên thiết bị hư hỏng" />
+        <td class="col-stt" style="text-align: center;">${idx}</td>
+        <td class="col-main">
+          <label class="field-label-mobile">Tên thiết bị / Quy cách hư hỏng</label>
+          <input type="text" class="form-control tb-name" list="dl-thietbi" placeholder="Nhập hoặc chọn tên thiết bị..." autocomplete="off" />
         </td>
-        <td>
-          <div style="display: flex; gap: 4px;">
-            <input type="number" class="form-control tb-qty" value="1" min="1" style="width: 70px;" />
-            <input type="text" class="form-control tb-unit" value="Cái" style="width: 70px;" />
+        <td class="col-qty">
+          <label class="field-label-mobile">Số lượng &amp; ĐVT</label>
+          <div class="qty-unit-group">
+            <input type="number" class="form-control tb-qty" value="1" min="1" placeholder="SL" />
+            <input type="text" class="form-control tb-unit" list="dl-dvt" value="Cái" placeholder="ĐVT" />
           </div>
         </td>
-        <td>
-          <input type="text" class="form-control tb-status" placeholder="Tình trạng hư hỏng" />
+        <td class="col-status">
+          <label class="field-label-mobile">Tình trạng hư hỏng</label>
+          <input type="text" class="form-control tb-status" list="dl-su-co" placeholder="Tình trạng hư hỏng..." autocomplete="off" />
         </td>
-        <td style="text-align: center;">
-          <button type="button" class="btn btn-danger btn-sm" onclick="this.closest('tr').remove()"><svg class="ico" aria-hidden="true"><use href="#i-x"></use></svg></button>
+        <td class="col-action" style="text-align: center;">
+          <button type="button" class="btn-row-del" title="Xóa dòng" onclick="this.closest('tr').remove(); App.reindexRows('${tbodyId}');">
+            <svg class="ico" aria-hidden="true"><use href="#i-x"></use></svg>
+          </button>
         </td>
       `;
     } else {
       row.innerHTML = `
-        <td style="text-align: center;">${idx}</td>
-        <td>
-          <input type="text" class="form-control tb-name" list="thietbi-datalist" placeholder="Tên thiết bị thay thế" />
+        <td class="col-stt" style="text-align: center;">${idx}</td>
+        <td class="col-main">
+          <label class="field-label-mobile">Tên vật tư / Thiết bị thay thế</label>
+          <input type="text" class="form-control tb-name" list="dl-thietbi" placeholder="Nhập hoặc chọn vật tư thay thế..." autocomplete="off" />
         </td>
-        <td>
-          <div style="display: flex; gap: 4px;">
-            <input type="number" class="form-control tb-qty" value="1" min="1" style="width: 70px;" />
-            <input type="text" class="form-control tb-unit" value="Cái" style="width: 70px;" />
+        <td class="col-qty">
+          <label class="field-label-mobile">Số lượng &amp; ĐVT</label>
+          <div class="qty-unit-group">
+            <input type="number" class="form-control tb-qty" value="1" min="1" placeholder="SL" />
+            <input type="text" class="form-control tb-unit" list="dl-dvt" value="Cái" placeholder="ĐVT" />
           </div>
         </td>
-        <td>
-          <input type="text" class="form-control tb-note" value="Đã thay mới, hoạt động tốt" />
+        <td class="col-status">
+          <label class="field-label-mobile">Ghi chú / Tình trạng thay mới</label>
+          <input type="text" class="form-control tb-note" list="dl-danh-gia" placeholder="Ghi chú thay thế..." autocomplete="off" />
         </td>
-        <td style="text-align: center;">
-          <button type="button" class="btn btn-danger btn-sm" onclick="this.closest('tr').remove()"><svg class="ico" aria-hidden="true"><use href="#i-x"></use></svg></button>
+        <td class="col-action" style="text-align: center;">
+          <button type="button" class="btn-row-del" title="Xóa dòng" onclick="this.closest('tr').remove(); App.reindexRows('${tbodyId}');">
+            <svg class="ico" aria-hidden="true"><use href="#i-x"></use></svg>
+          </button>
         </td>
       `;
     }
     tbody.appendChild(row);
+  },
+
+  /**
+   * Đánh số thứ tự lại các dòng sau khi xóa
+   */
+  reindexRows(tbodyId) {
+    const tbody = document.getElementById(tbodyId);
+    if (!tbody) return;
+    Array.from(tbody.children).forEach((tr, i) => {
+      const sttEl = tr.querySelector('.col-stt, td:first-child');
+      if (sttEl) sttEl.textContent = i + 1;
+    });
+  },
+
+  /**
+   * Ghim nhanh giá trị hiện tại của ô nhập liệu vào thư viện Validation
+   */
+  quickPinField(inputId, cat) {
+    const el = document.getElementById(inputId);
+    if (!el) return;
+    const val = el.value.trim();
+    if (!val) {
+      this.showToast('Vui lòng nhập nội dung vào ô trước khi ghim!', 'warning');
+      return;
+    }
+    ValidationStore.learn(cat, val);
+    ValidationStore.togglePin(cat, val);
+    const isPinned = ValidationStore.isPinned(cat, val);
+    this.showToast(isPinned ? `📌 Đã ghim & lưu vào thư viện "${val}"!` : `Đã bỏ ghim "${val}"`, 'success');
   },
 
   /**
@@ -867,12 +920,18 @@ const App = {
 
   collectBaoTriData() {
     const tuyen = document.getElementById('bt-tuyen-input')?.value.trim() || '';
+    const diaDiem = document.getElementById('bt-dia-diem')?.value.trim() || '';
     const suCo = document.getElementById('bt-su-co-input')?.value.trim() || '';
     const reason = document.getElementById('bt-nguyen-nhan')?.value.trim() || '';
+    const ketQua = document.getElementById('bt-ket-qua')?.value.trim() || '';
+    const tinhTrang = document.getElementById('bt-tinh-trang')?.value.trim() || '';
 
     if (tuyen) ValidationStore.learn('tuyen', tuyen);
+    if (diaDiem) ValidationStore.learn('diaDiem', diaDiem);
     if (suCo) ValidationStore.learn('suCo', suCo);
     if (reason) ValidationStore.learn('nguyenNhan', reason);
+    if (ketQua) ValidationStore.learn('danhGia', ketQua);
+    if (tinhTrang) ValidationStore.learn('danhGia', tinhTrang);
 
     const reps = this.collectRepresentatives('bt');
 
@@ -909,7 +968,7 @@ const App = {
     return {
       ngayLap: document.getElementById('bt-ngay-lap')?.value,
       gioLap: document.getElementById('bt-gio-lap')?.value,
-      diaDiem: document.getElementById('bt-dia-diem')?.value,
+      diaDiem: diaDiem,
       tuyenHrd: tuyen,
       daiDienBaoTri: reps.bt,
       daiDienChuRung: reps.cr,
@@ -921,15 +980,22 @@ const App = {
       nguyenNhan: reason,
       thietBiHong: thietBiHong,
       thietBiThayThe: thietBiThayThe,
-      ketQuaKhacPhuc: document.getElementById('bt-ket-qua')?.value,
-      tinhTrang: document.getElementById('bt-tinh-trang')?.value,
+      ketQuaKhacPhuc: ketQua,
+      tinhTrang: tinhTrang,
       photos: this.currentPhotos.baotri
     };
   },
 
   collectVeSinhData() {
     const tuyen = document.getElementById('vs-tuyen-input')?.value.trim() || '';
+    const diaDiem = document.getElementById('vs-dia-diem')?.value.trim() || '';
+    const danhGia = document.getElementById('vs-danh-gia')?.value.trim() || '';
+    const nhanCong = document.getElementById('vs-nhan-cong')?.value.trim() || '';
+
     if (tuyen) ValidationStore.learn('tuyen', tuyen);
+    if (diaDiem) ValidationStore.learn('diaDiem', diaDiem);
+    if (danhGia) ValidationStore.learn('danhGia', danhGia);
+    if (nhanCong) ValidationStore.learn('hoten', nhanCong);
 
     const reps = this.collectRepresentatives('vs');
 
@@ -950,7 +1016,7 @@ const App = {
     return {
       ngayLap: document.getElementById('vs-ngay-lap')?.value,
       gioLap: document.getElementById('vs-gio-lap')?.value,
-      diaDiem: document.getElementById('vs-dia-diem')?.value,
+      diaDiem: diaDiem,
       tuyenHrd: tuyen,
       daiDienBaoTri: reps.bt,
       daiDienChuRung: reps.cr,
@@ -958,26 +1024,43 @@ const App = {
       ddBt: formatRepsStr(reps.bt),
       ddCr: formatRepsStr(reps.cr),
       ddKl: formatRepsStr(reps.kl),
-      dsNhanCong: [document.getElementById('vs-nhan-cong')?.value].filter(Boolean),
+      dsNhanCong: [nhanCong].filter(Boolean),
       cacDoanVeSinh: doanList,
       tongChieuDai: document.getElementById('vs-tong-chieu-dai')?.value || '0',
       tongDienTich: document.getElementById('vs-tong-dien-tich')?.value || '0',
-      danhGia: document.getElementById('vs-danh-gia')?.value,
+      danhGia: danhGia,
       photos: this.currentPhotos.vesinh
     };
   },
 
   collectNhatKyData() {
+    const hangMuc = document.getElementById('nk-hang-muc')?.value.trim() || '';
+    const tuyen = (document.getElementById('nk-tuyen-input')?.value || document.getElementById('nk-dia-diem')?.value || '').trim();
+    const chuDauTu = document.getElementById('nk-chu-dau-tu')?.value.trim() || '';
+    const tvgs = document.getElementById('nk-tu-van-giam-sat')?.value.trim() || '';
+    const nhaThau = document.getElementById('nk-nha-thau')?.value.trim() || '';
+    const noiDung = document.getElementById('nk-noi-dung')?.value.trim() || '';
+    const danhGia = document.getElementById('nk-danh-gia')?.value.trim() || '';
+
+    if (hangMuc) ValidationStore.learn('nkHangMuc', hangMuc);
+    if (tuyen) ValidationStore.learn('tuyen', tuyen);
+    if (chuDauTu) ValidationStore.learn('nkChuDauTu', chuDauTu);
+    if (tvgs) ValidationStore.learn('nkTuVanGiamSat', tvgs);
+    if (nhaThau) ValidationStore.learn('nkNhaThau', nhaThau);
+    if (noiDung) ValidationStore.learn('nkNoiDung', noiDung);
+    if (danhGia) ValidationStore.learn('nkDanhGia', danhGia);
+
     return {
       ngayGhi: document.getElementById('nk-ngay-ghi')?.value,
       thoiTiet: document.getElementById('nk-thoi-tiet')?.value,
-      hangMuc: document.getElementById('nk-hang-muc')?.value,
-      diaDiem: document.getElementById('nk-dia-diem')?.value,
-      chuDauTu: document.getElementById('nk-chu-dau-tu')?.value,
-      tuVanGiamSat: document.getElementById('nk-tu-van-giam-sat')?.value,
-      nhaThauThiCong: document.getElementById('nk-nha-thau')?.value,
-      noiDungCongViec: document.getElementById('nk-noi-dung')?.value,
-      danhGiaGiamSat: document.getElementById('nk-danh-gia')?.value,
+      hangMuc: hangMuc,
+      diaDiem: tuyen,
+      tuyenHrd: tuyen,
+      chuDauTu: chuDauTu,
+      tuVanGiamSat: tvgs,
+      nhaThauThiCong: nhaThau,
+      noiDungCongViec: noiDung,
+      danhGiaGiamSat: danhGia,
       photos: this.currentPhotos.nhatky
     };
   },

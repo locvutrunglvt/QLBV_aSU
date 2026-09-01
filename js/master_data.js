@@ -177,18 +177,59 @@ const ValidationStore = {
       id: 'diaDiem',
       name: 'Vị Trí / Địa Điểm / Tiểu Khu',
       desc: 'Dùng chung cho: Vị trí trụ, tiểu khu rừng, phân trường',
-      sharedWith: ['bt-dia-diem', 'vs-dia-diem', 'nk-dia-diem']
+      sharedWith: ['bt-dia-diem', 'vs-dia-diem', 'nk-tuyen-input']
     },
     {
       id: 'danhGia',
-      name: 'Đánh Giá & Kết Luận',
+      name: 'Đánh Giá & Kết Quả Bảo Trì / Vệ Sinh',
       desc: 'Dùng chung cho: Kết luận bảo trì, đánh giá vệ sinh thực bì',
       sharedWith: ['bt-ket-qua', 'bt-tinh-trang', 'vs-danh-gia']
+    },
+    {
+      id: 'nkHangMuc',
+      name: 'Hạng Mục Nhật Ký Thi Công',
+      desc: 'Dùng cho: Hạng mục công trình, gói thầu bảo vệ vận hành',
+      sharedWith: ['nk-hang-muc']
+    },
+    {
+      id: 'nkNoiDung',
+      name: 'Nội Dung Công Việc Nhật Ký',
+      desc: 'Dùng cho: Các công việc thực hiện trong ngày của nhật ký thi công',
+      sharedWith: ['nk-noi-dung']
+    },
+    {
+      id: 'nkDanhGia',
+      name: 'Đánh Giá Giám Sát Nhật Ký',
+      desc: 'Dùng cho: Nhận xét chất lượng, tiến độ của TVGS / Chủ đầu tư',
+      sharedWith: ['nk-danh-gia']
+    },
+    {
+      id: 'nkChuDauTu',
+      name: 'Chủ Đầu Tư',
+      desc: 'Dùng cho: Nhật ký thi công & biên bản nghiệm thu',
+      sharedWith: ['nk-chu-dau-tu']
+    },
+    {
+      id: 'nkTuVanGiamSat',
+      name: 'Tư Vấn Giám Sát',
+      desc: 'Dùng cho: Đơn vị tư vấn giám sát',
+      sharedWith: ['nk-tu-van-giam-sat']
+    },
+    {
+      id: 'nkNhaThau',
+      name: 'Nhà Thầu Thi Công / Đơn Vị Thực Hiện',
+      desc: 'Dùng cho: Nhà thầu thi công & đội bảo dưỡng',
+      sharedWith: ['nk-nha-thau']
     }
   ],
 
   defaults: {
-    tuyen: [],
+    tuyen: [
+      "Tuyến Hàng rào điện Định Quán (Đoạn 1 - Trụ 01 đến Trụ 150)",
+      "Tuyến Hàng rào điện Vĩnh Cửu (Đoạn 2 - Trụ 151 đến Trụ 320)",
+      "Tuyến Hàng rào điện Tân Phú (Đoạn 3 - Trụ 321 đến Trụ 480)",
+      "Tuyến Hàng rào điện Bù Gia Mập giáp ranh (Đoạn 4 - Trụ 481 đến Trụ 600)"
+    ],
     hoten: [],
     chucvu: [
       "Đội trưởng", "Đội phó", "Kỹ thuật viên", "Công nhân bảo trì",
@@ -209,25 +250,58 @@ const ValidationStore = {
       "Mất nguồn xung điện tại trạm phát xung",
       "Sứ cách điện bị vỡ làm chạm chập tiếp địa",
       "Bình ắc quy lưu điện bị chai / sụt áp",
-      "Trụ rào bị nghiêng do voi rừng húc / đất lún"
+      "Trụ rào bị nghiêng do voi rừng húc / đất lún",
+      "Cỏ cây mọc um tùm chạm vào dây làm tiêu hao xung điện"
     ],
     nguyenNhan: [
       "Cây rừng ngoài hành lang ngã đổ đè đứt dây cáp",
       "Mưa bão sét đánh hỏng thiết bị chống sét",
       "Voi rừng tác động làm biến dạng khung trụ rào",
-      "Thiết bị vận hành lâu ngày hết tuổi thọ tự nhiên"
+      "Thiết bị vận hành lâu ngày hết tuổi thọ tự nhiên",
+      "Dông lốc gãy cành cây vắt ngang đường dây"
     ],
     dvt: ["Cái", "Bộ", "Bình", "Tấm", "Mét", "Trụ", "Kg", "Hệ thống"],
     diaDiem: [
       "Tiểu khu 120 - RPH Tân Phú",
       "Khu vực Trụ 45 đến Trụ 48",
       "Khu vực Trạm xung số 2 - Vườn Quốc Gia Cát Tiên",
-      "Tuyến rào giáp ranh Định Quán - Vĩnh Cửu"
+      "Tuyến rào giáp ranh Định Quán - Vĩnh Cửu",
+      "Phân trường 1 - Lâm trường La Ngà"
     ],
     danhGia: [
       "Đã tiến hành nối dây cáp và kiểm tra thông mạch, hệ thống xung điện hoạt động bình thường.",
       "Điện áp đo đạt 7.5kV, đảm bảo an toàn ngăn voi.",
-      "Đã phát dọn sạch thực bì dưới hành lang dây điện, đảm bảo thông thoáng và an toàn cách điện."
+      "Đã phát dọn sạch thực bì dưới hành lang dây điện, đảm bảo thông thoáng và an toàn cách điện.",
+      "Hệ thống xung điện phát tín hiệu ổn định, cảnh báo xung đạt yêu cầu kỹ thuật."
+    ],
+    nkHangMuc: [
+      "Quản lý, bảo vệ và vận hành hàng rào điện",
+      "Bảo trì, sửa chữa sự cố xung điện tuyến hàng rào",
+      "Vệ sinh, phát dọn thực bì hành lang an toàn hàng rào điện",
+      "Kiểm tra định kỳ và đo thông số điện áp tuyến rào"
+    ],
+    nkNoiDung: [
+      "- Kiểm tra điện áp toàn tuyến rào từ Trụ 01 đến Trụ 150, điện áp đạt 7.5kV.\n- Phát dọn thực bì hành lang an toàn tuyến rào từ Trụ 40 đến Trụ 65.\n- Kiểm tra tình trạng bình ắc quy và tấm pin mặt trời tại Trạm xung số 1.",
+      "- Khắc phục sự cố đứt dây cáp do cây đổ tại khu vực Trụ 85 - Trụ 88.\n- Thay mới 02 sứ cách điện bị nứt tại Trụ 86.\n- Đo kiểm tra và kích hoạt lại nguồn phát xung hoạt động bình thường.",
+      "- Tuần tra dọc tuyến rào phát hiện dấu chân voi tiếp cận tại Trụ 112.\n- Gia cố dây chằng và căng lại dây thép néo góc.\n- Ghi nhận hệ thống xung hoạt động tốt, không có hiện tượng vượt rào."
+    ],
+    nkDanhGia: [
+      "Nhà thầu thi công đúng tiến độ và yêu cầu kỹ thuật. Đảm bảo an toàn lao động trong suốt ca trực.",
+      "Công tác phát dọn thực bì sạch sẽ, thông thoáng, đúng quy định khoảng cách an toàn cách điện.",
+      "Đã xử lý sự cố kịp thời, khôi phục xung điện bảo vệ tuyến hàng rào trước thời gian voi xuất hiện.",
+      "Chất lượng công việc đạt yêu cầu theo hợp đồng và hồ sơ kỹ thuật đã được phê duyệt."
+    ],
+    nkChuDauTu: [
+      "Chi cục Kiểm lâm Tỉnh Đồng Nai",
+      "Sở Nông nghiệp và Môi trường Tỉnh Đồng Nai"
+    ],
+    nkTuVanGiamSat: [
+      "Ban Quản lý Dự án Bảo tồn Voi",
+      "Đơn vị Tư vấn Giám sát Lâm nghiệp Đồng Nai"
+    ],
+    nkNhaThau: [
+      "Công ty TNHH Kỹ thuật Xây dựng & Môi trường Đồng Nai",
+      "Đội Bảo trì & Quản lý Vận hành Hàng rào điện"
     ]
   },
 
@@ -358,8 +432,16 @@ const ValidationStore = {
     populateDL('dl-hoten', 'hoten');
     populateDL('dl-chucvu', 'chucvu');
     populateDL('dl-dvt', 'dvt');
+    populateDL('dl-dia-diem', 'diaDiem');
     populateDL('dl-diadiem', 'diaDiem');
+    populateDL('dl-danh-gia', 'danhGia');
     populateDL('dl-danhgia', 'danhGia');
+    populateDL('dl-nk-hangmuc', 'nkHangMuc');
+    populateDL('dl-nk-noidung', 'nkNoiDung');
+    populateDL('dl-nk-danhgia', 'nkDanhGia');
+    populateDL('dl-nk-cdt', 'nkChuDauTu');
+    populateDL('dl-nk-tvgs', 'nkTuVanGiamSat');
+    populateDL('dl-nk-nhathau', 'nkNhaThau');
   }
 };
 

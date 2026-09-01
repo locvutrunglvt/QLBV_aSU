@@ -1214,9 +1214,208 @@ input, select, textarea, .form-control, .form-select, .form-textarea {
   color: #74c69d;
 }
 
-@media (min-width: 769px) {
-  .mobile-bottom-nav {
+/* ================= INPUT WITH QUICK PIN BUTTON ================= */
+.input-pin-group {
+  display: flex;
+  align-items: stretch;
+  gap: 0.35rem;
+  width: 100%;
+}
+
+.input-pin-group .form-control,
+.input-pin-group .form-textarea {
+  flex: 1;
+  min-width: 0;
+}
+
+.btn-pin {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  color: var(--text-muted);
+  padding: 0 0.65rem;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+  min-height: 42px;
+}
+
+.btn-pin:hover {
+  background: var(--primary);
+  color: #ffffff;
+  border-color: var(--primary);
+  transform: translateY(-1px);
+}
+
+.btn-pin:active {
+  transform: scale(0.95);
+}
+
+/* ================= BẢNG BIỂU ĐỘNG & CARD NHẬP LIỆU (DYNAMIC TABLES) ================= */
+.dynamic-table-wrapper {
+  width: 100%;
+  margin-top: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  background: var(--bg-card);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-sm);
+}
+
+.data-table thead th {
+  background: var(--bg-subtle);
+  color: var(--text-main);
+  font-size: 0.82rem;
+  font-weight: 700;
+  padding: 0.65rem 0.75rem;
+  border-bottom: 1px solid var(--border-strong);
+  text-align: left;
+}
+
+.data-table tbody td {
+  padding: 0.5rem 0.65rem;
+  border-bottom: 1px solid var(--border-color);
+  vertical-align: middle;
+  background: var(--bg-card);
+}
+
+.data-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.data-table .form-control {
+  font-size: 0.88rem;
+  padding: 0.45rem 0.65rem;
+  min-height: 38px;
+}
+
+.field-label-mobile {
+  display: none;
+}
+
+.qty-unit-group {
+  display: flex;
+  gap: 0.4rem;
+  align-items: center;
+}
+
+.qty-unit-group .tb-qty {
+  width: 75px;
+  flex-shrink: 0;
+}
+
+.qty-unit-group .tb-unit {
+  width: 85px;
+  flex-shrink: 0;
+}
+
+.btn-row-del {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  background: rgba(220, 38, 38, 0.1);
+  color: #dc2626;
+  border: 1px solid rgba(220, 38, 38, 0.25);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btn-row-del:hover {
+  background: #dc2626;
+  color: #ffffff;
+}
+
+/* GIAO DIỆN TRÊN ĐIỆN THOẠI: Chuyển bảng biểu thành các Card nhập liệu độc lập, rõ ràng */
+@media (max-width: 768px) {
+  .dynamic-table-wrapper .data-table {
+    display: block;
+    border: none;
+    background: transparent;
+    box-shadow: none;
+  }
+
+  .dynamic-table-wrapper .data-table thead {
     display: none;
+  }
+
+  .dynamic-table-wrapper .data-table tbody {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    width: 100%;
+  }
+
+  .dynamic-table-wrapper .data-table tr.dynamic-row-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+    background: var(--bg-card);
+    padding: 0.85rem;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-strong);
+    box-shadow: var(--shadow-sm);
+    position: relative;
+  }
+
+  .dynamic-table-wrapper .data-table td {
+    display: block;
+    padding: 0 !important;
+    border: none !important;
+    width: 100% !important;
+    background: transparent !important;
+  }
+
+  .dynamic-table-wrapper .field-label-mobile {
+    display: block;
+    font-size: 0.76rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    margin-bottom: 0.25rem;
+  }
+
+  .dynamic-table-wrapper .col-stt {
+    display: inline-flex !important;
+    width: 26px !important;
+    height: 26px !important;
+    align-items: center;
+    justify-content: center;
+    background: var(--primary);
+    color: #ffffff !important;
+    border-radius: 999px;
+    font-size: 0.78rem;
+    font-weight: 800;
+  }
+
+  .dynamic-table-wrapper .col-action {
+    position: absolute;
+    top: 0.65rem;
+    right: 0.65rem;
+    width: auto !important;
+  }
+
+  .dynamic-table-wrapper .qty-unit-group {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+  }
+
+  .dynamic-table-wrapper .qty-unit-group .tb-qty,
+  .dynamic-table-wrapper .qty-unit-group .tb-unit {
+    width: 100% !important;
   }
 }
 

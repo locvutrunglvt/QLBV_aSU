@@ -441,11 +441,17 @@
           <div class="form-grid" style="margin-top: 1rem;">
             <div class="form-group full-width">
               <label class="form-label" for="bt-ket-qua">Kết quả khắc phục sự cố</label>
-              <input type="text" id="bt-ket-qua" class="form-control" value="Đã tiến hành nối dây cáp và kiểm tra thông mạch, hệ thống xung điện hoạt động bình thường." />
+              <div class="input-pin-group">
+                <input type="text" id="bt-ket-qua" class="form-control" list="dl-danh-gia" placeholder="Nhập kết quả khắc phục sự cố hoặc chọn từ thư viện..." autocomplete="off" />
+                <button type="button" class="btn-pin" title="Ghim & lưu vào thư viện gợi ý" onclick="App.quickPinField('bt-ket-qua', 'danhGia')">📌</button>
+              </div>
             </div>
             <div class="form-group full-width">
               <label class="form-label" for="bt-tinh-trang">Tình trạng tuyến sau xử lý</label>
-              <input type="text" id="bt-tinh-trang" class="form-control" value="Điện áp đo đạt 7.5kV, đảm bảo an toàn ngăn voi." />
+              <div class="input-pin-group">
+                <input type="text" id="bt-tinh-trang" class="form-control" list="dl-danh-gia" placeholder="Nhập tình trạng tuyến sau xử lý..." autocomplete="off" />
+                <button type="button" class="btn-pin" title="Ghim & lưu vào thư viện gợi ý" onclick="App.quickPinField('bt-tinh-trang', 'danhGia')">📌</button>
+              </div>
             </div>
           </div>
 
@@ -615,7 +621,10 @@
             </div>
             <div class="form-group full-width">
               <label class="form-label" for="vs-danh-gia">Đánh giá chất lượng vệ sinh</label>
-              <input type="text" id="vs-danh-gia" class="form-control" value="Đã phát dọn sạch thực bì dưới hành lang dây điện, đảm bảo thông thoáng và an toàn cách điện." />
+              <div class="input-pin-group">
+                <input type="text" id="vs-danh-gia" class="form-control" list="dl-danh-gia" placeholder="Nhập đánh giá chất lượng vệ sinh hoặc chọn từ gợi ý..." autocomplete="off" />
+                <button type="button" class="btn-pin" title="Ghim & lưu vào thư viện gợi ý" onclick="App.quickPinField('vs-danh-gia', 'danhGia')">📌</button>
+              </div>
             </div>
           </div>
 
@@ -669,37 +678,58 @@
             </div>
             <div class="form-group">
               <label class="form-label" for="nk-hang-muc">Tên Hạng mục</label>
-              <input type="text" id="nk-hang-muc" class="form-control" value="Quản lý, bảo vệ và vận hành hàng rào điện" />
+              <div class="input-pin-group">
+                <input type="text" id="nk-hang-muc" class="form-control" list="dl-nk-hangmuc" placeholder="Nhập hoặc chọn Tên hạng mục..." autocomplete="off" />
+                <button type="button" class="btn-pin" title="Ghim & lưu vào thư viện gợi ý" onclick="App.quickPinField('nk-hang-muc', 'nkHangMuc')">📌</button>
+              </div>
             </div>
             <div class="form-group">
-              <label class="form-label" for="nk-tuyen-select">Địa điểm / Tuyến</label>
-              <select id="nk-tuyen-select" class="form-select"></select>
+              <label class="form-label" for="nk-tuyen-input">Địa điểm / Tuyến</label>
+              <div class="input-pin-group">
+                <input type="text" id="nk-tuyen-input" class="form-control" list="dl-tuyen" placeholder="Nhập hoặc chọn Tuyến/Địa điểm..." autocomplete="off" />
+                <button type="button" class="btn-pin" title="Ghim & lưu vào thư viện gợi ý" onclick="App.quickPinField('nk-tuyen-input', 'tuyen')">📌</button>
+              </div>
             </div>
           </div>
 
           <div class="form-grid">
             <div class="form-group">
               <label class="form-label" for="nk-chu-dau-tu">Chủ đầu tư</label>
-              <input type="text" id="nk-chu-dau-tu" class="form-control" value="Chi cục Kiểm lâm Tỉnh Đồng Nai" />
+              <div class="input-pin-group">
+                <input type="text" id="nk-chu-dau-tu" class="form-control" list="dl-nk-cdt" placeholder="Nhập Chủ đầu tư..." autocomplete="off" />
+                <button type="button" class="btn-pin" title="Ghim & lưu vào thư viện gợi ý" onclick="App.quickPinField('nk-chu-dau-tu', 'nkChuDauTu')">📌</button>
+              </div>
             </div>
             <div class="form-group">
               <label class="form-label" for="nk-tu-van-giam-sat">Tư vấn giám sát</label>
-              <input type="text" id="nk-tu-van-giam-sat" class="form-control" value="Ban Quản lý Dự án Bảo tồn Voi" />
+              <div class="input-pin-group">
+                <input type="text" id="nk-tu-van-giam-sat" class="form-control" list="dl-nk-tvgs" placeholder="Nhập Tư vấn giám sát..." autocomplete="off" />
+                <button type="button" class="btn-pin" title="Ghim & lưu vào thư viện gợi ý" onclick="App.quickPinField('nk-tu-van-giam-sat', 'nkTuVanGiamSat')">📌</button>
+              </div>
             </div>
             <div class="form-group">
               <label class="form-label" for="nk-nha-thau">Nhà thầu thi công / Đơn vị thực hiện</label>
-              <input type="text" id="nk-nha-thau" class="form-control" value="Công ty Kỹ thuật Xây dựng & Môi trường Đồng Nai" />
+              <div class="input-pin-group">
+                <input type="text" id="nk-nha-thau" class="form-control" list="dl-nk-nhathau" placeholder="Nhập Nhà thầu thi công..." autocomplete="off" />
+                <button type="button" class="btn-pin" title="Ghim & lưu vào thư viện gợi ý" onclick="App.quickPinField('nk-nha-thau', 'nkNhaThau')">📌</button>
+              </div>
             </div>
           </div>
 
           <div class="form-grid">
             <div class="form-group full-width">
               <label class="form-label required" for="nk-noi-dung">Nội dung công việc thực hiện trong ngày</label>
-              <textarea id="nk-noi-dung" class="form-textarea" style="min-height: 110px;" placeholder="- Kiểm tra điện áp toàn tuyến rào...&#10;- Phát dọn thực bì hành lang tuyến từ Trụ X đến Trụ Y...&#10;- Sửa chữa thay thế 2 bình ắc quy tại trạm xung số 3..." required></textarea>
+              <div class="input-pin-group">
+                <textarea id="nk-noi-dung" class="form-textarea" style="min-height: 110px;" placeholder="- Kiểm tra điện áp toàn tuyến rào...&#10;- Phát dọn thực bì hành lang tuyến...&#10;- Sửa chữa thay thế vật tư..." required></textarea>
+                <button type="button" class="btn-pin" title="Ghim & lưu vào thư viện gợi ý" onclick="App.quickPinField('nk-noi-dung', 'nkNoiDung')">📌</button>
+              </div>
             </div>
             <div class="form-group full-width">
               <label class="form-label" for="nk-danh-gia">Đánh giá của Cán bộ Giám sát / Chủ đầu tư</label>
-              <textarea id="nk-danh-gia" class="form-textarea" placeholder="Nhận xét về chất lượng, tiến độ, an toàn lao động..."></textarea>
+              <div class="input-pin-group">
+                <textarea id="nk-danh-gia" class="form-textarea" placeholder="Nhận xét về chất lượng, tiến độ, an toàn lao động..."></textarea>
+                <button type="button" class="btn-pin" title="Ghim & lưu vào thư viện gợi ý" onclick="App.quickPinField('nk-danh-gia', 'nkDanhGia')">📌</button>
+              </div>
             </div>
           </div>
 
@@ -1153,6 +1183,16 @@
   <datalist id="dl-hoten"></datalist>
   <datalist id="dl-chucvu"></datalist>
   <datalist id="dl-thietbi"></datalist>
+  <datalist id="dl-dia-diem"></datalist>
+  <datalist id="dl-diadiem"></datalist>
+  <datalist id="dl-danh-gia"></datalist>
+  <datalist id="dl-danhgia"></datalist>
+  <datalist id="dl-nk-hangmuc"></datalist>
+  <datalist id="dl-nk-noidung"></datalist>
+  <datalist id="dl-nk-danhgia"></datalist>
+  <datalist id="dl-nk-cdt"></datalist>
+  <datalist id="dl-nk-tvgs"></datalist>
+  <datalist id="dl-nk-nhathau"></datalist>
   <datalist id="dl-dvt">
     <option value="Cái">Cái</option>
     <option value="Bộ">Bộ</option>
@@ -1161,6 +1201,7 @@
     <option value="Mét">Mét</option>
     <option value="Trụ">Trụ</option>
     <option value="Kg">Kg</option>
+    <option value="Hệ thống">Hệ thống</option>
   </datalist>
 
   <!-- Container for Direct A4 Printing -->
