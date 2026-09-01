@@ -287,7 +287,10 @@
         <div class="card-panel">
           <div class="card-header">
             <h2><svg class="ico" aria-hidden="true"><use href="#i-wrench"></use></svg> Biên bản xác minh hiện trạng & ghi nhận bảo trì HRD</h2>
-            <button type="button" class="btn btn-secondary btn-sm" onclick="App.switchTab('dashboard')"><svg class="ico" aria-hidden="true"><use href="#i-arrow-left"></use></svg> <span class="btn-text">Về trang chủ</span></button>
+            <div style="display: flex; align-items: center; gap: 0.4rem;">
+              <button type="button" class="btn btn-secondary btn-sm" onclick="App.resetForm('baotri')" title="Xóa trắng toàn bộ dữ liệu nhập"><svg class="ico" aria-hidden="true"><use href="#i-refresh"></use></svg> <span class="btn-text">Làm mới / Blank</span></button>
+              <button type="button" class="btn btn-secondary btn-sm" onclick="App.switchTab('dashboard')"><svg class="ico" aria-hidden="true"><use href="#i-arrow-left"></use></svg> <span class="btn-text">Về trang chủ</span></button>
+            </div>
           </div>
 
           <!-- Thông tin thời gian & địa điểm -->
@@ -302,11 +305,17 @@
             </div>
             <div class="form-group">
               <label class="form-label required" for="bt-tuyen-input">Tuyến hàng rào điện</label>
-              <input type="text" id="bt-tuyen-input" class="form-control" list="dl-tuyen" placeholder="Nhập hoặc chọn Tuyến hàng rào..." required autocomplete="off" />
+              <div class="input-pin-group">
+                <input type="text" id="bt-tuyen-input" class="form-control" list="dl-tuyen" placeholder="Nhập hoặc chọn Tuyến hàng rào..." required autocomplete="off" />
+                <button type="button" class="btn-pin" title="Ghim & lưu vào thư viện gợi ý" onclick="App.quickPinField('bt-tuyen-input', 'tuyen')">📌</button>
+              </div>
             </div>
             <div class="form-group">
               <label class="form-label" for="bt-dia-diem">Vị trí cụ thể / Trụ số</label>
-              <input type="text" id="bt-dia-diem" class="form-control" placeholder="Ví dụ: Khu vực Trụ 45 - Trụ 48" />
+              <div class="input-pin-group">
+                <input type="text" id="bt-dia-diem" class="form-control" list="dl-dia-diem" placeholder="Ví dụ: Khu vực Trụ 45 - Trụ 48" autocomplete="off" />
+                <button type="button" class="btn-pin" title="Ghim & lưu vào thư viện gợi ý" onclick="App.quickPinField('bt-dia-diem', 'diaDiem')">📌</button>
+              </div>
             </div>
           </div>
 
@@ -389,27 +398,36 @@
           <div class="form-grid">
             <div class="form-group full-width">
               <label class="form-label required" for="bt-su-co-input">Sự cố xảy ra trên tuyến hàng rào</label>
-              <input type="text" id="bt-su-co-input" class="form-control" list="dl-su-co" placeholder="Nhập sự cố hoặc chọn từ gợi ý..." required autocomplete="off" />
+              <div class="input-pin-group">
+                <input type="text" id="bt-su-co-input" class="form-control" list="dl-su-co" placeholder="Nhập sự cố hoặc chọn từ gợi ý..." required autocomplete="off" />
+                <button type="button" class="btn-pin" title="Ghim & lưu vào thư viện gợi ý" onclick="App.quickPinField('bt-su-co-input', 'suCo')">📌</button>
+              </div>
             </div>
             <div class="form-group full-width">
               <label class="form-label" for="bt-nguyen-nhan">Nguyên nhân sự cố</label>
-              <textarea id="bt-nguyen-nhan" class="form-textarea" list="dl-nguyen-nhan" placeholder="Ví dụ: Cây rừng gãy đè đứt dây cáp làm mất xung điện..."></textarea>
+              <div class="input-pin-group">
+                <textarea id="bt-nguyen-nhan" class="form-textarea" list="dl-nguyen-nhan" placeholder="Ví dụ: Cây rừng gãy đè đứt dây cáp làm mất xung điện..."></textarea>
+                <button type="button" class="btn-pin" title="Ghim & lưu vào thư viện gợi ý" onclick="App.quickPinField('bt-nguyen-nhan', 'nguyenNhan')">📌</button>
+              </div>
             </div>
           </div>
 
-          <!-- Bảng Thiết bị hỏng -->
-          <div style="display: flex; align-items: center; justify-content: space-between; margin: 1.25rem 0 0.5rem 0;">
-            <div class="field-group-label is-danger">Thiết bị hư hỏng</div>
-            <button type="button" id="btn-add-bt-thietbi-hong" class="btn btn-secondary btn-sm">+ Thêm thiết bị</button>
+          <!-- Bảng Thiết bị hỏng (Giao diện bảng tính Excel trượt ngang/dọc) -->
+          <div class="excel-table-toolbar">
+            <div class="field-group-label is-danger"><svg class="ico" aria-hidden="true"><use href="#i-wrench"></use></svg> Thiết bị hư hỏng (Bảng tính Excel)</div>
+            <div style="display: flex; gap: 0.4rem;">
+              <button type="button" id="btn-add-bt-thietbi-hong" class="btn btn-secondary btn-sm">+ Thêm thiết bị</button>
+              <button type="button" class="btn btn-secondary btn-sm" onclick="App.clearTableRows('bt-thietbi-hong-tbody', 'hong')" title="Xóa toàn bộ dòng"><svg class="ico" aria-hidden="true"><use href="#i-trash"></use></svg> Xóa hết</button>
+            </div>
           </div>
-          <div class="dynamic-table-wrapper">
-            <table class="data-table">
+          <div class="excel-grid-container excel-table-scroll dynamic-table-wrapper">
+            <table class="data-table excel-table">
               <thead>
                 <tr>
-                  <th style="width: 40px; text-align: center;">STT</th>
-                  <th>Tên thiết bị / Quy cách</th>
-                  <th style="width: 150px;">Số lượng</th>
-                  <th>Tình trạng hư hỏng</th>
+                  <th class="col-stt" style="width: 45px; text-align: center;">STT</th>
+                  <th style="min-width: 220px;">Tên thiết bị / Quy cách</th>
+                  <th style="width: 170px; min-width: 170px;">Số lượng &amp; ĐVT</th>
+                  <th style="min-width: 200px;">Tình trạng hư hỏng</th>
                   <th style="width: 50px; text-align: center;">Xóa</th>
                 </tr>
               </thead>
@@ -417,19 +435,22 @@
             </table>
           </div>
 
-          <!-- Bảng Thiết bị thay thế -->
-          <div style="display: flex; align-items: center; justify-content: space-between; margin: 1.25rem 0 0.5rem 0;">
-            <div class="field-group-label is-success">Vật tư / thiết bị thay thế</div>
-            <button type="button" id="btn-add-bt-thietbi-thaythe" class="btn btn-secondary btn-sm">+ Thêm vật tư</button>
+          <!-- Bảng Thiết bị thay thế (Giao diện bảng tính Excel trượt ngang/dọc) -->
+          <div class="excel-table-toolbar">
+            <div class="field-group-label is-success"><svg class="ico" aria-hidden="true"><use href="#i-check"></use></svg> Vật tư / thiết bị thay thế (Bảng tính Excel)</div>
+            <div style="display: flex; gap: 0.4rem;">
+              <button type="button" id="btn-add-bt-thietbi-thaythe" class="btn btn-secondary btn-sm">+ Thêm vật tư</button>
+              <button type="button" class="btn btn-secondary btn-sm" onclick="App.clearTableRows('bt-thietbi-thaythe-tbody', 'thaythe')" title="Xóa toàn bộ dòng"><svg class="ico" aria-hidden="true"><use href="#i-trash"></use></svg> Xóa hết</button>
+            </div>
           </div>
-          <div class="dynamic-table-wrapper">
-            <table class="data-table">
+          <div class="excel-grid-container excel-table-scroll dynamic-table-wrapper">
+            <table class="data-table excel-table">
               <thead>
                 <tr>
-                  <th style="width: 40px; text-align: center;">STT</th>
-                  <th>Tên vật tư thay thế</th>
-                  <th style="width: 150px;">Số lượng</th>
-                  <th>Ghi chú / Tình trạng</th>
+                  <th class="col-stt" style="width: 45px; text-align: center;">STT</th>
+                  <th style="min-width: 220px;">Tên vật tư thay thế</th>
+                  <th style="width: 170px; min-width: 170px;">Số lượng &amp; ĐVT</th>
+                  <th style="min-width: 200px;">Ghi chú / Tình trạng</th>
                   <th style="width: 50px; text-align: center;">Xóa</th>
                 </tr>
               </thead>
@@ -472,6 +493,9 @@
             <button type="button" id="btn-print-baotri" class="btn btn-secondary">
               <svg class="ico" aria-hidden="true"><use href="#i-printer"></use></svg> Xem trước<span class="btn-text"> & in PDF</span>
             </button>
+            <button type="button" class="btn btn-secondary" onclick="App.resetForm('baotri')" title="Xóa trắng form">
+              <svg class="ico" aria-hidden="true"><use href="#i-refresh"></use></svg> Xóa trắng
+            </button>
             <button type="submit" class="btn btn-primary btn-lg">
               <svg class="ico" aria-hidden="true"><use href="#i-save"></use></svg> Lưu biên bản
             </button>
@@ -486,7 +510,10 @@
         <div class="card-panel">
           <div class="card-header">
             <h2><svg class="ico" aria-hidden="true"><use href="#i-leaf"></use></svg> Biên bản ghi nhận kết quả vệ sinh, phát dọn thực bì HRD</h2>
-            <button type="button" class="btn btn-secondary btn-sm" onclick="App.switchTab('dashboard')"><svg class="ico" aria-hidden="true"><use href="#i-arrow-left"></use></svg> <span class="btn-text">Về trang chủ</span></button>
+            <div style="display: flex; align-items: center; gap: 0.4rem;">
+              <button type="button" class="btn btn-secondary btn-sm" onclick="App.resetForm('vesinh')" title="Xóa trắng toàn bộ dữ liệu nhập"><svg class="ico" aria-hidden="true"><use href="#i-refresh"></use></svg> <span class="btn-text">Làm mới / Blank</span></button>
+              <button type="button" class="btn btn-secondary btn-sm" onclick="App.switchTab('dashboard')"><svg class="ico" aria-hidden="true"><use href="#i-arrow-left"></use></svg> <span class="btn-text">Về trang chủ</span></button>
+            </div>
           </div>
 
           <!-- Thời gian & Địa điểm -->
@@ -501,11 +528,17 @@
             </div>
             <div class="form-group">
               <label class="form-label required" for="vs-tuyen-input">Tuyến hàng rào điện</label>
-              <input type="text" id="vs-tuyen-input" class="form-control" list="dl-tuyen" placeholder="Nhập hoặc chọn Tuyến hàng rào..." required autocomplete="off" />
+              <div class="input-pin-group">
+                <input type="text" id="vs-tuyen-input" class="form-control" list="dl-tuyen" placeholder="Nhập hoặc chọn Tuyến hàng rào..." required autocomplete="off" />
+                <button type="button" class="btn-pin" title="Ghim & lưu vào thư viện gợi ý" onclick="App.quickPinField('vs-tuyen-input', 'tuyen')">📌</button>
+              </div>
             </div>
             <div class="form-group">
               <label class="form-label" for="vs-dia-diem">Địa điểm / Tiểu khu</label>
-              <input type="text" id="vs-dia-diem" class="form-control" placeholder="Ví dụ: Tiểu khu 120 - RPH Tân Phú" />
+              <div class="input-pin-group">
+                <input type="text" id="vs-dia-diem" class="form-control" list="dl-dia-diem" placeholder="Ví dụ: Tiểu khu 120 - RPH Tân Phú" autocomplete="off" />
+                <button type="button" class="btn-pin" title="Ghim & lưu vào thư viện gợi ý" onclick="App.quickPinField('vs-dia-diem', 'diaDiem')">📌</button>
+              </div>
             </div>
           </div>
 
@@ -583,25 +616,30 @@
           <div class="form-grid">
             <div class="form-group full-width">
               <label class="form-label" for="vs-nhan-cong">Danh sách Nhân công phát dọn</label>
-              <input type="text" id="vs-nhan-cong" class="form-control" placeholder="Ví dụ: Nguyễn Văn A, Trần Văn B, Lê Văn C (Tổ 1)" />
+              <div class="input-pin-group">
+                <input type="text" id="vs-nhan-cong" class="form-control" list="dl-hoten" placeholder="Ví dụ: Nguyễn Văn A, Trần Văn B, Lê Văn C (Tổ 1)" />
+                <button type="button" class="btn-pin" title="Ghim & lưu vào thư viện gợi ý" onclick="App.quickPinField('vs-nhan-cong', 'hoten')">📌</button>
+              </div>
             </div>
           </div>
 
-
-          <!-- Chi tiết phân đoạn trụ -->
-          <div style="display: flex; align-items: center; justify-content: space-between; margin: 1.25rem 0 0.5rem 0;">
-            <div class="form-section">II. Chi tiết các phân đoạn trụ đã phát dọn</div>
-            <button type="button" id="btn-add-vs-doan" class="btn btn-secondary btn-sm">+ Thêm phân đoạn</button>
+          <!-- Chi tiết phân đoạn trụ (Giao diện bảng tính Excel trượt ngang/dọc) -->
+          <div class="excel-table-toolbar">
+            <div class="form-section" style="margin: 0; border-bottom: none; padding-bottom: 0;">II. Chi tiết các phân đoạn trụ đã phát dọn (Bảng tính Excel)</div>
+            <div style="display: flex; gap: 0.4rem;">
+              <button type="button" id="btn-add-vs-doan" class="btn btn-secondary btn-sm">+ Thêm phân đoạn</button>
+              <button type="button" class="btn btn-secondary btn-sm" onclick="App.clearTableRows('vs-doan-tbody', 'doan')" title="Xóa toàn bộ dòng"><svg class="ico" aria-hidden="true"><use href="#i-trash"></use></svg> Xóa hết</button>
+            </div>
           </div>
-          <div class="dynamic-table-wrapper">
-            <table class="data-table">
+          <div class="excel-grid-container excel-table-scroll dynamic-table-wrapper">
+            <table class="data-table excel-table">
               <thead>
                 <tr>
-                  <th style="width: 40px; text-align: center;">STT</th>
-                  <th>Phân đoạn trụ (Từ - Đến)</th>
-                  <th style="width: 110px;">Chiều dài (m)</th>
-                  <th style="width: 100px;">Bề rộng (m)</th>
-                  <th style="width: 120px;">Diện tích (m²)</th>
+                  <th class="col-stt" style="width: 45px; text-align: center;">STT</th>
+                  <th style="min-width: 220px;">Phân đoạn trụ (Từ - Đến)</th>
+                  <th style="width: 120px; min-width: 120px;">Chiều dài (m)</th>
+                  <th style="width: 110px; min-width: 110px;">Bề rộng (m)</th>
+                  <th style="width: 130px; min-width: 130px;">Diện tích (m²)</th>
                   <th style="width: 50px; text-align: center;">Xóa</th>
                 </tr>
               </thead>
@@ -613,11 +651,11 @@
           <div class="form-grid" style="margin-top: 1rem; background: var(--bg-subtle); padding: 1rem; border-radius: var(--radius-md);">
             <div class="form-group">
               <label class="form-label" for="vs-tong-chieu-dai">Tổng Chiều Dài (Mét)</label>
-              <input type="number" id="vs-tong-chieu-dai" class="form-control" readonly style="font-weight: 800; font-size: 1.1rem; color: var(--primary);" value="0" />
+              <input type="number" id="vs-tong-chieu-dai" class="form-control" readonly style="font-weight: 800; font-size: 1.1rem; color: var(--primary);" placeholder="0" />
             </div>
             <div class="form-group">
               <label class="form-label" for="vs-tong-dien-tich">Tổng Diện Tích (m²)</label>
-              <input type="text" id="vs-tong-dien-tich" class="form-control" readonly style="font-weight: 800; font-size: 1.1rem; color: var(--success);" value="0" />
+              <input type="text" id="vs-tong-dien-tich" class="form-control" readonly style="font-weight: 800; font-size: 1.1rem; color: var(--success);" placeholder="0" />
             </div>
             <div class="form-group full-width">
               <label class="form-label" for="vs-danh-gia">Đánh giá chất lượng vệ sinh</label>
@@ -644,6 +682,9 @@
             <button type="button" id="btn-print-vesinh" class="btn btn-secondary">
               <svg class="ico" aria-hidden="true"><use href="#i-printer"></use></svg> Xem trước<span class="btn-text"> & in PDF</span>
             </button>
+            <button type="button" class="btn btn-secondary" onclick="App.resetForm('vesinh')" title="Xóa trắng form">
+              <svg class="ico" aria-hidden="true"><use href="#i-refresh"></use></svg> Xóa trắng
+            </button>
             <button type="submit" class="btn btn-primary btn-lg">
               <svg class="ico" aria-hidden="true"><use href="#i-save"></use></svg> Lưu Biên bản vệ sinh
             </button>
@@ -658,7 +699,10 @@
         <div class="card-panel">
           <div class="card-header">
             <h2><svg class="ico" aria-hidden="true"><use href="#i-clipboard"></use></svg> Nhật ký thi công & Quản Lý Vận Hành</h2>
-            <button type="button" class="btn btn-secondary btn-sm" onclick="App.switchTab('dashboard')"><svg class="ico" aria-hidden="true"><use href="#i-arrow-left"></use></svg> <span class="btn-text">Về trang chủ</span></button>
+            <div style="display: flex; align-items: center; gap: 0.4rem;">
+              <button type="button" class="btn btn-secondary btn-sm" onclick="App.resetForm('nhatky')" title="Xóa trắng toàn bộ dữ liệu nhập"><svg class="ico" aria-hidden="true"><use href="#i-refresh"></use></svg> <span class="btn-text">Làm mới / Blank</span></button>
+              <button type="button" class="btn btn-secondary btn-sm" onclick="App.switchTab('dashboard')"><svg class="ico" aria-hidden="true"><use href="#i-arrow-left"></use></svg> <span class="btn-text">Về trang chủ</span></button>
+            </div>
           </div>
 
           <div class="form-grid">
@@ -669,6 +713,7 @@
             <div class="form-group">
               <label class="form-label required" for="nk-thoi-tiet">Thời tiết</label>
               <select id="nk-thoi-tiet" class="form-select" required>
+                <option value="">-- Chọn thời tiết --</option>
                 <option value="Nắng ráo">Nắng ráo</option>
                 <option value="Nắng gắt">Nắng gắt</option>
                 <option value="Mưa rải rác">Mưa rải rác</option>
@@ -749,6 +794,9 @@
             <button type="button" id="btn-print-nhatky" class="btn btn-secondary">
               <svg class="ico" aria-hidden="true"><use href="#i-printer"></use></svg> Xem trước<span class="btn-text"> & in PDF</span>
             </button>
+            <button type="button" class="btn btn-secondary" onclick="App.resetForm('nhatky')" title="Xóa trắng form">
+              <svg class="ico" aria-hidden="true"><use href="#i-refresh"></use></svg> Xóa trắng
+            </button>
             <button type="submit" class="btn btn-primary btn-lg">
               <svg class="ico" aria-hidden="true"><use href="#i-save"></use></svg> Lưu nhật ký
             </button>
@@ -756,6 +804,7 @@
         </div>
       </form>
     </section>
+
 
     <!-- ================= VIEW 5: LỊCH SỬ BẢN GHI ================= -->
     <section id="view-history" class="tab-view" style="display: none;">

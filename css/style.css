@@ -1306,26 +1306,29 @@ input, select, textarea, .form-control, .form-select, .form-textarea {
 
 .qty-unit-group {
   display: flex;
-  gap: 0.4rem;
+  gap: 0.35rem;
   align-items: center;
+  width: 100%;
 }
 
 .qty-unit-group .tb-qty {
-  width: 75px;
-  flex-shrink: 0;
+  width: 70px !important;
+  flex: 1 1 65px;
+  min-width: 55px;
 }
 
 .qty-unit-group .tb-unit {
-  width: 85px;
-  flex-shrink: 0;
+  width: 80px !important;
+  flex: 1 1 75px;
+  min-width: 65px;
 }
 
 .btn-row-del {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 32px;
-  height: 32px;
+  width: 30px;
+  height: 30px;
   border-radius: 6px;
   background: rgba(220, 38, 38, 0.1);
   color: #dc2626;
@@ -1339,85 +1342,182 @@ input, select, textarea, .form-control, .form-select, .form-textarea {
   color: #ffffff;
 }
 
-/* GIAO DIỆN TRÊN ĐIỆN THOẠI: Chuyển bảng biểu thành các Card nhập liệu độc lập, rõ ràng */
-@media (max-width: 768px) {
-  .dynamic-table-wrapper .data-table {
-    display: block;
-    border: none;
-    background: transparent;
-    box-shadow: none;
-  }
-
-  .dynamic-table-wrapper .data-table thead {
-    display: none;
-  }
-
-  .dynamic-table-wrapper .data-table tbody {
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-    width: 100%;
-  }
-
-  .dynamic-table-wrapper .data-table tr.dynamic-row-item {
-    display: flex;
-    flex-direction: column;
-    gap: 0.55rem;
-    background: var(--bg-card);
-    padding: 0.85rem;
-    border-radius: var(--radius-md);
-    border: 1px solid var(--border-strong);
-    box-shadow: var(--shadow-sm);
-    position: relative;
-  }
-
-  .dynamic-table-wrapper .data-table td {
-    display: block;
-    padding: 0 !important;
-    border: none !important;
-    width: 100% !important;
-    background: transparent !important;
-  }
-
-  .dynamic-table-wrapper .field-label-mobile {
-    display: block;
-    font-size: 0.76rem;
-    font-weight: 700;
-    color: var(--text-muted);
-    margin-bottom: 0.25rem;
-  }
-
-  .dynamic-table-wrapper .col-stt {
-    display: inline-flex !important;
-    width: 26px !important;
-    height: 26px !important;
-    align-items: center;
-    justify-content: center;
-    background: var(--primary);
-    color: #ffffff !important;
-    border-radius: 999px;
-    font-size: 0.78rem;
-    font-weight: 800;
-  }
-
-  .dynamic-table-wrapper .col-action {
-    position: absolute;
-    top: 0.65rem;
-    right: 0.65rem;
-    width: auto !important;
-  }
-
-  .dynamic-table-wrapper .qty-unit-group {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0.5rem;
-  }
-
-  .dynamic-table-wrapper .qty-unit-group .tb-qty,
-  .dynamic-table-wrapper .qty-unit-group .tb-unit {
-    width: 100% !important;
-  }
+/* ==========================================================================
+   GIAO DIỆN BẢNG TÍNH EXCEL NHẬP LIỆU (SPREADSHEET GRID) - TRƯỢT NGANG & TRƯỢT DỌC
+   ========================================================================== */
+.excel-table-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin: 1.25rem 0 0.5rem 0;
+  flex-wrap: wrap;
 }
+
+.excel-grid-container,
+.excel-table-scroll {
+  overflow-x: auto !important;
+  overflow-y: auto !important;
+  max-height: 380px;
+  border: 1.5px solid var(--border-strong);
+  border-radius: var(--radius-md);
+  background: var(--bg-surface);
+  -webkit-overflow-scrolling: touch;
+  position: relative;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.excel-table-scroll::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+.excel-table-scroll::-webkit-scrollbar-track {
+  background: var(--bg-subtle);
+  border-radius: 4px;
+}
+.excel-table-scroll::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+  border-radius: 4px;
+}
+.excel-table-scroll::-webkit-scrollbar-thumb:hover {
+  background: var(--text-light);
+}
+
+.data-table.excel-table {
+  width: 100%;
+  min-width: 620px;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 0.88rem;
+}
+
+.data-table.excel-table th {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: var(--bg-subtle);
+  color: var(--text-main);
+  font-weight: 700;
+  padding: 0.65rem 0.6rem;
+  border-bottom: 2px solid var(--border-strong);
+  border-right: 1px solid var(--border-color);
+  white-space: nowrap;
+  text-align: left;
+  user-select: none;
+}
+
+.data-table.excel-table th.col-stt,
+.data-table.excel-table td.col-stt {
+  position: sticky;
+  left: 0;
+  z-index: 8;
+  background: var(--bg-subtle);
+  text-align: center;
+  border-right: 2px solid var(--border-strong);
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+.data-table.excel-table th.col-stt {
+  z-index: 15;
+}
+
+.data-table.excel-table td {
+  padding: 3px 4px;
+  border-bottom: 1px solid var(--border-color);
+  border-right: 1px solid var(--border-color);
+  background: var(--bg-surface);
+  vertical-align: middle;
+}
+
+.data-table.excel-table tr:hover td {
+  background: var(--bg-hover);
+}
+
+.data-table.excel-table td input.form-control,
+.data-table.excel-table td select.form-select {
+  border: 1px solid transparent;
+  border-radius: 4px;
+  padding: 0.4rem 0.5rem;
+  background: transparent;
+  font-size: 0.88rem;
+  width: 100%;
+  min-height: 34px;
+  transition: all 0.15s ease;
+}
+
+.data-table.excel-table td input.form-control:hover,
+.data-table.excel-table td select.form-select:hover {
+  border-color: var(--border-color);
+  background: var(--bg-surface);
+}
+
+.data-table.excel-table td input.form-control:focus,
+.data-table.excel-table td select.form-select:focus {
+  border-color: var(--primary);
+  background: var(--bg-surface);
+  box-shadow: 0 0 0 2px rgba(21, 128, 61, 0.2);
+}
+
+/* NÚT GHIM (PIN) & NHÓM ĐỀ XUẤT */
+.input-pin-group {
+  position: relative;
+  display: flex;
+  align-items: stretch;
+  width: 100%;
+}
+
+.input-pin-group .form-control,
+.input-pin-group .form-textarea,
+.input-pin-group .form-select {
+  padding-right: 2.4rem !important;
+  width: 100%;
+}
+
+.input-pin-group .btn-pin {
+  position: absolute;
+  right: 4px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  opacity: 0.65;
+  transition: all 0.2s ease;
+  z-index: 2;
+}
+
+.input-pin-group textarea + .btn-pin {
+  top: 16px;
+  transform: none;
+}
+
+.input-pin-group .btn-pin:hover {
+  opacity: 1;
+  transform: scale(1.18);
+  background: var(--bg-subtle);
+}
+
+.input-pin-group textarea + .btn-pin:hover {
+  transform: scale(1.18);
+}
+
+/* VALIDATION STATES */
+.is-invalid,
+.form-control.is-invalid,
+.form-select.is-invalid,
+.form-textarea.is-invalid {
+  border-color: var(--danger) !important;
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.2) !important;
+}
+
 
 /* Thẻ Đăng Nhập Sạch Sẽ (Chuyên Nghiệp, Bảo Mật, Không Lộ Gợi Ý) */
 .login-clean-card {

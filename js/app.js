@@ -702,7 +702,78 @@ const App = {
   },
 
   /**
-   * Thêm dòng thiết bị cho Form Bảo Trì (Hỗ trợ giao diện máy tính & card độc lập trên điện thoại)
+   * Làm mới / Xóa trắng toàn bộ ô nhập liệu của Form
+   */
+  resetForm(formType, showToastMsg = true) {
+    if (formType === 'baotri') {
+      const form = document.getElementById('form-baotri-el');
+      if (form) {
+        form.reset();
+        form.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
+      }
+      const hongTbody = document.getElementById('bt-thietbi-hong-tbody');
+      if (hongTbody) {
+        hongTbody.innerHTML = '';
+        this.addBaoTriRow('bt-thietbi-hong-tbody', 'hong');
+      }
+      const thayTheTbody = document.getElementById('bt-thietbi-thaythe-tbody');
+      if (thayTheTbody) {
+        thayTheTbody.innerHTML = '';
+        this.addBaoTriRow('bt-thietbi-thaythe-tbody', 'thaythe');
+      }
+      this.currentPhotos.baotri = [];
+      CameraService.renderPhotoGallery('bt-photo-gallery', [], null);
+      if (showToastMsg) this.showToast('Đã xóa trắng toàn bộ Form Biên bản bảo trì!', 'info');
+    } else if (formType === 'vesinh') {
+      const form = document.getElementById('form-vesinh-el');
+      if (form) {
+        form.reset();
+        form.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
+      }
+      const doanTbody = document.getElementById('vs-doan-tbody');
+      if (doanTbody) {
+        doanTbody.innerHTML = '';
+        this.addVeSinhDoanRow();
+      }
+      const lenEl = document.getElementById('vs-tong-chieu-dai');
+      const areaEl = document.getElementById('vs-tong-dien-tich');
+      if (lenEl) lenEl.value = '';
+      if (areaEl) areaEl.value = '';
+      this.currentPhotos.vesinh = [];
+      CameraService.renderPhotoGallery('vs-photo-gallery', [], null);
+      if (showToastMsg) this.showToast('Đã xóa trắng toàn bộ Form Biên bản vệ sinh!', 'info');
+    } else if (formType === 'nhatky') {
+      const form = document.getElementById('form-nhatky-el');
+      if (form) {
+        form.reset();
+        form.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
+      }
+      const tt = document.getElementById('nk-thoi-tiet');
+      if (tt) tt.value = '';
+      this.currentPhotos.nhatky = [];
+      CameraService.renderPhotoGallery('nk-photo-gallery', [], null);
+      if (showToastMsg) this.showToast('Đã xóa trắng toàn bộ Form Nhật ký thi công!', 'info');
+    }
+  },
+
+  /**
+   * Xóa sạch toàn bộ dòng trong bảng và khởi tạo 1 dòng trống
+   */
+  clearTableRows(tbodyId, type) {
+    const tbody = document.getElementById(tbodyId);
+    if (!tbody) return;
+    tbody.innerHTML = '';
+    if (type === 'hong' || type === 'thaythe') {
+      this.addBaoTriRow(tbodyId, type);
+    } else if (type === 'doan') {
+      this.addVeSinhDoanRow();
+      this.calcVeSinhTotals();
+    }
+    this.showToast('Đã làm mới danh sách dòng bảng tính!', 'info');
+  },
+
+  /**
+   * Thêm dòng thiết bị cho Form Bảo Trì (Bảng tính Excel trượt ngang/dọc)
    */
   addBaoTriRow(tbodyId, type) {
     const tbody = document.getElementById(tbodyId);
@@ -715,22 +786,19 @@ const App = {
     if (type === 'hong') {
       row.innerHTML = `
         <td class="col-stt" style="text-align: center;">${idx}</td>
-        <td class="col-main">
-          <label class="field-label-mobile">Tên thiết bị / Quy cách hư hỏng</label>
-          <input type="text" class="form-control tb-name" list="dl-thietbi" placeholder="Nhập hoặc chọn tên thiết bị..." autocomplete="off" />
+        <td>
+          <input type="text" class="form-control tb-name" list="dl-thietbi" placeholder="Tên thiết bị..." autocomplete="off" />
         </td>
-        <td class="col-qty">
-          <label class="field-label-mobile">Số lượng &amp; ĐVT</label>
+        <td>
           <div class="qty-unit-group">
-            <input type="number" class="form-control tb-qty" value="1" min="1" placeholder="SL" />
-            <input type="text" class="form-control tb-unit" list="dl-dvt" value="Cái" placeholder="ĐVT" />
+            <input type="number" class="form-control tb-qty" min="1" placeholder="SL" />
+            <input type="text" class="form-control tb-unit" list="dl-dvt" placeholder="ĐVT" />
           </div>
         </td>
-        <td class="col-status">
-          <label class="field-label-mobile">Tình trạng hư hỏng</label>
+        <td>
           <input type="text" class="form-control tb-status" list="dl-su-co" placeholder="Tình trạng hư hỏng..." autocomplete="off" />
         </td>
-        <td class="col-action" style="text-align: center;">
+        <td style="text-align: center;">
           <button type="button" class="btn-row-del" title="Xóa dòng" onclick="this.closest('tr').remove(); App.reindexRows('${tbodyId}');">
             <svg class="ico" aria-hidden="true"><use href="#i-x"></use></svg>
           </button>
@@ -739,22 +807,19 @@ const App = {
     } else {
       row.innerHTML = `
         <td class="col-stt" style="text-align: center;">${idx}</td>
-        <td class="col-main">
-          <label class="field-label-mobile">Tên vật tư / Thiết bị thay thế</label>
-          <input type="text" class="form-control tb-name" list="dl-thietbi" placeholder="Nhập hoặc chọn vật tư thay thế..." autocomplete="off" />
+        <td>
+          <input type="text" class="form-control tb-name" list="dl-thietbi" placeholder="Tên vật tư thay..." autocomplete="off" />
         </td>
-        <td class="col-qty">
-          <label class="field-label-mobile">Số lượng &amp; ĐVT</label>
+        <td>
           <div class="qty-unit-group">
-            <input type="number" class="form-control tb-qty" value="1" min="1" placeholder="SL" />
-            <input type="text" class="form-control tb-unit" list="dl-dvt" value="Cái" placeholder="ĐVT" />
+            <input type="number" class="form-control tb-qty" min="1" placeholder="SL" />
+            <input type="text" class="form-control tb-unit" list="dl-dvt" placeholder="ĐVT" />
           </div>
         </td>
-        <td class="col-status">
-          <label class="field-label-mobile">Ghi chú / Tình trạng thay mới</label>
-          <input type="text" class="form-control tb-note" list="dl-danh-gia" placeholder="Ghi chú thay thế..." autocomplete="off" />
+        <td>
+          <input type="text" class="form-control tb-note" list="dl-danh-gia" placeholder="Ghi chú / Tình trạng thay mới..." autocomplete="off" />
         </td>
-        <td class="col-action" style="text-align: center;">
+        <td style="text-align: center;">
           <button type="button" class="btn-row-del" title="Xóa dòng" onclick="this.closest('tr').remove(); App.reindexRows('${tbodyId}');">
             <svg class="ico" aria-hidden="true"><use href="#i-x"></use></svg>
           </button>
@@ -794,7 +859,7 @@ const App = {
   },
 
   /**
-   * Thêm dòng phân đoạn cho Form Vệ Sinh
+   * Thêm dòng phân đoạn cho Form Vệ Sinh (Bảng tính Excel trượt ngang/dọc)
    */
   addVeSinhDoanRow() {
     const tbody = document.getElementById('vs-doan-tbody');
@@ -804,30 +869,31 @@ const App = {
     const idx = tbody.children.length + 1;
 
     row.innerHTML = `
-      <td style="text-align: center;">${idx}</td>
+      <td class="col-stt" style="text-align: center;">${idx}</td>
       <td>
         <div style="display: flex; align-items: center; gap: 4px;">
-          <span>Trụ</span>
-          <input type="number" class="form-control vs-from" placeholder="Từ" style="width: 70px;" />
-          <span>đến</span>
-          <input type="number" class="form-control vs-to" placeholder="Đến" style="width: 70px;" />
+          <span style="font-size: 0.8rem; color: var(--text-muted);">Trụ</span>
+          <input type="number" class="form-control vs-from" placeholder="Từ" style="width: 75px;" />
+          <span style="font-size: 0.8rem; color: var(--text-muted);">-</span>
+          <input type="number" class="form-control vs-to" placeholder="Đến" style="width: 75px;" />
         </div>
       </td>
       <td>
-        <input type="number" class="form-control vs-len" placeholder="Mét" style="width: 90px;" />
+        <input type="number" class="form-control vs-len" placeholder="Mét" />
       </td>
       <td>
-        <input type="number" class="form-control vs-wid" value="3.0" step="0.5" style="width: 80px;" />
+        <input type="number" class="form-control vs-wid" placeholder="3.0" step="0.5" />
       </td>
       <td>
-        <input type="text" class="form-control vs-area" readonly style="width: 100px; font-weight: bold; background: var(--bg-subtle);" value="0" />
+        <input type="text" class="form-control vs-area" readonly style="font-weight: 700; background: var(--bg-subtle); color: var(--primary);" placeholder="0" />
       </td>
       <td style="text-align: center;">
-        <button type="button" class="btn btn-danger btn-sm" onclick="this.closest('tr').remove(); App.calcVeSinhTotals();"><svg class="ico" aria-hidden="true"><use href="#i-x"></use></svg></button>
+        <button type="button" class="btn-row-del" title="Xóa dòng" onclick="this.closest('tr').remove(); App.reindexRows('vs-doan-tbody'); App.calcVeSinhTotals();">
+          <svg class="ico" aria-hidden="true"><use href="#i-x"></use></svg>
+        </button>
       </td>
     `;
 
-    // Lắng nghe thay đổi để tự động tính diện tích
     const fromInput = row.querySelector('.vs-from');
     const toInput = row.querySelector('.vs-to');
     const lenInput = row.querySelector('.vs-len');
@@ -839,15 +905,14 @@ const App = {
       const to = parseInt(toInput.value) || 0;
       let len = parseFloat(lenInput.value);
 
-      // Nếu người dùng nhập trụ từ A đến B mà chưa nhập mét -> tự ước tính (mỗi trụ ~40m)
       if (!len && to > from) {
         len = (to - from) * 40;
         lenInput.value = len;
       }
 
-      const wid = parseFloat(widInput.value) || 0;
+      const wid = parseFloat(widInput.value) || (len ? 3.0 : 0);
       const area = (len || 0) * wid;
-      areaInput.value = area.toFixed(1);
+      areaInput.value = area > 0 ? area.toFixed(1) : '';
       this.calcVeSinhTotals();
     };
 
@@ -876,17 +941,56 @@ const App = {
     const totalLenEl = document.getElementById('vs-tong-chieu-dai');
     const totalAreaEl = document.getElementById('vs-tong-dien-tich');
 
-    if (totalLenEl) totalLenEl.value = totalLen;
-    if (totalAreaEl) totalAreaEl.value = totalArea.toFixed(1);
+    if (totalLenEl) totalLenEl.value = totalLen > 0 ? totalLen : '';
+    if (totalAreaEl) totalAreaEl.value = totalArea > 0 ? totalArea.toFixed(1) : '';
+  },
+
+  /**
+   * Kiểm tra validation các trường bắt buộc và đánh dấu đỏ
+   */
+  validateFormFields(formId) {
+    const form = document.getElementById(formId);
+    if (!form) return true;
+
+    let isValid = true;
+    let firstInvalid = null;
+
+    form.querySelectorAll('[required]').forEach(input => {
+      if (!input.value || !input.value.trim()) {
+        input.classList.add('is-invalid');
+        isValid = false;
+        if (!firstInvalid) firstInvalid = input;
+      } else {
+        input.classList.remove('is-invalid');
+      }
+    });
+
+    if (!isValid) {
+      if (firstInvalid) {
+        firstInvalid.focus();
+        firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+      this.showToast('Vui lòng điền đầy đủ các thông tin bắt buộc (*)', 'warning');
+    }
+
+    return isValid;
   },
 
   /**
    * Thu thập dữ liệu và xử lý Lưu / In ấn cho các Form
    */
   setupFormSubmitHandlers() {
+    // Tự động xóa class .is-invalid khi người dùng gõ
+    document.addEventListener('input', (e) => {
+      if (e.target && e.target.classList.contains('is-invalid')) {
+        e.target.classList.remove('is-invalid');
+      }
+    });
+
     // 1. Submit Form Bảo Trì
     document.getElementById('form-baotri-el')?.addEventListener('submit', async (e) => {
       e.preventDefault();
+      if (!this.validateFormFields('form-baotri-el')) return;
       const record = this.collectBaoTriData();
       await this.handleSaveAction('baotri', record);
     });
@@ -898,6 +1002,7 @@ const App = {
     // 2. Submit Form Vệ Sinh
     document.getElementById('form-vesinh-el')?.addEventListener('submit', async (e) => {
       e.preventDefault();
+      if (!this.validateFormFields('form-vesinh-el')) return;
       const record = this.collectVeSinhData();
       await this.handleSaveAction('vesinh', record);
     });
@@ -909,6 +1014,7 @@ const App = {
     // 3. Submit Form Nhật Ký
     document.getElementById('form-nhatky-el')?.addEventListener('submit', async (e) => {
       e.preventDefault();
+      if (!this.validateFormFields('form-nhatky-el')) return;
       const record = this.collectNhatKyData();
       await this.handleSaveAction('nhatky', record);
     });
@@ -941,8 +1047,8 @@ const App = {
       if (name) {
         thietBiHong.push({
           name: name,
-          quantity: r.querySelector('.tb-qty')?.value || '1',
-          unit: r.querySelector('.tb-unit')?.value || 'Cái',
+          quantity: r.querySelector('.tb-qty')?.value || '',
+          unit: r.querySelector('.tb-unit')?.value || '',
           status: r.querySelector('.tb-status')?.value || ''
         });
         ValidationStore.learn('thietBi', name);
@@ -955,8 +1061,8 @@ const App = {
       if (name) {
         thietBiThayThe.push({
           name: name,
-          quantity: r.querySelector('.tb-qty')?.value || '1',
-          unit: r.querySelector('.tb-unit')?.value || 'Cái',
+          quantity: r.querySelector('.tb-qty')?.value || '',
+          unit: r.querySelector('.tb-unit')?.value || '',
           note: r.querySelector('.tb-note')?.value || ''
         });
         ValidationStore.learn('thietBi', name);
@@ -966,8 +1072,8 @@ const App = {
     const formatRepsStr = (arr) => arr.map(r => r.position ? `${r.name} (${r.position})` : r.name).join('; ');
 
     return {
-      ngayLap: document.getElementById('bt-ngay-lap')?.value,
-      gioLap: document.getElementById('bt-gio-lap')?.value,
+      ngayLap: document.getElementById('bt-ngay-lap')?.value || '',
+      gioLap: document.getElementById('bt-gio-lap')?.value || '',
       diaDiem: diaDiem,
       tuyenHrd: tuyen,
       daiDienBaoTri: reps.bt,
@@ -1003,10 +1109,10 @@ const App = {
     document.querySelectorAll('#vs-doan-tbody tr').forEach(r => {
       const from = r.querySelector('.vs-from')?.value || '';
       const to = r.querySelector('.vs-to')?.value || '';
-      const l = r.querySelector('.vs-len')?.value || '0';
-      const w = r.querySelector('.vs-wid')?.value || '3.0';
-      const a = (parseFloat(l) * parseFloat(w)).toFixed(1);
-      if (from || to || l !== '0') {
+      const l = r.querySelector('.vs-len')?.value || '';
+      const w = r.querySelector('.vs-wid')?.value || '';
+      const a = r.querySelector('.vs-area')?.value || '';
+      if (from || to || l || a) {
         doanList.push({ from: from, to: to, length: l, width: w, area: a });
       }
     });
@@ -1014,8 +1120,8 @@ const App = {
     const formatRepsStr = (arr) => arr.map(r => r.position ? `${r.name} (${r.position})` : r.name).join('; ');
 
     return {
-      ngayLap: document.getElementById('vs-ngay-lap')?.value,
-      gioLap: document.getElementById('vs-gio-lap')?.value,
+      ngayLap: document.getElementById('vs-ngay-lap')?.value || '',
+      gioLap: document.getElementById('vs-gio-lap')?.value || '',
       diaDiem: diaDiem,
       tuyenHrd: tuyen,
       daiDienBaoTri: reps.bt,
@@ -1026,8 +1132,8 @@ const App = {
       ddKl: formatRepsStr(reps.kl),
       dsNhanCong: [nhanCong].filter(Boolean),
       cacDoanVeSinh: doanList,
-      tongChieuDai: document.getElementById('vs-tong-chieu-dai')?.value || '0',
-      tongDienTich: document.getElementById('vs-tong-dien-tich')?.value || '0',
+      tongChieuDai: document.getElementById('vs-tong-chieu-dai')?.value || '',
+      tongDienTich: document.getElementById('vs-tong-dien-tich')?.value || '',
       danhGia: danhGia,
       photos: this.currentPhotos.vesinh
     };
@@ -1051,8 +1157,8 @@ const App = {
     if (danhGia) ValidationStore.learn('nkDanhGia', danhGia);
 
     return {
-      ngayGhi: document.getElementById('nk-ngay-ghi')?.value,
-      thoiTiet: document.getElementById('nk-thoi-tiet')?.value,
+      ngayGhi: document.getElementById('nk-ngay-ghi')?.value || '',
+      thoiTiet: document.getElementById('nk-thoi-tiet')?.value || '',
       hangMuc: hangMuc,
       diaDiem: tuyen,
       tuyenHrd: tuyen,
@@ -1095,6 +1201,7 @@ const App = {
             timestamp: new Date().toISOString(),
             status: 'synced'
           });
+          this.resetForm(formType, false);
           this.refreshDashboardMetrics();
           return;
         }
@@ -1106,6 +1213,7 @@ const App = {
     // 2. Lưu Offline vào LocalStorage
     StorageService.saveOffline(formType, recordData, username);
     this.showToast('Đã lưu vào bộ nhớ máy (Offline)! Sẽ tự đồng bộ khi có mạng.', 'warning');
+    this.resetForm(formType, false);
     this.refreshDashboardMetrics();
   },
 

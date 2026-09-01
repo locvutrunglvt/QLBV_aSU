@@ -1335,26 +1335,29 @@ input, select, textarea, .form-control, .form-select, .form-textarea {
 
 .qty-unit-group {
   display: flex;
-  gap: 0.4rem;
+  gap: 0.35rem;
   align-items: center;
+  width: 100%;
 }
 
 .qty-unit-group .tb-qty {
-  width: 75px;
-  flex-shrink: 0;
+  width: 70px !important;
+  flex: 1 1 65px;
+  min-width: 55px;
 }
 
 .qty-unit-group .tb-unit {
-  width: 85px;
-  flex-shrink: 0;
+  width: 80px !important;
+  flex: 1 1 75px;
+  min-width: 65px;
 }
 
 .btn-row-del {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 32px;
-  height: 32px;
+  width: 30px;
+  height: 30px;
   border-radius: 6px;
   background: rgba(220, 38, 38, 0.1);
   color: #dc2626;
@@ -1368,85 +1371,182 @@ input, select, textarea, .form-control, .form-select, .form-textarea {
   color: #ffffff;
 }
 
-/* GIAO DIỆN TRÊN ĐIỆN THOẠI: Chuyển bảng biểu thành các Card nhập liệu độc lập, rõ ràng */
-@media (max-width: 768px) {
-  .dynamic-table-wrapper .data-table {
-    display: block;
-    border: none;
-    background: transparent;
-    box-shadow: none;
-  }
-
-  .dynamic-table-wrapper .data-table thead {
-    display: none;
-  }
-
-  .dynamic-table-wrapper .data-table tbody {
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-    width: 100%;
-  }
-
-  .dynamic-table-wrapper .data-table tr.dynamic-row-item {
-    display: flex;
-    flex-direction: column;
-    gap: 0.55rem;
-    background: var(--bg-card);
-    padding: 0.85rem;
-    border-radius: var(--radius-md);
-    border: 1px solid var(--border-strong);
-    box-shadow: var(--shadow-sm);
-    position: relative;
-  }
-
-  .dynamic-table-wrapper .data-table td {
-    display: block;
-    padding: 0 !important;
-    border: none !important;
-    width: 100% !important;
-    background: transparent !important;
-  }
-
-  .dynamic-table-wrapper .field-label-mobile {
-    display: block;
-    font-size: 0.76rem;
-    font-weight: 700;
-    color: var(--text-muted);
-    margin-bottom: 0.25rem;
-  }
-
-  .dynamic-table-wrapper .col-stt {
-    display: inline-flex !important;
-    width: 26px !important;
-    height: 26px !important;
-    align-items: center;
-    justify-content: center;
-    background: var(--primary);
-    color: #ffffff !important;
-    border-radius: 999px;
-    font-size: 0.78rem;
-    font-weight: 800;
-  }
-
-  .dynamic-table-wrapper .col-action {
-    position: absolute;
-    top: 0.65rem;
-    right: 0.65rem;
-    width: auto !important;
-  }
-
-  .dynamic-table-wrapper .qty-unit-group {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0.5rem;
-  }
-
-  .dynamic-table-wrapper .qty-unit-group .tb-qty,
-  .dynamic-table-wrapper .qty-unit-group .tb-unit {
-    width: 100% !important;
-  }
+/* ==========================================================================
+   GIAO DIỆN BẢNG TÍNH EXCEL NHẬP LIỆU (SPREADSHEET GRID) - TRƯỢT NGANG & TRƯỢT DỌC
+   ========================================================================== */
+.excel-table-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin: 1.25rem 0 0.5rem 0;
+  flex-wrap: wrap;
 }
+
+.excel-grid-container,
+.excel-table-scroll {
+  overflow-x: auto !important;
+  overflow-y: auto !important;
+  max-height: 380px;
+  border: 1.5px solid var(--border-strong);
+  border-radius: var(--radius-md);
+  background: var(--bg-surface);
+  -webkit-overflow-scrolling: touch;
+  position: relative;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.excel-table-scroll::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+.excel-table-scroll::-webkit-scrollbar-track {
+  background: var(--bg-subtle);
+  border-radius: 4px;
+}
+.excel-table-scroll::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+  border-radius: 4px;
+}
+.excel-table-scroll::-webkit-scrollbar-thumb:hover {
+  background: var(--text-light);
+}
+
+.data-table.excel-table {
+  width: 100%;
+  min-width: 620px;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 0.88rem;
+}
+
+.data-table.excel-table th {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: var(--bg-subtle);
+  color: var(--text-main);
+  font-weight: 700;
+  padding: 0.65rem 0.6rem;
+  border-bottom: 2px solid var(--border-strong);
+  border-right: 1px solid var(--border-color);
+  white-space: nowrap;
+  text-align: left;
+  user-select: none;
+}
+
+.data-table.excel-table th.col-stt,
+.data-table.excel-table td.col-stt {
+  position: sticky;
+  left: 0;
+  z-index: 8;
+  background: var(--bg-subtle);
+  text-align: center;
+  border-right: 2px solid var(--border-strong);
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+.data-table.excel-table th.col-stt {
+  z-index: 15;
+}
+
+.data-table.excel-table td {
+  padding: 3px 4px;
+  border-bottom: 1px solid var(--border-color);
+  border-right: 1px solid var(--border-color);
+  background: var(--bg-surface);
+  vertical-align: middle;
+}
+
+.data-table.excel-table tr:hover td {
+  background: var(--bg-hover);
+}
+
+.data-table.excel-table td input.form-control,
+.data-table.excel-table td select.form-select {
+  border: 1px solid transparent;
+  border-radius: 4px;
+  padding: 0.4rem 0.5rem;
+  background: transparent;
+  font-size: 0.88rem;
+  width: 100%;
+  min-height: 34px;
+  transition: all 0.15s ease;
+}
+
+.data-table.excel-table td input.form-control:hover,
+.data-table.excel-table td select.form-select:hover {
+  border-color: var(--border-color);
+  background: var(--bg-surface);
+}
+
+.data-table.excel-table td input.form-control:focus,
+.data-table.excel-table td select.form-select:focus {
+  border-color: var(--primary);
+  background: var(--bg-surface);
+  box-shadow: 0 0 0 2px rgba(21, 128, 61, 0.2);
+}
+
+/* NÚT GHIM (PIN) & NHÓM ĐỀ XUẤT */
+.input-pin-group {
+  position: relative;
+  display: flex;
+  align-items: stretch;
+  width: 100%;
+}
+
+.input-pin-group .form-control,
+.input-pin-group .form-textarea,
+.input-pin-group .form-select {
+  padding-right: 2.4rem !important;
+  width: 100%;
+}
+
+.input-pin-group .btn-pin {
+  position: absolute;
+  right: 4px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  opacity: 0.65;
+  transition: all 0.2s ease;
+  z-index: 2;
+}
+
+.input-pin-group textarea + .btn-pin {
+  top: 16px;
+  transform: none;
+}
+
+.input-pin-group .btn-pin:hover {
+  opacity: 1;
+  transform: scale(1.18);
+  background: var(--bg-subtle);
+}
+
+.input-pin-group textarea + .btn-pin:hover {
+  transform: scale(1.18);
+}
+
+/* VALIDATION STATES */
+.is-invalid,
+.form-control.is-invalid,
+.form-select.is-invalid,
+.form-textarea.is-invalid {
+  border-color: var(--danger) !important;
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.2) !important;
+}
+
 
 /* Thẻ Đăng Nhập Sạch Sẽ (Chuyên Nghiệp, Bảo Mật, Không Lộ Gợi Ý) */
 .login-clean-card {
@@ -2092,6 +2192,8 @@ body.modal-open {
     font-size: 16px;
     padding: 0.7rem 0.85rem;
   }
+
+  .app-container { padding: 0.85rem 0.75rem 1rem; }
 
   /* Đảm bảo không có khoảng đệm dư thừa khi đã bỏ bottom menu */
   body { padding-bottom: env(safe-area-inset-bottom); }
@@ -3283,7 +3385,10 @@ body {
         <div class="card-panel">
           <div class="card-header">
             <h2><svg class="ico" aria-hidden="true"><use href="#i-wrench"></use></svg> Biên bản xác minh hiện trạng & ghi nhận bảo trì HRD</h2>
-            <button type="button" class="btn btn-secondary btn-sm" onclick="App.switchTab('dashboard')"><svg class="ico" aria-hidden="true"><use href="#i-arrow-left"></use></svg> <span class="btn-text">Về trang chủ</span></button>
+            <div style="display: flex; align-items: center; gap: 0.4rem;">
+              <button type="button" class="btn btn-secondary btn-sm" onclick="App.resetForm('baotri')" title="Xóa trắng toàn bộ dữ liệu nhập"><svg class="ico" aria-hidden="true"><use href="#i-refresh"></use></svg> <span class="btn-text">Làm mới / Blank</span></button>
+              <button type="button" class="btn btn-secondary btn-sm" onclick="App.switchTab('dashboard')"><svg class="ico" aria-hidden="true"><use href="#i-arrow-left"></use></svg> <span class="btn-text">Về trang chủ</span></button>
+            </div>
           </div>
 
           <!-- Thông tin thời gian & địa điểm -->
@@ -3298,11 +3403,17 @@ body {
             </div>
             <div class="form-group">
               <label class="form-label required" for="bt-tuyen-input">Tuyến hàng rào điện</label>
-              <input type="text" id="bt-tuyen-input" class="form-control" list="dl-tuyen" placeholder="Nhập hoặc chọn Tuyến hàng rào..." required autocomplete="off" />
+              <div class="input-pin-group">
+                <input type="text" id="bt-tuyen-input" class="form-control" list="dl-tuyen" placeholder="Nhập hoặc chọn Tuyến hàng rào..." required autocomplete="off" />
+                <button type="button" class="btn-pin" title="Ghim & lưu vào thư viện gợi ý" onclick="App.quickPinField('bt-tuyen-input', 'tuyen')">📌</button>
+              </div>
             </div>
             <div class="form-group">
               <label class="form-label" for="bt-dia-diem">Vị trí cụ thể / Trụ số</label>
-              <input type="text" id="bt-dia-diem" class="form-control" placeholder="Ví dụ: Khu vực Trụ 45 - Trụ 48" />
+              <div class="input-pin-group">
+                <input type="text" id="bt-dia-diem" class="form-control" list="dl-dia-diem" placeholder="Ví dụ: Khu vực Trụ 45 - Trụ 48" autocomplete="off" />
+                <button type="button" class="btn-pin" title="Ghim & lưu vào thư viện gợi ý" onclick="App.quickPinField('bt-dia-diem', 'diaDiem')">📌</button>
+              </div>
             </div>
           </div>
 
@@ -3385,27 +3496,36 @@ body {
           <div class="form-grid">
             <div class="form-group full-width">
               <label class="form-label required" for="bt-su-co-input">Sự cố xảy ra trên tuyến hàng rào</label>
-              <input type="text" id="bt-su-co-input" class="form-control" list="dl-su-co" placeholder="Nhập sự cố hoặc chọn từ gợi ý..." required autocomplete="off" />
+              <div class="input-pin-group">
+                <input type="text" id="bt-su-co-input" class="form-control" list="dl-su-co" placeholder="Nhập sự cố hoặc chọn từ gợi ý..." required autocomplete="off" />
+                <button type="button" class="btn-pin" title="Ghim & lưu vào thư viện gợi ý" onclick="App.quickPinField('bt-su-co-input', 'suCo')">📌</button>
+              </div>
             </div>
             <div class="form-group full-width">
               <label class="form-label" for="bt-nguyen-nhan">Nguyên nhân sự cố</label>
-              <textarea id="bt-nguyen-nhan" class="form-textarea" list="dl-nguyen-nhan" placeholder="Ví dụ: Cây rừng gãy đè đứt dây cáp làm mất xung điện..."></textarea>
+              <div class="input-pin-group">
+                <textarea id="bt-nguyen-nhan" class="form-textarea" list="dl-nguyen-nhan" placeholder="Ví dụ: Cây rừng gãy đè đứt dây cáp làm mất xung điện..."></textarea>
+                <button type="button" class="btn-pin" title="Ghim & lưu vào thư viện gợi ý" onclick="App.quickPinField('bt-nguyen-nhan', 'nguyenNhan')">📌</button>
+              </div>
             </div>
           </div>
 
-          <!-- Bảng Thiết bị hỏng -->
-          <div style="display: flex; align-items: center; justify-content: space-between; margin: 1.25rem 0 0.5rem 0;">
-            <div class="field-group-label is-danger">Thiết bị hư hỏng</div>
-            <button type="button" id="btn-add-bt-thietbi-hong" class="btn btn-secondary btn-sm">+ Thêm thiết bị</button>
+          <!-- Bảng Thiết bị hỏng (Giao diện bảng tính Excel trượt ngang/dọc) -->
+          <div class="excel-table-toolbar">
+            <div class="field-group-label is-danger"><svg class="ico" aria-hidden="true"><use href="#i-wrench"></use></svg> Thiết bị hư hỏng (Bảng tính Excel)</div>
+            <div style="display: flex; gap: 0.4rem;">
+              <button type="button" id="btn-add-bt-thietbi-hong" class="btn btn-secondary btn-sm">+ Thêm thiết bị</button>
+              <button type="button" class="btn btn-secondary btn-sm" onclick="App.clearTableRows('bt-thietbi-hong-tbody', 'hong')" title="Xóa toàn bộ dòng"><svg class="ico" aria-hidden="true"><use href="#i-trash"></use></svg> Xóa hết</button>
+            </div>
           </div>
-          <div class="dynamic-table-wrapper">
-            <table class="data-table">
+          <div class="excel-grid-container excel-table-scroll dynamic-table-wrapper">
+            <table class="data-table excel-table">
               <thead>
                 <tr>
-                  <th style="width: 40px; text-align: center;">STT</th>
-                  <th>Tên thiết bị / Quy cách</th>
-                  <th style="width: 150px;">Số lượng</th>
-                  <th>Tình trạng hư hỏng</th>
+                  <th class="col-stt" style="width: 45px; text-align: center;">STT</th>
+                  <th style="min-width: 220px;">Tên thiết bị / Quy cách</th>
+                  <th style="width: 170px; min-width: 170px;">Số lượng &amp; ĐVT</th>
+                  <th style="min-width: 200px;">Tình trạng hư hỏng</th>
                   <th style="width: 50px; text-align: center;">Xóa</th>
                 </tr>
               </thead>
@@ -3413,19 +3533,22 @@ body {
             </table>
           </div>
 
-          <!-- Bảng Thiết bị thay thế -->
-          <div style="display: flex; align-items: center; justify-content: space-between; margin: 1.25rem 0 0.5rem 0;">
-            <div class="field-group-label is-success">Vật tư / thiết bị thay thế</div>
-            <button type="button" id="btn-add-bt-thietbi-thaythe" class="btn btn-secondary btn-sm">+ Thêm vật tư</button>
+          <!-- Bảng Thiết bị thay thế (Giao diện bảng tính Excel trượt ngang/dọc) -->
+          <div class="excel-table-toolbar">
+            <div class="field-group-label is-success"><svg class="ico" aria-hidden="true"><use href="#i-check"></use></svg> Vật tư / thiết bị thay thế (Bảng tính Excel)</div>
+            <div style="display: flex; gap: 0.4rem;">
+              <button type="button" id="btn-add-bt-thietbi-thaythe" class="btn btn-secondary btn-sm">+ Thêm vật tư</button>
+              <button type="button" class="btn btn-secondary btn-sm" onclick="App.clearTableRows('bt-thietbi-thaythe-tbody', 'thaythe')" title="Xóa toàn bộ dòng"><svg class="ico" aria-hidden="true"><use href="#i-trash"></use></svg> Xóa hết</button>
+            </div>
           </div>
-          <div class="dynamic-table-wrapper">
-            <table class="data-table">
+          <div class="excel-grid-container excel-table-scroll dynamic-table-wrapper">
+            <table class="data-table excel-table">
               <thead>
                 <tr>
-                  <th style="width: 40px; text-align: center;">STT</th>
-                  <th>Tên vật tư thay thế</th>
-                  <th style="width: 150px;">Số lượng</th>
-                  <th>Ghi chú / Tình trạng</th>
+                  <th class="col-stt" style="width: 45px; text-align: center;">STT</th>
+                  <th style="min-width: 220px;">Tên vật tư thay thế</th>
+                  <th style="width: 170px; min-width: 170px;">Số lượng &amp; ĐVT</th>
+                  <th style="min-width: 200px;">Ghi chú / Tình trạng</th>
                   <th style="width: 50px; text-align: center;">Xóa</th>
                 </tr>
               </thead>
@@ -3468,6 +3591,9 @@ body {
             <button type="button" id="btn-print-baotri" class="btn btn-secondary">
               <svg class="ico" aria-hidden="true"><use href="#i-printer"></use></svg> Xem trước<span class="btn-text"> & in PDF</span>
             </button>
+            <button type="button" class="btn btn-secondary" onclick="App.resetForm('baotri')" title="Xóa trắng form">
+              <svg class="ico" aria-hidden="true"><use href="#i-refresh"></use></svg> Xóa trắng
+            </button>
             <button type="submit" class="btn btn-primary btn-lg">
               <svg class="ico" aria-hidden="true"><use href="#i-save"></use></svg> Lưu biên bản
             </button>
@@ -3482,7 +3608,10 @@ body {
         <div class="card-panel">
           <div class="card-header">
             <h2><svg class="ico" aria-hidden="true"><use href="#i-leaf"></use></svg> Biên bản ghi nhận kết quả vệ sinh, phát dọn thực bì HRD</h2>
-            <button type="button" class="btn btn-secondary btn-sm" onclick="App.switchTab('dashboard')"><svg class="ico" aria-hidden="true"><use href="#i-arrow-left"></use></svg> <span class="btn-text">Về trang chủ</span></button>
+            <div style="display: flex; align-items: center; gap: 0.4rem;">
+              <button type="button" class="btn btn-secondary btn-sm" onclick="App.resetForm('vesinh')" title="Xóa trắng toàn bộ dữ liệu nhập"><svg class="ico" aria-hidden="true"><use href="#i-refresh"></use></svg> <span class="btn-text">Làm mới / Blank</span></button>
+              <button type="button" class="btn btn-secondary btn-sm" onclick="App.switchTab('dashboard')"><svg class="ico" aria-hidden="true"><use href="#i-arrow-left"></use></svg> <span class="btn-text">Về trang chủ</span></button>
+            </div>
           </div>
 
           <!-- Thời gian & Địa điểm -->
@@ -3497,11 +3626,17 @@ body {
             </div>
             <div class="form-group">
               <label class="form-label required" for="vs-tuyen-input">Tuyến hàng rào điện</label>
-              <input type="text" id="vs-tuyen-input" class="form-control" list="dl-tuyen" placeholder="Nhập hoặc chọn Tuyến hàng rào..." required autocomplete="off" />
+              <div class="input-pin-group">
+                <input type="text" id="vs-tuyen-input" class="form-control" list="dl-tuyen" placeholder="Nhập hoặc chọn Tuyến hàng rào..." required autocomplete="off" />
+                <button type="button" class="btn-pin" title="Ghim & lưu vào thư viện gợi ý" onclick="App.quickPinField('vs-tuyen-input', 'tuyen')">📌</button>
+              </div>
             </div>
             <div class="form-group">
               <label class="form-label" for="vs-dia-diem">Địa điểm / Tiểu khu</label>
-              <input type="text" id="vs-dia-diem" class="form-control" placeholder="Ví dụ: Tiểu khu 120 - RPH Tân Phú" />
+              <div class="input-pin-group">
+                <input type="text" id="vs-dia-diem" class="form-control" list="dl-dia-diem" placeholder="Ví dụ: Tiểu khu 120 - RPH Tân Phú" autocomplete="off" />
+                <button type="button" class="btn-pin" title="Ghim & lưu vào thư viện gợi ý" onclick="App.quickPinField('vs-dia-diem', 'diaDiem')">📌</button>
+              </div>
             </div>
           </div>
 
@@ -3579,25 +3714,30 @@ body {
           <div class="form-grid">
             <div class="form-group full-width">
               <label class="form-label" for="vs-nhan-cong">Danh sách Nhân công phát dọn</label>
-              <input type="text" id="vs-nhan-cong" class="form-control" placeholder="Ví dụ: Nguyễn Văn A, Trần Văn B, Lê Văn C (Tổ 1)" />
+              <div class="input-pin-group">
+                <input type="text" id="vs-nhan-cong" class="form-control" list="dl-hoten" placeholder="Ví dụ: Nguyễn Văn A, Trần Văn B, Lê Văn C (Tổ 1)" />
+                <button type="button" class="btn-pin" title="Ghim & lưu vào thư viện gợi ý" onclick="App.quickPinField('vs-nhan-cong', 'hoten')">📌</button>
+              </div>
             </div>
           </div>
 
-
-          <!-- Chi tiết phân đoạn trụ -->
-          <div style="display: flex; align-items: center; justify-content: space-between; margin: 1.25rem 0 0.5rem 0;">
-            <div class="form-section">II. Chi tiết các phân đoạn trụ đã phát dọn</div>
-            <button type="button" id="btn-add-vs-doan" class="btn btn-secondary btn-sm">+ Thêm phân đoạn</button>
+          <!-- Chi tiết phân đoạn trụ (Giao diện bảng tính Excel trượt ngang/dọc) -->
+          <div class="excel-table-toolbar">
+            <div class="form-section" style="margin: 0; border-bottom: none; padding-bottom: 0;">II. Chi tiết các phân đoạn trụ đã phát dọn (Bảng tính Excel)</div>
+            <div style="display: flex; gap: 0.4rem;">
+              <button type="button" id="btn-add-vs-doan" class="btn btn-secondary btn-sm">+ Thêm phân đoạn</button>
+              <button type="button" class="btn btn-secondary btn-sm" onclick="App.clearTableRows('vs-doan-tbody', 'doan')" title="Xóa toàn bộ dòng"><svg class="ico" aria-hidden="true"><use href="#i-trash"></use></svg> Xóa hết</button>
+            </div>
           </div>
-          <div class="dynamic-table-wrapper">
-            <table class="data-table">
+          <div class="excel-grid-container excel-table-scroll dynamic-table-wrapper">
+            <table class="data-table excel-table">
               <thead>
                 <tr>
-                  <th style="width: 40px; text-align: center;">STT</th>
-                  <th>Phân đoạn trụ (Từ - Đến)</th>
-                  <th style="width: 110px;">Chiều dài (m)</th>
-                  <th style="width: 100px;">Bề rộng (m)</th>
-                  <th style="width: 120px;">Diện tích (m²)</th>
+                  <th class="col-stt" style="width: 45px; text-align: center;">STT</th>
+                  <th style="min-width: 220px;">Phân đoạn trụ (Từ - Đến)</th>
+                  <th style="width: 120px; min-width: 120px;">Chiều dài (m)</th>
+                  <th style="width: 110px; min-width: 110px;">Bề rộng (m)</th>
+                  <th style="width: 130px; min-width: 130px;">Diện tích (m²)</th>
                   <th style="width: 50px; text-align: center;">Xóa</th>
                 </tr>
               </thead>
@@ -3609,11 +3749,11 @@ body {
           <div class="form-grid" style="margin-top: 1rem; background: var(--bg-subtle); padding: 1rem; border-radius: var(--radius-md);">
             <div class="form-group">
               <label class="form-label" for="vs-tong-chieu-dai">Tổng Chiều Dài (Mét)</label>
-              <input type="number" id="vs-tong-chieu-dai" class="form-control" readonly style="font-weight: 800; font-size: 1.1rem; color: var(--primary);" value="0" />
+              <input type="number" id="vs-tong-chieu-dai" class="form-control" readonly style="font-weight: 800; font-size: 1.1rem; color: var(--primary);" placeholder="0" />
             </div>
             <div class="form-group">
               <label class="form-label" for="vs-tong-dien-tich">Tổng Diện Tích (m²)</label>
-              <input type="text" id="vs-tong-dien-tich" class="form-control" readonly style="font-weight: 800; font-size: 1.1rem; color: var(--success);" value="0" />
+              <input type="text" id="vs-tong-dien-tich" class="form-control" readonly style="font-weight: 800; font-size: 1.1rem; color: var(--success);" placeholder="0" />
             </div>
             <div class="form-group full-width">
               <label class="form-label" for="vs-danh-gia">Đánh giá chất lượng vệ sinh</label>
@@ -3640,6 +3780,9 @@ body {
             <button type="button" id="btn-print-vesinh" class="btn btn-secondary">
               <svg class="ico" aria-hidden="true"><use href="#i-printer"></use></svg> Xem trước<span class="btn-text"> & in PDF</span>
             </button>
+            <button type="button" class="btn btn-secondary" onclick="App.resetForm('vesinh')" title="Xóa trắng form">
+              <svg class="ico" aria-hidden="true"><use href="#i-refresh"></use></svg> Xóa trắng
+            </button>
             <button type="submit" class="btn btn-primary btn-lg">
               <svg class="ico" aria-hidden="true"><use href="#i-save"></use></svg> Lưu Biên bản vệ sinh
             </button>
@@ -3654,7 +3797,10 @@ body {
         <div class="card-panel">
           <div class="card-header">
             <h2><svg class="ico" aria-hidden="true"><use href="#i-clipboard"></use></svg> Nhật ký thi công & Quản Lý Vận Hành</h2>
-            <button type="button" class="btn btn-secondary btn-sm" onclick="App.switchTab('dashboard')"><svg class="ico" aria-hidden="true"><use href="#i-arrow-left"></use></svg> <span class="btn-text">Về trang chủ</span></button>
+            <div style="display: flex; align-items: center; gap: 0.4rem;">
+              <button type="button" class="btn btn-secondary btn-sm" onclick="App.resetForm('nhatky')" title="Xóa trắng toàn bộ dữ liệu nhập"><svg class="ico" aria-hidden="true"><use href="#i-refresh"></use></svg> <span class="btn-text">Làm mới / Blank</span></button>
+              <button type="button" class="btn btn-secondary btn-sm" onclick="App.switchTab('dashboard')"><svg class="ico" aria-hidden="true"><use href="#i-arrow-left"></use></svg> <span class="btn-text">Về trang chủ</span></button>
+            </div>
           </div>
 
           <div class="form-grid">
@@ -3665,6 +3811,7 @@ body {
             <div class="form-group">
               <label class="form-label required" for="nk-thoi-tiet">Thời tiết</label>
               <select id="nk-thoi-tiet" class="form-select" required>
+                <option value="">-- Chọn thời tiết --</option>
                 <option value="Nắng ráo">Nắng ráo</option>
                 <option value="Nắng gắt">Nắng gắt</option>
                 <option value="Mưa rải rác">Mưa rải rác</option>
@@ -3745,6 +3892,9 @@ body {
             <button type="button" id="btn-print-nhatky" class="btn btn-secondary">
               <svg class="ico" aria-hidden="true"><use href="#i-printer"></use></svg> Xem trước<span class="btn-text"> & in PDF</span>
             </button>
+            <button type="button" class="btn btn-secondary" onclick="App.resetForm('nhatky')" title="Xóa trắng form">
+              <svg class="ico" aria-hidden="true"><use href="#i-refresh"></use></svg> Xóa trắng
+            </button>
             <button type="submit" class="btn btn-primary btn-lg">
               <svg class="ico" aria-hidden="true"><use href="#i-save"></use></svg> Lưu nhật ký
             </button>
@@ -3752,6 +3902,7 @@ body {
         </div>
       </form>
     </section>
+
 
     <!-- ================= VIEW 5: LỊCH SỬ BẢN GHI ================= -->
     <section id="view-history" class="tab-view" style="display: none;">
@@ -4205,50 +4356,6 @@ body {
 
   <!-- JavaScript Scripts -->
   <script>
-// ================= KHÓA HOÀN TOÀN TÍNH NĂNG ZOOM TRÊN MỌI MÀN HÌNH =================
-(function lockAppZoom() {
-  // 1. Chặn cử chỉ thu phóng 2 ngón tay (Pinch to zoom)
-  document.addEventListener('touchstart', function (e) {
-    if (e.touches && e.touches.length > 1) {
-      e.preventDefault();
-    }
-  }, { passive: false });
-
-  // 2. Chặn nhấp đúp phóng to (Double tap to zoom)
-  let lastTouchEnd = 0;
-  document.addEventListener('touchend', function (e) {
-    const now = Date.now();
-    if (now - lastTouchEnd <= 300) {
-      const tag = e.target && e.target.tagName ? e.target.tagName.toLowerCase() : '';
-      if (tag !== 'input' && tag !== 'textarea') {
-        e.preventDefault();
-      }
-    }
-    lastTouchEnd = now;
-  }, { passive: false });
-
-  // 3. Chặn các cử chỉ gesture trên iOS Safari
-  ['gesturestart', 'gesturechange', 'gestureend'].forEach(function (evt) {
-    document.addEventListener(evt, function (e) {
-      e.preventDefault();
-    }, { passive: false });
-  });
-
-  // 4. Chặn Ctrl + Mousewheel / Trackpad zoom trên PC
-  document.addEventListener('wheel', function (e) {
-    if (e.ctrlKey) {
-      e.preventDefault();
-    }
-  }, { passive: false });
-
-  // 5. Chặn phím tắt zoom bàn phím
-  document.addEventListener('keydown', function (e) {
-    if (e.ctrlKey && (e.key === '+' || e.key === '-' || e.key === '=' || e.key === '0')) {
-      e.preventDefault();
-    }
-  });
-})();
-
 /* ===== js/config.js ===== */
 /**
  * CẤU HÌNH HỆ THỐNG QLBV (CONFIG)
@@ -4756,7 +4863,7 @@ const ValidationStore = {
     },
     {
       id: 'nkNhaThau',
-      name: 'Nhà Thầu Thi Công / Đơn vị Thực Hiện',
+      name: 'Nhà Thầu Thi Công / Đơn Vị Thực Hiện',
       desc: 'Dùng cho: Nhà thầu thi công & đội bảo dưỡng',
       sharedWith: ['nk-nha-thau']
     }
@@ -4983,6 +5090,7 @@ const ValidationStore = {
     populateDL('dl-nk-nhathau', 'nkNhaThau');
   }
 };
+
 
 
   </script>
@@ -5857,6 +5965,50 @@ const PDFService = {
  * Main Application Controller
  */
 
+// ================= KHÓA HOÀN TOÀN TÍNH NĂNG ZOOM TRÊN MỌI MÀN HÌNH =================
+(function lockAppZoom() {
+  // 1. Chặn cử chỉ thu phóng 2 ngón tay (Pinch to zoom)
+  document.addEventListener('touchstart', function (e) {
+    if (e.touches && e.touches.length > 1) {
+      e.preventDefault();
+    }
+  }, { passive: false });
+
+  // 2. Chặn nhấp đúp phóng to (Double tap to zoom)
+  let lastTouchEnd = 0;
+  document.addEventListener('touchend', function (e) {
+    const now = Date.now();
+    if (now - lastTouchEnd <= 300) {
+      const tag = e.target && e.target.tagName ? e.target.tagName.toLowerCase() : '';
+      if (tag !== 'input' && tag !== 'textarea') {
+        e.preventDefault();
+      }
+    }
+    lastTouchEnd = now;
+  }, { passive: false });
+
+  // 3. Chặn các cử chỉ gesture trên iOS Safari
+  ['gesturestart', 'gesturechange', 'gestureend'].forEach(function (evt) {
+    document.addEventListener(evt, function (e) {
+      e.preventDefault();
+    }, { passive: false });
+  });
+
+  // 4. Chặn Ctrl + Mousewheel / Trackpad zoom trên PC
+  document.addEventListener('wheel', function (e) {
+    if (e.ctrlKey) {
+      e.preventDefault();
+    }
+  }, { passive: false });
+
+  // 5. Chặn phím tắt zoom bàn phím
+  document.addEventListener('keydown', function (e) {
+    if (e.ctrlKey && (e.key === '+' || e.key === '-' || e.key === '=' || e.key === '0')) {
+      e.preventDefault();
+    }
+  });
+})();
+
 const App = {
   activeTab: 'dashboard',
   currentPhotos: {
@@ -5908,6 +6060,9 @@ const App = {
     document.addEventListener('visibilitychange', () => {
       if (!document.hidden) this.enforceSession();
     });
+
+    // Chặn cử chỉ zoom ngoài ý muốn trên Safari / iOS
+    document.addEventListener('gesturestart', (e) => e.preventDefault());
 
     // 6. Làm mới danh mục dùng chung từ Google Sheets ở nền (không chặn giao diện)
     MasterData.refreshFromServer().then(updated => {
@@ -6509,7 +6664,78 @@ const App = {
   },
 
   /**
-   * Thêm dòng thiết bị cho Form Bảo Trì (Hỗ trợ giao diện máy tính & card độc lập trên điện thoại)
+   * Làm mới / Xóa trắng toàn bộ ô nhập liệu của Form
+   */
+  resetForm(formType, showToastMsg = true) {
+    if (formType === 'baotri') {
+      const form = document.getElementById('form-baotri-el');
+      if (form) {
+        form.reset();
+        form.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
+      }
+      const hongTbody = document.getElementById('bt-thietbi-hong-tbody');
+      if (hongTbody) {
+        hongTbody.innerHTML = '';
+        this.addBaoTriRow('bt-thietbi-hong-tbody', 'hong');
+      }
+      const thayTheTbody = document.getElementById('bt-thietbi-thaythe-tbody');
+      if (thayTheTbody) {
+        thayTheTbody.innerHTML = '';
+        this.addBaoTriRow('bt-thietbi-thaythe-tbody', 'thaythe');
+      }
+      this.currentPhotos.baotri = [];
+      CameraService.renderPhotoGallery('bt-photo-gallery', [], null);
+      if (showToastMsg) this.showToast('Đã xóa trắng toàn bộ Form Biên bản bảo trì!', 'info');
+    } else if (formType === 'vesinh') {
+      const form = document.getElementById('form-vesinh-el');
+      if (form) {
+        form.reset();
+        form.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
+      }
+      const doanTbody = document.getElementById('vs-doan-tbody');
+      if (doanTbody) {
+        doanTbody.innerHTML = '';
+        this.addVeSinhDoanRow();
+      }
+      const lenEl = document.getElementById('vs-tong-chieu-dai');
+      const areaEl = document.getElementById('vs-tong-dien-tich');
+      if (lenEl) lenEl.value = '';
+      if (areaEl) areaEl.value = '';
+      this.currentPhotos.vesinh = [];
+      CameraService.renderPhotoGallery('vs-photo-gallery', [], null);
+      if (showToastMsg) this.showToast('Đã xóa trắng toàn bộ Form Biên bản vệ sinh!', 'info');
+    } else if (formType === 'nhatky') {
+      const form = document.getElementById('form-nhatky-el');
+      if (form) {
+        form.reset();
+        form.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
+      }
+      const tt = document.getElementById('nk-thoi-tiet');
+      if (tt) tt.value = '';
+      this.currentPhotos.nhatky = [];
+      CameraService.renderPhotoGallery('nk-photo-gallery', [], null);
+      if (showToastMsg) this.showToast('Đã xóa trắng toàn bộ Form Nhật ký thi công!', 'info');
+    }
+  },
+
+  /**
+   * Xóa sạch toàn bộ dòng trong bảng và khởi tạo 1 dòng trống
+   */
+  clearTableRows(tbodyId, type) {
+    const tbody = document.getElementById(tbodyId);
+    if (!tbody) return;
+    tbody.innerHTML = '';
+    if (type === 'hong' || type === 'thaythe') {
+      this.addBaoTriRow(tbodyId, type);
+    } else if (type === 'doan') {
+      this.addVeSinhDoanRow();
+      this.calcVeSinhTotals();
+    }
+    this.showToast('Đã làm mới danh sách dòng bảng tính!', 'info');
+  },
+
+  /**
+   * Thêm dòng thiết bị cho Form Bảo Trì (Bảng tính Excel trượt ngang/dọc)
    */
   addBaoTriRow(tbodyId, type) {
     const tbody = document.getElementById(tbodyId);
@@ -6522,22 +6748,19 @@ const App = {
     if (type === 'hong') {
       row.innerHTML = `
         <td class="col-stt" style="text-align: center;">${idx}</td>
-        <td class="col-main">
-          <label class="field-label-mobile">Tên thiết bị / Quy cách hư hỏng</label>
-          <input type="text" class="form-control tb-name" list="dl-thietbi" placeholder="Nhập hoặc chọn tên thiết bị..." autocomplete="off" />
+        <td>
+          <input type="text" class="form-control tb-name" list="dl-thietbi" placeholder="Tên thiết bị..." autocomplete="off" />
         </td>
-        <td class="col-qty">
-          <label class="field-label-mobile">Số lượng &amp; ĐVT</label>
+        <td>
           <div class="qty-unit-group">
-            <input type="number" class="form-control tb-qty" value="1" min="1" placeholder="SL" />
-            <input type="text" class="form-control tb-unit" list="dl-dvt" value="Cái" placeholder="ĐVT" />
+            <input type="number" class="form-control tb-qty" min="1" placeholder="SL" />
+            <input type="text" class="form-control tb-unit" list="dl-dvt" placeholder="ĐVT" />
           </div>
         </td>
-        <td class="col-status">
-          <label class="field-label-mobile">Tình trạng hư hỏng</label>
+        <td>
           <input type="text" class="form-control tb-status" list="dl-su-co" placeholder="Tình trạng hư hỏng..." autocomplete="off" />
         </td>
-        <td class="col-action" style="text-align: center;">
+        <td style="text-align: center;">
           <button type="button" class="btn-row-del" title="Xóa dòng" onclick="this.closest('tr').remove(); App.reindexRows('${tbodyId}');">
             <svg class="ico" aria-hidden="true"><use href="#i-x"></use></svg>
           </button>
@@ -6546,22 +6769,19 @@ const App = {
     } else {
       row.innerHTML = `
         <td class="col-stt" style="text-align: center;">${idx}</td>
-        <td class="col-main">
-          <label class="field-label-mobile">Tên vật tư / Thiết bị thay thế</label>
-          <input type="text" class="form-control tb-name" list="dl-thietbi" placeholder="Nhập hoặc chọn vật tư thay thế..." autocomplete="off" />
+        <td>
+          <input type="text" class="form-control tb-name" list="dl-thietbi" placeholder="Tên vật tư thay..." autocomplete="off" />
         </td>
-        <td class="col-qty">
-          <label class="field-label-mobile">Số lượng &amp; ĐVT</label>
+        <td>
           <div class="qty-unit-group">
-            <input type="number" class="form-control tb-qty" value="1" min="1" placeholder="SL" />
-            <input type="text" class="form-control tb-unit" list="dl-dvt" value="Cái" placeholder="ĐVT" />
+            <input type="number" class="form-control tb-qty" min="1" placeholder="SL" />
+            <input type="text" class="form-control tb-unit" list="dl-dvt" placeholder="ĐVT" />
           </div>
         </td>
-        <td class="col-status">
-          <label class="field-label-mobile">Ghi chú / Tình trạng thay mới</label>
-          <input type="text" class="form-control tb-note" list="dl-danh-gia" placeholder="Ghi chú thay thế..." autocomplete="off" />
+        <td>
+          <input type="text" class="form-control tb-note" list="dl-danh-gia" placeholder="Ghi chú / Tình trạng thay mới..." autocomplete="off" />
         </td>
-        <td class="col-action" style="text-align: center;">
+        <td style="text-align: center;">
           <button type="button" class="btn-row-del" title="Xóa dòng" onclick="this.closest('tr').remove(); App.reindexRows('${tbodyId}');">
             <svg class="ico" aria-hidden="true"><use href="#i-x"></use></svg>
           </button>
@@ -6601,7 +6821,7 @@ const App = {
   },
 
   /**
-   * Thêm dòng phân đoạn cho Form Vệ Sinh
+   * Thêm dòng phân đoạn cho Form Vệ Sinh (Bảng tính Excel trượt ngang/dọc)
    */
   addVeSinhDoanRow() {
     const tbody = document.getElementById('vs-doan-tbody');
@@ -6611,30 +6831,31 @@ const App = {
     const idx = tbody.children.length + 1;
 
     row.innerHTML = `
-      <td style="text-align: center;">${idx}</td>
+      <td class="col-stt" style="text-align: center;">${idx}</td>
       <td>
         <div style="display: flex; align-items: center; gap: 4px;">
-          <span>Trụ</span>
-          <input type="number" class="form-control vs-from" placeholder="Từ" style="width: 70px;" />
-          <span>đến</span>
-          <input type="number" class="form-control vs-to" placeholder="Đến" style="width: 70px;" />
+          <span style="font-size: 0.8rem; color: var(--text-muted);">Trụ</span>
+          <input type="number" class="form-control vs-from" placeholder="Từ" style="width: 75px;" />
+          <span style="font-size: 0.8rem; color: var(--text-muted);">-</span>
+          <input type="number" class="form-control vs-to" placeholder="Đến" style="width: 75px;" />
         </div>
       </td>
       <td>
-        <input type="number" class="form-control vs-len" placeholder="Mét" style="width: 90px;" />
+        <input type="number" class="form-control vs-len" placeholder="Mét" />
       </td>
       <td>
-        <input type="number" class="form-control vs-wid" value="3.0" step="0.5" style="width: 80px;" />
+        <input type="number" class="form-control vs-wid" placeholder="3.0" step="0.5" />
       </td>
       <td>
-        <input type="text" class="form-control vs-area" readonly style="width: 100px; font-weight: bold; background: var(--bg-subtle);" value="0" />
+        <input type="text" class="form-control vs-area" readonly style="font-weight: 700; background: var(--bg-subtle); color: var(--primary);" placeholder="0" />
       </td>
       <td style="text-align: center;">
-        <button type="button" class="btn btn-danger btn-sm" onclick="this.closest('tr').remove(); App.calcVeSinhTotals();"><svg class="ico" aria-hidden="true"><use href="#i-x"></use></svg></button>
+        <button type="button" class="btn-row-del" title="Xóa dòng" onclick="this.closest('tr').remove(); App.reindexRows('vs-doan-tbody'); App.calcVeSinhTotals();">
+          <svg class="ico" aria-hidden="true"><use href="#i-x"></use></svg>
+        </button>
       </td>
     `;
 
-    // Lắng nghe thay đổi để tự động tính diện tích
     const fromInput = row.querySelector('.vs-from');
     const toInput = row.querySelector('.vs-to');
     const lenInput = row.querySelector('.vs-len');
@@ -6646,15 +6867,14 @@ const App = {
       const to = parseInt(toInput.value) || 0;
       let len = parseFloat(lenInput.value);
 
-      // Nếu người dùng nhập trụ từ A đến B mà chưa nhập mét -> tự ước tính (mỗi trụ ~40m)
       if (!len && to > from) {
         len = (to - from) * 40;
         lenInput.value = len;
       }
 
-      const wid = parseFloat(widInput.value) || 0;
+      const wid = parseFloat(widInput.value) || (len ? 3.0 : 0);
       const area = (len || 0) * wid;
-      areaInput.value = area.toFixed(1);
+      areaInput.value = area > 0 ? area.toFixed(1) : '';
       this.calcVeSinhTotals();
     };
 
@@ -6683,17 +6903,56 @@ const App = {
     const totalLenEl = document.getElementById('vs-tong-chieu-dai');
     const totalAreaEl = document.getElementById('vs-tong-dien-tich');
 
-    if (totalLenEl) totalLenEl.value = totalLen;
-    if (totalAreaEl) totalAreaEl.value = totalArea.toFixed(1);
+    if (totalLenEl) totalLenEl.value = totalLen > 0 ? totalLen : '';
+    if (totalAreaEl) totalAreaEl.value = totalArea > 0 ? totalArea.toFixed(1) : '';
+  },
+
+  /**
+   * Kiểm tra validation các trường bắt buộc và đánh dấu đỏ
+   */
+  validateFormFields(formId) {
+    const form = document.getElementById(formId);
+    if (!form) return true;
+
+    let isValid = true;
+    let firstInvalid = null;
+
+    form.querySelectorAll('[required]').forEach(input => {
+      if (!input.value || !input.value.trim()) {
+        input.classList.add('is-invalid');
+        isValid = false;
+        if (!firstInvalid) firstInvalid = input;
+      } else {
+        input.classList.remove('is-invalid');
+      }
+    });
+
+    if (!isValid) {
+      if (firstInvalid) {
+        firstInvalid.focus();
+        firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+      this.showToast('Vui lòng điền đầy đủ các thông tin bắt buộc (*)', 'warning');
+    }
+
+    return isValid;
   },
 
   /**
    * Thu thập dữ liệu và xử lý Lưu / In ấn cho các Form
    */
   setupFormSubmitHandlers() {
+    // Tự động xóa class .is-invalid khi người dùng gõ
+    document.addEventListener('input', (e) => {
+      if (e.target && e.target.classList.contains('is-invalid')) {
+        e.target.classList.remove('is-invalid');
+      }
+    });
+
     // 1. Submit Form Bảo Trì
     document.getElementById('form-baotri-el')?.addEventListener('submit', async (e) => {
       e.preventDefault();
+      if (!this.validateFormFields('form-baotri-el')) return;
       const record = this.collectBaoTriData();
       await this.handleSaveAction('baotri', record);
     });
@@ -6705,6 +6964,7 @@ const App = {
     // 2. Submit Form Vệ Sinh
     document.getElementById('form-vesinh-el')?.addEventListener('submit', async (e) => {
       e.preventDefault();
+      if (!this.validateFormFields('form-vesinh-el')) return;
       const record = this.collectVeSinhData();
       await this.handleSaveAction('vesinh', record);
     });
@@ -6716,6 +6976,7 @@ const App = {
     // 3. Submit Form Nhật Ký
     document.getElementById('form-nhatky-el')?.addEventListener('submit', async (e) => {
       e.preventDefault();
+      if (!this.validateFormFields('form-nhatky-el')) return;
       const record = this.collectNhatKyData();
       await this.handleSaveAction('nhatky', record);
     });
@@ -6748,8 +7009,8 @@ const App = {
       if (name) {
         thietBiHong.push({
           name: name,
-          quantity: r.querySelector('.tb-qty')?.value || '1',
-          unit: r.querySelector('.tb-unit')?.value || 'Cái',
+          quantity: r.querySelector('.tb-qty')?.value || '',
+          unit: r.querySelector('.tb-unit')?.value || '',
           status: r.querySelector('.tb-status')?.value || ''
         });
         ValidationStore.learn('thietBi', name);
@@ -6762,8 +7023,8 @@ const App = {
       if (name) {
         thietBiThayThe.push({
           name: name,
-          quantity: r.querySelector('.tb-qty')?.value || '1',
-          unit: r.querySelector('.tb-unit')?.value || 'Cái',
+          quantity: r.querySelector('.tb-qty')?.value || '',
+          unit: r.querySelector('.tb-unit')?.value || '',
           note: r.querySelector('.tb-note')?.value || ''
         });
         ValidationStore.learn('thietBi', name);
@@ -6773,8 +7034,8 @@ const App = {
     const formatRepsStr = (arr) => arr.map(r => r.position ? `${r.name} (${r.position})` : r.name).join('; ');
 
     return {
-      ngayLap: document.getElementById('bt-ngay-lap')?.value,
-      gioLap: document.getElementById('bt-gio-lap')?.value,
+      ngayLap: document.getElementById('bt-ngay-lap')?.value || '',
+      gioLap: document.getElementById('bt-gio-lap')?.value || '',
       diaDiem: diaDiem,
       tuyenHrd: tuyen,
       daiDienBaoTri: reps.bt,
@@ -6810,10 +7071,10 @@ const App = {
     document.querySelectorAll('#vs-doan-tbody tr').forEach(r => {
       const from = r.querySelector('.vs-from')?.value || '';
       const to = r.querySelector('.vs-to')?.value || '';
-      const l = r.querySelector('.vs-len')?.value || '0';
-      const w = r.querySelector('.vs-wid')?.value || '3.0';
-      const a = (parseFloat(l) * parseFloat(w)).toFixed(1);
-      if (from || to || l !== '0') {
+      const l = r.querySelector('.vs-len')?.value || '';
+      const w = r.querySelector('.vs-wid')?.value || '';
+      const a = r.querySelector('.vs-area')?.value || '';
+      if (from || to || l || a) {
         doanList.push({ from: from, to: to, length: l, width: w, area: a });
       }
     });
@@ -6821,8 +7082,8 @@ const App = {
     const formatRepsStr = (arr) => arr.map(r => r.position ? `${r.name} (${r.position})` : r.name).join('; ');
 
     return {
-      ngayLap: document.getElementById('vs-ngay-lap')?.value,
-      gioLap: document.getElementById('vs-gio-lap')?.value,
+      ngayLap: document.getElementById('vs-ngay-lap')?.value || '',
+      gioLap: document.getElementById('vs-gio-lap')?.value || '',
       diaDiem: diaDiem,
       tuyenHrd: tuyen,
       daiDienBaoTri: reps.bt,
@@ -6833,8 +7094,8 @@ const App = {
       ddKl: formatRepsStr(reps.kl),
       dsNhanCong: [nhanCong].filter(Boolean),
       cacDoanVeSinh: doanList,
-      tongChieuDai: document.getElementById('vs-tong-chieu-dai')?.value || '0',
-      tongDienTich: document.getElementById('vs-tong-dien-tich')?.value || '0',
+      tongChieuDai: document.getElementById('vs-tong-chieu-dai')?.value || '',
+      tongDienTich: document.getElementById('vs-tong-dien-tich')?.value || '',
       danhGia: danhGia,
       photos: this.currentPhotos.vesinh
     };
@@ -6858,8 +7119,8 @@ const App = {
     if (danhGia) ValidationStore.learn('nkDanhGia', danhGia);
 
     return {
-      ngayGhi: document.getElementById('nk-ngay-ghi')?.value,
-      thoiTiet: document.getElementById('nk-thoi-tiet')?.value,
+      ngayGhi: document.getElementById('nk-ngay-ghi')?.value || '',
+      thoiTiet: document.getElementById('nk-thoi-tiet')?.value || '',
       hangMuc: hangMuc,
       diaDiem: tuyen,
       tuyenHrd: tuyen,
@@ -6902,6 +7163,7 @@ const App = {
             timestamp: new Date().toISOString(),
             status: 'synced'
           });
+          this.resetForm(formType, false);
           this.refreshDashboardMetrics();
           return;
         }
@@ -6913,6 +7175,7 @@ const App = {
     // 2. Lưu Offline vào LocalStorage
     StorageService.saveOffline(formType, recordData, username);
     this.showToast('Đã lưu vào bộ nhớ máy (Offline)! Sẽ tự đồng bộ khi có mạng.', 'warning');
+    this.resetForm(formType, false);
     this.refreshDashboardMetrics();
   },
 
@@ -7262,7 +7525,6 @@ const App = {
 
 // Khởi chạy App khi trang đã load xong
 document.addEventListener('DOMContentLoaded', () => {
-  document.addEventListener('gesturestart', (e) => e.preventDefault());
   App.init();
 });
 
