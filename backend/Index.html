@@ -1250,6 +1250,7 @@ input, select, textarea, .form-control, .form-select, .form-textarea {
   justify-content: center;
   width: 24px;
   height: 24px;
+  min-width: 24px;
   min-height: 24px;
   max-height: 24px;
   border-radius: 5px;
@@ -1257,8 +1258,10 @@ input, select, textarea, .form-control, .form-select, .form-textarea {
   color: #15803d;
   border: 1px solid rgba(21, 128, 61, 0.25);
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease, opacity 0.1s ease;
   flex-shrink: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 [data-theme="dark"] .btn-pin {
@@ -1279,8 +1282,7 @@ input, select, textarea, .form-control, .form-select, .form-textarea {
   background: #15803d !important;
   color: #ffffff !important;
   border-color: #15803d !important;
-  transform: scale(1.12);
-  box-shadow: 0 2px 5px rgba(21, 128, 61, 0.35);
+  box-shadow: 0 2px 6px rgba(21, 128, 61, 0.35);
 }
 
 [data-theme="dark"] .btn-pin:hover {
@@ -1289,11 +1291,24 @@ input, select, textarea, .form-control, .form-select, .form-textarea {
   border-color: #22c55e !important;
 }
 
-.btn-pin:active {
-  transform: scale(0.92);
+/* TRẠNG THÁI ĐÃ GHIM (ACTIVE / PINNED SÁNG MÀU XANH LÁ) */
+.btn-pin.is-pinned,
+.btn-pin.active {
+  background: #15803d !important;
+  color: #ffffff !important;
+  border-color: #15803d !important;
+  box-shadow: 0 0 0 2px rgba(21, 128, 61, 0.25), 0 2px 5px rgba(21, 128, 61, 0.4);
 }
 
-/* NÚT GHIM NẰM TRONG Ô INPUT */
+[data-theme="dark"] .btn-pin.is-pinned,
+[data-theme="dark"] .btn-pin.active {
+  background: #22c55e !important;
+  color: #ffffff !important;
+  border-color: #22c55e !important;
+  box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.35);
+}
+
+/* NÚT GHIM NẰM TRONG Ô INPUT (CỐ ĐỊNH CHÍNH GIỮA THEO CHIỀU DỌC KHÔNG BỊ TRƯỢT) */
 .input-pin-group {
   position: relative;
   display: flex;
@@ -1312,21 +1327,17 @@ input, select, textarea, .form-control, .form-select, .form-textarea {
   position: absolute;
   right: 5px;
   top: 50%;
-  transform: translateY(-50%);
+  transform: translateY(-50%) !important;
   z-index: 2;
 }
 
 .input-pin-group textarea + .btn-pin {
-  top: 14px;
-  transform: none;
+  top: 10px;
+  transform: none !important;
 }
 
-.input-pin-group .btn-pin:hover {
-  transform: translateY(-50%) scale(1.15);
-}
-
-.input-pin-group textarea + .btn-pin:hover {
-  transform: scale(1.15);
+.input-pin-group .btn-pin:active {
+  opacity: 0.85;
 }
 
 /* ================= THÀNH PHẦN THAM GIA (REPRESENTATIVES CARDS) ================= */
@@ -6787,6 +6798,29 @@ const App = {
         pwToggle.setAttribute('aria-label', showing ? 'Hiện mật khẩu' : 'Ẩn mật khẩu');
       });
     }
+
+    // 15. Tự động kiểm tra trạng thái đã ghim (is-pinned) cho nút đinh ghim khi nhập hoặc xóa
+    document.addEventListener('input', (e) => {
+      const pinGroup = e.target.closest ? e.target.closest('.input-pin-group') : null;
+      if (pinGroup) {
+        const btn = pinGroup.querySelector('.btn-pin');
+        if (btn) {
+          const fnStr = btn.getAttribute('onclick') || '';
+          const match = fnStr.match(/quickPinField\s*\(\s*['"]([^'"]+)['"]\s*,\s*['"]([^'"]+)['"]/);
+          if (match) {
+            const cat = match[2];
+            const val = e.target.value ? e.target.value.trim() : '';
+            if (val && ValidationStore.isPinned(cat, val)) {
+              btn.classList.add('is-pinned');
+              btn.title = `Đã ghim "${val}" (Bấm để bỏ ghim)`;
+            } else {
+              btn.classList.remove('is-pinned');
+              btn.title = 'Ghim & lưu vào thư viện gợi ý';
+            }
+          }
+        }
+      }
+    });
   },
 
   /**
@@ -6828,6 +6862,7 @@ const App = {
       if (form) {
         form.reset();
         form.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
+        form.querySelectorAll('.btn-pin.is-pinned').forEach(b => b.classList.remove('is-pinned'));
       }
       const hongTbody = document.getElementById('bt-thietbi-hong-tbody');
       if (hongTbody) {
@@ -6847,6 +6882,7 @@ const App = {
       if (form) {
         form.reset();
         form.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
+        form.querySelectorAll('.btn-pin.is-pinned').forEach(b => b.classList.remove('is-pinned'));
       }
       const doanTbody = document.getElementById('vs-doan-tbody');
       if (doanTbody) {
@@ -6865,6 +6901,7 @@ const App = {
       if (form) {
         form.reset();
         form.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
+        form.querySelectorAll('.btn-pin.is-pinned').forEach(b => b.classList.remove('is-pinned'));
       }
       const tt = document.getElementById('nk-thoi-tiet');
       if (tt) tt.value = '';
@@ -6973,7 +7010,20 @@ const App = {
     ValidationStore.learn(cat, val);
     ValidationStore.togglePin(cat, val);
     const isPinned = ValidationStore.isPinned(cat, val);
-    this.showToast(isPinned ? `📌 Đã ghim & lưu vào thư viện "${val}"!` : `Đã bỏ ghim "${val}"`, 'success');
+
+    // Cập nhật trạng thái hiển thị màu xanh lá đậm của nút đinh ghim
+    const pinBtn = el.parentElement ? el.parentElement.querySelector('.btn-pin') : null;
+    if (pinBtn) {
+      if (isPinned) {
+        pinBtn.classList.add('is-pinned');
+        pinBtn.title = `Đã ghim "${val}" (Bấm để bỏ ghim)`;
+      } else {
+        pinBtn.classList.remove('is-pinned');
+        pinBtn.title = 'Ghim & lưu vào thư viện gợi ý';
+      }
+    }
+
+    this.showToast(isPinned ? `📌 Đã ghim & lưu vào đề xuất: "${val}"` : `Đã bỏ ghim: "${val}"`, isPinned ? 'success' : 'info');
   },
 
   /**

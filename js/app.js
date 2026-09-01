@@ -669,6 +669,29 @@ const App = {
         pwToggle.setAttribute('aria-label', showing ? 'Hiện mật khẩu' : 'Ẩn mật khẩu');
       });
     }
+
+    // 15. Tự động kiểm tra trạng thái đã ghim (is-pinned) cho nút đinh ghim khi nhập hoặc xóa
+    document.addEventListener('input', (e) => {
+      const pinGroup = e.target.closest ? e.target.closest('.input-pin-group') : null;
+      if (pinGroup) {
+        const btn = pinGroup.querySelector('.btn-pin');
+        if (btn) {
+          const fnStr = btn.getAttribute('onclick') || '';
+          const match = fnStr.match(/quickPinField\s*\(\s*['"]([^'"]+)['"]\s*,\s*['"]([^'"]+)['"]/);
+          if (match) {
+            const cat = match[2];
+            const val = e.target.value ? e.target.value.trim() : '';
+            if (val && ValidationStore.isPinned(cat, val)) {
+              btn.classList.add('is-pinned');
+              btn.title = `Đã ghim "${val}" (Bấm để bỏ ghim)`;
+            } else {
+              btn.classList.remove('is-pinned');
+              btn.title = 'Ghim & lưu vào thư viện gợi ý';
+            }
+          }
+        }
+      }
+    });
   },
 
   /**
@@ -710,6 +733,7 @@ const App = {
       if (form) {
         form.reset();
         form.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
+        form.querySelectorAll('.btn-pin.is-pinned').forEach(b => b.classList.remove('is-pinned'));
       }
       const hongTbody = document.getElementById('bt-thietbi-hong-tbody');
       if (hongTbody) {
@@ -729,6 +753,7 @@ const App = {
       if (form) {
         form.reset();
         form.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
+        form.querySelectorAll('.btn-pin.is-pinned').forEach(b => b.classList.remove('is-pinned'));
       }
       const doanTbody = document.getElementById('vs-doan-tbody');
       if (doanTbody) {
@@ -747,6 +772,7 @@ const App = {
       if (form) {
         form.reset();
         form.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
+        form.querySelectorAll('.btn-pin.is-pinned').forEach(b => b.classList.remove('is-pinned'));
       }
       const tt = document.getElementById('nk-thoi-tiet');
       if (tt) tt.value = '';
@@ -855,7 +881,20 @@ const App = {
     ValidationStore.learn(cat, val);
     ValidationStore.togglePin(cat, val);
     const isPinned = ValidationStore.isPinned(cat, val);
-    this.showToast(isPinned ? `📌 Đã ghim & lưu vào thư viện "${val}"!` : `Đã bỏ ghim "${val}"`, 'success');
+
+    // Cập nhật trạng thái hiển thị màu xanh lá đậm của nút đinh ghim
+    const pinBtn = el.parentElement ? el.parentElement.querySelector('.btn-pin') : null;
+    if (pinBtn) {
+      if (isPinned) {
+        pinBtn.classList.add('is-pinned');
+        pinBtn.title = `Đã ghim "${val}" (Bấm để bỏ ghim)`;
+      } else {
+        pinBtn.classList.remove('is-pinned');
+        pinBtn.title = 'Ghim & lưu vào thư viện gợi ý';
+      }
+    }
+
+    this.showToast(isPinned ? `📌 Đã ghim & lưu vào đề xuất: "${val}"` : `Đã bỏ ghim: "${val}"`, isPinned ? 'success' : 'info');
   },
 
   /**
