@@ -1214,45 +1214,90 @@ input, select, textarea, .form-control, .form-select, .form-textarea {
   color: #74c69d;
 }
 
-/* ================= INPUT WITH QUICK PIN BUTTON ================= */
-.input-pin-group {
-  display: flex;
-  align-items: stretch;
-  gap: 0.35rem;
-  width: 100%;
-}
-
-.input-pin-group .form-control,
-.input-pin-group .form-textarea {
-  flex: 1;
-  min-width: 0;
-}
-
+/* ================= NÚT GHIM ĐỀ XUẤT (COMPACT GREEN PIN BUTTON) ================= */
 .btn-pin {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background: var(--bg-subtle);
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-sm);
-  color: var(--text-muted);
-  padding: 0 0.65rem;
-  font-size: 0.95rem;
+  width: 24px;
+  height: 24px;
+  min-height: 24px;
+  max-height: 24px;
+  border-radius: 5px;
+  background: rgba(21, 128, 61, 0.1);
+  color: #15803d;
+  border: 1px solid rgba(21, 128, 61, 0.25);
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.15s ease;
   flex-shrink: 0;
-  min-height: 42px;
+}
+
+[data-theme="dark"] .btn-pin {
+  background: rgba(34, 197, 94, 0.15);
+  color: #4ade80;
+  border-color: rgba(34, 197, 94, 0.3);
+}
+
+.btn-pin .ico,
+.btn-pin svg {
+  width: 13px;
+  height: 13px;
+  stroke: currentColor;
+  stroke-width: 2.2;
 }
 
 .btn-pin:hover {
-  background: var(--primary);
-  color: #ffffff;
-  border-color: var(--primary);
-  transform: translateY(-1px);
+  background: #15803d !important;
+  color: #ffffff !important;
+  border-color: #15803d !important;
+  transform: scale(1.12);
+  box-shadow: 0 2px 5px rgba(21, 128, 61, 0.35);
+}
+
+[data-theme="dark"] .btn-pin:hover {
+  background: #22c55e !important;
+  color: #ffffff !important;
+  border-color: #22c55e !important;
 }
 
 .btn-pin:active {
-  transform: scale(0.95);
+  transform: scale(0.92);
+}
+
+/* NÚT GHIM NẰM TRONG Ô INPUT */
+.input-pin-group {
+  position: relative;
+  display: flex;
+  align-items: stretch;
+  width: 100%;
+}
+
+.input-pin-group .form-control,
+.input-pin-group .form-textarea,
+.input-pin-group .form-select {
+  padding-right: 2.2rem !important;
+  width: 100%;
+}
+
+.input-pin-group .btn-pin {
+  position: absolute;
+  right: 5px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 2;
+}
+
+.input-pin-group textarea + .btn-pin {
+  top: 14px;
+  transform: none;
+}
+
+.input-pin-group .btn-pin:hover {
+  transform: translateY(-50%) scale(1.15);
+}
+
+.input-pin-group textarea + .btn-pin:hover {
+  transform: scale(1.15);
 }
 
 /* ================= THÀNH PHẦN THAM GIA (REPRESENTATIVES CARDS) ================= */
@@ -1512,55 +1557,6 @@ input, select, textarea, .form-control, .form-select, .form-textarea {
 }
 
 /* NÚT GHIM (PIN) & NHÓM ĐỀ XUẤT */
-.input-pin-group {
-  position: relative;
-  display: flex;
-  align-items: stretch;
-  width: 100%;
-}
-
-.input-pin-group .form-control,
-.input-pin-group .form-textarea,
-.input-pin-group .form-select {
-  padding-right: 2.4rem !important;
-  width: 100%;
-}
-
-.input-pin-group .btn-pin {
-  position: absolute;
-  right: 4px;
-  top: 50%;
-  transform: translateY(-50%);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 28px;
-  height: 28px;
-  background: transparent;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 0.95rem;
-  opacity: 0.65;
-  transition: all 0.2s ease;
-  z-index: 2;
-}
-
-.input-pin-group textarea + .btn-pin {
-  top: 16px;
-  transform: none;
-}
-
-.input-pin-group .btn-pin:hover {
-  opacity: 1;
-  transform: scale(1.18);
-  background: var(--bg-subtle);
-}
-
-.input-pin-group textarea + .btn-pin:hover {
-  transform: scale(1.18);
-}
-
 /* VALIDATION STATES */
 .is-invalid,
 .form-control.is-invalid,
